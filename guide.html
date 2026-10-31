@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Pad: Tablet Setup Guide</title>
+<style>
+  :root { --bg:#fafaf9; --fg:#1c1917; --muted:#57534e; --card:#fff; --line:#e7e5e4; --accent:#4f46e5; --code:#f5f5f4; --ok:#15803d; --warn:#b45309; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14120f; --fg:#f5f5f4; --muted:#a8a29e; --card:#1c1917; --line:#3a3633; --accent:#a5b4fc; --code:#26221f; --ok:#4ade80; --warn:#fbbf24; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.6 system-ui,-apple-system,Segoe UI,sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 2rem; line-height:1.2; margin: .2em 0; }
+  h2 { font-size: 1.4rem; margin: 2.2em 0 .5em; padding-top: .6em; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.1rem; margin: 1.5em 0 .3em; }
+  p.lead { color: var(--muted); font-size: 1.1rem; }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+  code { background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { background: var(--code); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  ol, ul { padding-left: 1.3em; }
+  li { margin: .35em 0; }
+  .card { background: var(--card); border:1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 1em 0; }
+  .note { border-left: 4px solid var(--accent); }
+  .warn { border-left: 4px solid var(--warn); }
+  .ok { border-left: 4px solid var(--ok); }
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; display:block; overflow-x:auto; }
+  th, td { border:1px solid var(--line); padding: 8px 10px; text-align:left; vertical-align: top; }
+  th { background: var(--code); }
+  nav ol { columns: 2; font-size: .95rem; }
+  @media (max-width: 520px) { nav ol { columns: 1; } }
+  input[type=checkbox] { transform: scale(1.2); margin-right: .5em; }
+  label { display:block; margin: .4em 0; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Play Pad: getting it onto the tablet</h1>
+<p class="lead">A beginner-friendly, step-by-step guide to installing the MVP on your Samsung tablet, proving it works offline, and locking the tablet to it. No cables, no developer mode, no app store.</p>
+
+<nav class="card">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#how">How this works</a></li>
+    <li><a href="#host">Step 1: Host the app</a></li>
+    <li><a href="#install">Step 2: Install on the tablet</a></li>
+    <li><a href="#test">Step 3: Test it</a></li>
+    <li><a href="#pin">Step 4: Lock the tablet to the app</a></li>
+    <li><a href="#update">Updating the app later</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+    <li><a href="#next">What's next</a></li>
+  </ol>
+</nav>
+
+<h2 id="how">How this works</h2>
+<p>Play Pad is a <strong>PWA</strong> (progressive web app): a normal web page plus two small files that let Chrome treat it like an installed app.</p>
+<ul>
+  <li><code>docs/manifest.webmanifest</code> tells Android the app's name, icon, and that it should open <em>fullscreen</em> with no browser bars.</li>
+  <li><code>docs/sw.js</code> is a <em>service worker</em>. On first visit it copies the app's files into the tablet's storage, so afterwards it launches with <strong>no internet</strong>.</li>
+</ul>
+<p>The only time the tablet needs a network is the <strong>first visit</strong>, to download the app from some web address. That's the "how do I get it onto the tablet" part. Everything after that is offline.</p>
+
+<div class="card warn">
+  <strong>Important rule:</strong> Chrome only allows service workers (and real "Install app") on <strong>HTTPS</strong> pages or on <code>localhost</code>. A plain <code>http://192.168.x.x</code> address on your Wi-Fi does <em>not</em> qualify. That one fact drives the comparison below.
+</div>
+
+<h2 id="host">Step 1: Host the app</h2>
+<p>You need the contents of the <code>docs/</code> folder reachable at a web address. Pick one:</p>
+
+<table>
+  <tr><th></th><th>GitHub Pages <span style="color:var(--ok)">(recommended)</span></th><th>Local server on home Wi-Fi</th><th>Netlify / Cloudflare Pages</th></tr>
+  <tr><td><strong>HTTPS?</strong></td><td>Yes, automatic</td><td>No (needs a tablet flag, see below)</td><td>Yes, automatic</td></tr>
+  <tr><td><strong>Real "Install" + offline?</strong></td><td>Yes</td><td>Only with the flag workaround</td><td>Yes</td></tr>
+  <tr><td><strong>Needs your computer on?</strong></td><td>No</td><td>Yes, only for the first load</td><td>No</td></tr>
+  <tr><td><strong>Setup effort</strong></td><td>2 minutes, a repo setting</td><td>1 command</td><td>Connect repo, set publish dir to <code>docs</code></td></tr>
+  <tr><td><strong>Cost</strong></td><td>Free for public repos. Private repos need a paid GitHub plan.</td><td>Free</td><td>Free tier</td></tr>
+  <tr><td><strong>Best for</strong></td><td>Set it and forget it. Updates by pushing to git.</td><td>Fast iteration while developing</td><td>Private repo and no paid GitHub</td></tr>
+</table>
+
+<h3>Option A: GitHub Pages (recommended)</h3>
+<ol>
+  <li>Merge the <code>claude/greia-style-android-app-aoapd7</code> branch into <code>main</code> (or just publish from that branch while testing).</li>
+  <li>On GitHub, open the repo → <strong>Settings</strong> → <strong>Pages</strong>.</li>
+  <li>Under <strong>Build and deployment</strong>, set <strong>Source</strong> to <em>Deploy from a branch</em>. Choose branch <code>main</code> and folder <code>/docs</code>, then <strong>Save</strong>.</li>
+  <li>Wait about a minute. The page will show your site address, which should look like <code>https://&lt;your-github-username&gt;.github.io/obviously/</code>.</li>
+  <li>Open that address on your computer first. You should see a dark purple screen reading "Tap anywhere". If so, you're done with this step.</li>
+</ol>
+<p>All paths in the app are relative, so it works fine under the <code>/obviously/</code> sub-path.</p>
+
+<h3>Option B: Local server on your Wi-Fi (for quick testing)</h3>
+<ol>
+  <li>On your computer: <pre><code>cd docs
+python3 -m http.server 8000</code></pre> (or <code>npx serve docs -l 8000</code>)</li>
+  <li>Find your computer's local IP: <code>ipconfig getifaddr en0</code> (macOS), <code>hostname -I</code> (Linux), or <code>ipconfig</code> (Windows). It looks like <code>192.168.1.23</code>.</li>
+  <li>Put the tablet on the <strong>same Wi-Fi</strong> and open <code>http://192.168.1.23:8000</code> in Chrome. The app will load and the touch interactions will work.</li>
+  <li><strong>To get true install + offline over plain http:</strong> on the tablet open <code>chrome://flags</code>, search <em>"Insecure origins treated as secure"</em>, enable it, type <code>http://192.168.1.23:8000</code> into the box, then tap <strong>Relaunch</strong>. Without this, "Add to Home screen" just creates a shortcut that needs the server running every time.</li>
+</ol>
+<div class="card note">The IP can change when your router reassigns it. That's another reason to use GitHub Pages for the version the girls will actually use.</div>
+
+<h3>Option C: Netlify or Cloudflare Pages</h3>
+<p>Connect the repo, leave the build command empty, set the publish/output directory to <code>docs</code>. You'll get an HTTPS address. Good if you keep the repo private.</p>
+
+<h2 id="install">Step 2: Install on the tablet</h2>
+<p>Do this once, with the tablet connected to Wi-Fi.</p>
+
+<h3>With Chrome (recommended)</h3>
+<ol>
+  <li>Open <strong>Chrome</strong> and go to your app's address.</li>
+  <li>Wait for the small pill in the top right to say <strong>"online · offline-ready ✓"</strong>. That confirms the service worker has cached everything. If it says "not cached yet", wait a few seconds or reload once.</li>
+  <li>Tap the <strong>⋮ menu</strong> (top right) → <strong>Add to Home screen</strong> → <strong>Install</strong> (if you see both <em>Install</em> and <em>Create shortcut</em>, pick <strong>Install</strong>).</li>
+  <li>Tap <strong>Install</strong> / <strong>Add</strong> to confirm. A rainbow-shapes icon named "Play Pad" appears on the home screen.</li>
+</ol>
+
+<h3>With Samsung Internet (works too)</h3>
+<ol>
+  <li>Open the address in <strong>Samsung Internet</strong>.</li>
+  <li>Tap the <strong>≡ menu</strong> (bottom right) → <strong>Add page to</strong> → <strong>Home screen</strong> → <strong>Add</strong>.</li>
+</ol>
+<div class="card note">Chrome gives a cleaner fullscreen result. Use Chrome if you have a choice.</div>
+
+<h2 id="test">Step 3: Test it</h2>
+<p>Tick these off. Each one proves a different piece works.</p>
+<div class="card">
+  <label><input type="checkbox"> <strong>Launches from the icon.</strong> Close the browser completely, then tap the Play Pad icon. It should fill the screen with no address bar.</label>
+  <label><input type="checkbox"> <strong>Tap makes shapes and sounds.</strong> Tap anywhere: a colored shape appears and a note plays. (No sound? Raise media volume. Sound starts on the first tap by design, since browsers block audio until a touch.)</label>
+  <label><input type="checkbox"> <strong>Drag paints.</strong> Slide a finger to draw. Try two or three fingers at once; all of them should paint.</label>
+  <label><input type="checkbox"> <strong>Color buttons and 🧽 clear.</strong> The bottom bar changes colors and wipes the canvas.</label>
+  <label><input type="checkbox"> <strong>Rotation.</strong> Rotate the tablet; the canvas should resize and keep the painting.</label>
+  <label><input type="checkbox"> <strong>Works offline.</strong> Turn on <strong>Airplane mode</strong> (swipe down from the top → Airplane mode). Swipe the app away from Recents, then open it again from the icon. The pill should read <strong>"offline · offline-ready ✓"</strong> and everything still works.</label>
+</div>
+<div class="card ok">If all six pass, the hard part is proven: a custom app launches from the home screen, takes touch input, and runs without internet. Everything else is just building more screens.</div>
+
+<h2 id="pin">Step 4: Lock the tablet to the app</h2>
+<p>Pinning stops a 3-year-old from leaving the app. You have two options.</p>
+
+<h3>Option 1: Samsung screen pinning (works with any app)</h3>
+<ol>
+  <li><strong>Turn it on once:</strong> <code>Settings</code> → search for <strong>"Pin windows"</strong> (usually under <em>Biometrics and security</em> → <em>Other security settings</em>). Switch it <strong>On</strong>.</li>
+  <li>Also turn on <strong>"Ask for PIN before unpinning"</strong> so only you can exit. Set a PIN you'll remember.</li>
+  <li><strong>Pin the app:</strong> open Play Pad, then open <strong>Recents</strong> (the ▮▮▮ button, or swipe up and hold with gesture navigation). Tap the <strong>app icon at the top of Play Pad's card</strong> → <strong>Pin this app</strong>.</li>
+  <li><strong>Unpin:</strong> with button navigation, touch and hold <strong>Back + Recents</strong> together. With gesture navigation, swipe up with two fingers and hold. Enter your PIN.</li>
+</ol>
+<div class="card warn">Test the unpin gesture <em>before</em> handing the tablet over so you don't lock yourself out. The menu wording differs slightly between One UI versions; searching Settings for "pin" always finds it.</div>
+
+<h3>Option 2: Samsung Kids</h3>
+<p>If your tablet has the Samsung Kids mode (swipe down the quick panel → <strong>Kids</strong>), you can add Play Pad as an allowed app inside it and use its parental controls and timers. It's a good bridge until we build our own parent area.</p>
+
+<h2 id="update">Updating the app later</h2>
+<ol>
+  <li>Change files in <code>docs/</code>.</li>
+  <li><strong>Bump <code>VERSION</code> in <code>docs/sw.js</code></strong> (e.g. <code>playpad-v1</code> → <code>playpad-v2</code>). If you forget, tablets keep serving the old cached copy.</li>
+  <li>Push to the branch GitHub Pages serves.</li>
+  <li>On the tablet, open the app once while online, then close and reopen it. The new version takes over on the next launch. Pinned? Unpin first if you want to force a refresh.</li>
+</ol>
+<p>Tip: if you add new files, add them to the <code>ASSETS</code> list in <code>sw.js</code> too, or they won't work offline.</p>
+
+<h2 id="trouble">Troubleshooting</h2>
+<table>
+  <tr><th>Symptom</th><th>Likely cause and fix</th></tr>
+  <tr><td>Pill says "not cached yet" forever</td><td>Service worker didn't register. Check the address is <code>https://</code> (or use the flag from Option B). Reload once. Make sure you're not in a private/incognito tab.</td></tr>
+  <tr><td>No "Install" option, only "Create shortcut"</td><td>Same HTTPS problem, or you haven't loaded the page long enough. Wait for the offline-ready pill, then check the menu again.</td></tr>
+  <tr><td>GitHub Pages shows a 404</td><td>It takes up to a few minutes after enabling. Confirm the source is <code>main</code> + <code>/docs</code>, and that the branch containing <code>docs/</code> is merged. The URL is case-sensitive and ends with <code>/obviously/</code>.</td></tr>
+  <tr><td>Icon launches but a browser bar shows</td><td>It was added as a shortcut, not installed. Long-press the icon → remove, then redo Step 2 and choose <strong>Install</strong>. Or use Chrome instead of Samsung Internet.</td></tr>
+  <tr><td>No sound</td><td>Raise media volume (not ringer). Make sure the tablet isn't on silent. Tap once first, since audio unlocks on a touch.</td></tr>
+  <tr><td>Fails when Airplane mode is on</td><td>The cache never filled. Go online, open the app, wait for "offline-ready ✓", and retest. Also try clearing Chrome's site data for the address and reloading.</td></tr>
+  <tr><td>Old version keeps showing after an update</td><td>You didn't bump <code>VERSION</code> in <code>sw.js</code>, or the app hasn't been relaunched. Bump, push, open online, close fully, reopen. Last resort: Settings → Apps → Chrome → Storage → Manage storage, clear the site's data, then reinstall.</td></tr>
+  <tr><td>Page scrolls or zooms when kids touch it</td><td>Shouldn't happen. The app disables pinch-zoom and scroll. If it does, you probably have an old cached version. See the row above.</td></tr>
+  <tr><td>Can't get out of pinned mode</td><td>Hold Back + Recents (button nav) or two-finger swipe-up and hold (gesture nav), then enter your PIN. A reboot also clears pinning.</td></tr>
+</table>
+
+<h2 id="next">What's next</h2>
+<p>With the pipeline proven, the roadmap from the plan is:</p>
+<ol>
+  <li>Move to <strong>React + Vite + Tailwind</strong> (still deploying static files to GitHub Pages; the <code>sw.js</code> precache list can be generated with <code>vite-plugin-pwa</code>).</li>
+  <li>Picture-based profile picker, one profile per daughter, saved in <code>localStorage</code>/IndexedDB.</li>
+  <li>Home screen of big activity cards plus an always-visible Home button, filtered by age.</li>
+  <li>Parent area behind a long-press gesture, with per-child time limits.</li>
+  <li>First activities with original art: aquarium, finger painting, number train, letter tracing, music pad.</li>
+</ol>
+<p style="color:var(--muted); font-size:.9rem">Inspired by <a href="https://github.com/frozenpepper/Greia">Greia</a> (MPL-2.0). This project uses no Greia name, logo, art, or audio; all assets here are original.</p>
+
+</main>
+</body>
+</html>

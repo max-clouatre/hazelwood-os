@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1e1b4b">
+  <title>Play Pad</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #1e1b4b; font-family: system-ui, sans-serif; }
+    body { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; touch-action: none; display: block; }
+    .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 14px; justify-content: center; align-items: center;
+           padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); pointer-events: none; }
+    .bar > * { pointer-events: auto; }
+    .swatch, .btn { width: 64px; height: 64px; border-radius: 999px; border: 4px solid rgba(255,255,255,.85); box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+    .swatch.active { border-color: #fff; transform: scale(1.18); }
+    .btn { background: #fff; font-size: 30px; line-height: 1; padding: 0; }
+    .hint { position: fixed; top: 40%; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.85); font-size: clamp(22px, 4vw, 40px);
+            pointer-events: none; transition: opacity .6s; text-shadow: 0 2px 8px rgba(0,0,0,.4); }
+    .status { position: fixed; top: 8px; right: 8px; font-size: 13px; color: #fff; background: rgba(0,0,0,.45); padding: 4px 10px; border-radius: 999px; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hint" id="hint">Tap anywhere ✨ Drag to paint</div>
+  <div class="status" id="status">starting…</div>
+  <div class="bar" id="bar"></div>
+
+<script>
+(() => {
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  const bar = document.getElementById("bar");
+  const hint = document.getElementById("hint");
+  const status = document.getElementById("status");
+  const COLORS = ["#fbbf24", "#34d399", "#f472b6", "#60a5fa", "#ffffff"];
+  const NOTES = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25]; // C pentatonic-ish, always sounds nice
+  let color = COLORS[0];
+  let dpr = 1;
+  const dpi = () => Math.min(window.devicePixelRatio || 1, 2);
+
+  // ---- canvas sizing (preserve drawing on resize/rotation) ----
+  function resize() {
+    const old = document.createElement("canvas");
+    old.width = canvas.width; old.height = canvas.height;
+    if (canvas.width) old.getContext("2d").drawImage(canvas, 0, 0);
+    dpr = dpi();
+    canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+    ctx.fillStyle = "#1e1b4b"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (old.width) ctx.drawImage(old, 0, 0);
+  }
+  addEventListener("resize", resize);
+  resize();
+
+  // ---- sound (WebAudio, created on first touch to satisfy autoplay rules) ----
+  let audio;
+  function beep(freq) {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = "sine"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, audio.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, audio.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.5);
+      o.connect(g).connect(audio.destination);
+      o.start(); o.stop(audio.currentTime + 0.55);
+    } catch (_) {}
+  }
+
+  // ---- palette + clear buttons ----
+  COLORS.forEach((c) => {
+    const b = document.createElement("button");
+    b.className = "swatch" + (c === color ? " active" : "");
+    b.style.background = c;
+    b.setAttribute("aria-label", "color " + c);
+    b.onclick = () => { color = c; [...bar.querySelectorAll(".swatch")].forEach((s) => s.classList.toggle("active", s === b)); };
+    bar.appendChild(b);
+  });
+  const clear = document.createElement("button");
+  clear.className = "btn"; clear.textContent = "🧽"; clear.setAttribute("aria-label", "clear");
+  clear.onclick = () => { ctx.fillStyle = "#1e1b4b"; ctx.fillRect(0, 0, canvas.width, canvas.height); };
+  bar.appendChild(clear);
+
+  // ---- shapes ----
+  function drawShape(x, y) {
+    const r = (28 + Math.random() * 28) * dpr;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    const kind = Math.floor(Math.random() * 3);
+    if (kind === 0) ctx.arc(x, y, r, 0, Math.PI * 2);
+    else if (kind === 1) ctx.roundRect(x - r, y - r, r * 2, r * 2, r * 0.25);
+    else { ctx.moveTo(x, y - r); ctx.lineTo(x + r, y + r * 0.8); ctx.lineTo(x - r, y + r * 0.8); ctx.closePath(); }
+    ctx.fill();
+  }
+
+  // ---- pointer handling: tap = shape + note, drag = paint ----
+  const pointers = new Map(); // supports multi-touch: each finger paints
+  canvas.addEventListener("pointerdown", (e) => {
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false });
+    hint.style.opacity = 0;
+  });
+  canvas.addEventListener("pointermove", (e) => {
+    const p = pointers.get(e.pointerId);
+    if (!p) return;
+    if (!p.moved && Math.hypot(e.clientX - p.sx, e.clientY - p.sy) < 10) return; // small wobble still counts as a tap
+    p.moved = true;
+    ctx.strokeStyle = color; ctx.lineWidth = 22 * dpr; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(p.x * dpr, p.y * dpr); ctx.lineTo(e.clientX * dpr, e.clientY * dpr); ctx.stroke();
+    p.x = e.clientX; p.y = e.clientY;
+  });
+  const end = (e) => {
+    const p = pointers.get(e.pointerId);
+    if (p && !p.moved && e.type === "pointerup") {
+      drawShape(p.sx * dpr, p.sy * dpr);
+      beep(NOTES[Math.floor(Math.random() * NOTES.length)]);
+    }
+    pointers.delete(e.pointerId);
+  };
+  canvas.addEventListener("pointerup", end);
+  canvas.addEventListener("pointercancel", end);
+  addEventListener("contextmenu", (e) => e.preventDefault()); // no long-press menu
+
+  // ---- status pill: shows online/offline + whether the offline cache is ready ----
+  let swReady = false;
+  const render = () => { status.textContent = (navigator.onLine ? "online" : "offline") + (swReady ? " · offline-ready ✓" : " · not cached yet"); };
+  addEventListener("online", render); addEventListener("offline", render);
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then(() => { swReady = true; render(); }).catch(() => render());
+  }
+  render();
+})();
+</script>
+</body>
+</html>
