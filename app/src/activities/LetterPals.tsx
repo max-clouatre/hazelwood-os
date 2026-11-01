@@ -86,10 +86,10 @@ export default function LetterPals({ profile }: ActivityProps) {
           </button>
         )}
       </div>
-      <div className="flex gap-5">
+      <div className="flex gap-3 sm:gap-5">
         {round.choices.map((l) => (
           <button key={l} onClick={() => choose(l)}
-            className={`h-32 w-32 rounded-3xl bg-white text-7xl font-bold text-fuchsia-700 shadow-xl active:scale-95 ${wrong === l ? "anim-shake !bg-red-200" : ""} ${found && l === round.target ? "!bg-yellow-200" : ""}`}>
+            className={`h-24 w-24 rounded-3xl bg-white text-6xl font-bold sm:h-32 sm:w-32 sm:text-7xl text-fuchsia-700 shadow-xl active:scale-95 ${wrong === l ? "anim-shake !bg-red-200" : ""} ${found && l === round.target ? "!bg-yellow-200" : ""}`}>
             {l}
           </button>
         ))}

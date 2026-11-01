@@ -34,6 +34,13 @@ function App() {
     return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); window.removeEventListener("contextmenu", stop); };
   }, []);
 
+  // Other screens (like the berry guide) can ask to jump straight to an activity.
+  useEffect(() => {
+    const go = (e: Event) => setActivityId((e as CustomEvent<string>).detail);
+    window.addEventListener("hwos:go", go);
+    return () => window.removeEventListener("hwos:go", go);
+  }, []);
+
   // Count play time only while a kid is signed in and the screen is visible.
   useEffect(() => {
     if (!profile) return;
@@ -50,7 +57,7 @@ function App() {
   else if (!activity) body = <Home profile={profile} onOpen={setActivityId} onHome={() => setProfile(null)} />;
   else {
     body = (
-      <div className={`flex h-full flex-col bg-gradient-to-br ${PROFILES[profile].bg}`}>
+      <div className={`flex h-full flex-col ${PROFILES[profile].bg}`}>
         <TopBar profile={profile} title={titleOf(activity, profile)} onHome={() => setActivityId(null)} />
         <div className="min-h-0 flex-1"><activity.Component key={activity.id} profile={profile} /></div>
       </div>

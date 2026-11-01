@@ -6,7 +6,7 @@ const POS: [number, number, number][] = [[8, 12, 44], [22, 36, 34], [78, 14, 48]
 /** A simple painted backdrop for a biome: sky, ground, hills and scattered decorations. */
 export function Scene({ biome, children }: { biome: Biome; children?: ReactNode }) {
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ background: `linear-gradient(to bottom, ${biome.sky[0]}, ${biome.sky[1]} 60%, ${biome.ground} 60%)` }}>
+    <div className="absolute inset-0 overflow-hidden" style={{ background: `linear-gradient(to bottom, ${biome.sky[0]} 0 38%, ${biome.sky[1]} 38% 60%, ${biome.ground} 60%)` }}>
       <div className="absolute -left-20 bottom-[36%] h-40 w-[70%] rounded-[50%] opacity-60" style={{ background: biome.ground, filter: "brightness(.92)" }} />
       <div className="absolute -right-24 bottom-[34%] h-48 w-[70%] rounded-[50%] opacity-60" style={{ background: biome.ground, filter: "brightness(.85)" }} />
       <div className="absolute inset-x-0 bottom-0 h-[40%]" style={{ background: biome.ground }} />

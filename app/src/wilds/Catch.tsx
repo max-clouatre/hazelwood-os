@@ -112,17 +112,17 @@ export function Catch({ sp, shiny, biome, bonus = 0, headline, onCaught, onFled 
         {quality && phase !== "aim" && <p className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-3xl font-bold" style={{ color: ringHue }}>{quality === "great" ? "GREAT!" : quality === "nice" ? "Nice!" : quality === "ok" ? "OK" : "Miss"}</p>}
       </div>
 
-      <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-4">
+      <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-2 px-2 sm:gap-4">
         <button onClick={() => setUseBerry((b) => !b)} disabled={phase !== "aim" || berries < 1}
-          className={`rounded-2xl px-4 py-3 text-lg font-bold shadow-lg active:scale-95 ${useBerry ? "bg-pink-400 text-white ring-4 ring-pink-200" : "bg-white/90 text-pink-700"} ${berries < 1 ? "opacity-40" : ""}`}>
-          <span className="emoji">🍓</span> Sweet berry {useBerry ? "ON" : ""}<span className="block text-xs font-normal">+15% · costs 1 ({berries} left)</span>
+          className={`rounded-2xl px-3 py-2 text-base font-bold shadow-lg active:scale-95 sm:px-4 sm:py-3 sm:text-lg ${useBerry ? "bg-pink-400 text-white ring-4 ring-pink-200" : "bg-white/90 text-pink-700"} ${berries < 1 ? "opacity-40" : ""}`}>
+          <span className="emoji">🍓</span> Sweet berry {useBerry ? "ON" : ""}<span className="hidden text-xs font-normal sm:block">+15% · costs 1 ({berries} left)</span>
         </button>
-        <button onClick={throwOrb} disabled={phase !== "aim"} className="rounded-3xl bg-yellow-300 px-10 py-4 text-3xl font-bold text-black shadow-2xl active:scale-95">
+        <button onClick={throwOrb} disabled={phase !== "aim"} className="rounded-3xl bg-yellow-300 px-6 py-3 text-2xl font-bold text-black shadow-2xl active:scale-95 sm:px-10 sm:py-4 sm:text-3xl">
           <span className="emoji">🔮</span> Throw!
         </button>
-        <button onClick={onFled} disabled={phase !== "aim"} className="rounded-2xl bg-white/70 px-4 py-3 text-lg font-bold text-purple-900 active:scale-95">Run</button>
+        <button onClick={onFled} disabled={phase !== "aim"} className="rounded-2xl bg-white/70 px-3 py-2 text-base font-bold text-purple-900 active:scale-95 sm:px-4 sm:py-3 sm:text-lg">Run</button>
       </div>
-      <p className="pointer-events-none absolute inset-x-0 bottom-24 text-center text-sm text-white/90 drop-shadow">Tap when the white ring touches the dashed circle!</p>
+      <p className="pointer-events-none absolute inset-x-0 bottom-20 text-center text-sm text-white drop-shadow sm:bottom-24">Tap when the white ring touches the dashed circle!</p>
     </div>
   );
 }

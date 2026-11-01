@@ -13,7 +13,7 @@ export function Home({ profile, onOpen, onHome }: { profile: ProfileId; onOpen: 
   const mine = ACTIVITIES.filter((a) => a.profiles.includes(profile));
   const into = stars[profile] % STARS_PER_STICKER;
   return (
-    <div className={`flex h-full flex-col bg-gradient-to-br ${p.bg}`}>
+    <div className={`flex h-full flex-col ${p.bg}`}>
       <TopBar profile={profile} title={`Hi ${p.name}! ${p.emoji}`} onHome={onHome} />
       <div className="mx-auto flex items-center gap-2 px-4" aria-label="Progress to next sticker">
         {Array.from({ length: STARS_PER_STICKER }, (_, i) => (
@@ -26,8 +26,8 @@ export function Home({ profile, onOpen, onHome }: { profile: ProfileId; onOpen: 
           {mine.map((a, i) => (
             <button key={a.id} onClick={() => { say(titleOf(a, profile)); onOpen(a.id); }}
               style={{ animationDelay: `${i * 60}ms` }}
-              className={`anim-pop flex aspect-[4/3] flex-col items-center justify-center rounded-[2rem] bg-gradient-to-br ${a.color} p-3 shadow-2xl active:scale-95`}>
-              <span className="emoji text-6xl sm:text-7xl">{a.emoji}</span>
+              className={`anim-pop flex aspect-[4/3] flex-col items-center justify-center rounded-[2rem] ${a.color} p-3 shadow-2xl active:scale-95`}>
+              <span className="emoji flex h-16 w-16 items-center justify-center rounded-full bg-white/90 text-4xl sm:h-20 sm:w-20 sm:text-5xl">{a.emoji}</span>
               <span className="mt-1 text-center text-xl font-bold leading-tight drop-shadow sm:text-2xl">{titleOf(a, profile)}</span>
             </button>
           ))}

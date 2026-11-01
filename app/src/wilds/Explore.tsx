@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { chime, note } from "../lib/audio";
 import { say } from "../lib/speech";
-import { addBerries, giveEgg, makeOwned, markSeen, pickSpawn, rollShiny, setWilds, wilds } from "./game";
+import { BerryPill } from "./BerryGuide";
+import { addBerries, BUSH_BERRIES, bump, bushWait, giveEgg, makeOwned, markSeen, pickBush, pickSpawn, rollShiny, setWilds, wilds } from "./game";
 import { Scene } from "./Scene";
 import type { Biome, Species } from "./species";
 import { useStore } from "../lib/store";
 
-const SPOTS: [number, number][] = [[12, 62], [30, 74], [50, 66], [70, 76], [88, 64], [20, 86], [60, 88], [40, 58]];
+const SPOTS: [number, number][] = [[17, 62], [32, 74], [50, 66], [66, 76], [78, 64], [22, 86], [58, 88], [40, 58]];
 const NOTHING = ["A butterfly flutters by. 🦋", "Just a friendly breeze.", "Something giggled... but ran off!", "You found a shiny pebble.", "A tiny footprint! Keep looking."];
 export const LURE_COST = 8;
 
@@ -17,10 +18,12 @@ export function Explore({ biome, onEncounter, onBack }: { biome: Biome; onEncoun
   const { wilds: w } = useStore();
   const spots = useMemo(() => [...SPOTS].sort(() => Math.random() - 0.5).slice(0, 5), [round]); // eslint-disable-line react-hooks/exhaustive-deps
   const t = useRef<number>();
-  useEffect(() => () => window.clearTimeout(t.current), []);
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const i = setInterval(() => setNow(Date.now()), 1000); return () => { clearInterval(i); window.clearTimeout(t.current); }; }, []);
+  const wait = bushWait(w, biome.id, now);
 
   const look = () => {
-    note();
+    note(); bump("explore");
     const r = Math.random();
     if (lure || r < 0.52) {
       const sp = pickSpawn(biome.id, { lure });
@@ -53,7 +56,7 @@ export function Explore({ biome, onEncounter, onBack }: { biome: Biome; onEncoun
       <div className="absolute inset-x-0 top-2 flex items-center justify-between gap-2 px-3">
         <button onClick={onBack} className="rounded-2xl bg-white/90 px-4 py-2 text-xl font-bold text-purple-800 active:scale-95">◀ Map</button>
         <p className="min-w-0 flex-1 truncate rounded-full bg-black/40 px-4 py-1 text-center text-lg font-bold">{toast}</p>
-        <span className="rounded-full bg-black/40 px-3 py-1 text-xl font-bold"><span className="emoji">🍓</span> {w.berries}</span>
+        <BerryPill n={w.berries} className="!bg-black/40" />
       </div>
       <p className="absolute inset-x-0 top-14 text-center text-2xl font-bold drop-shadow"><span className="emoji">{biome.emoji}</span> {biome.name}</p>
       {spots.map(([x, y], i) => (
@@ -66,7 +69,12 @@ export function Explore({ biome, onEncounter, onBack }: { biome: Biome; onEncoun
           </span>
         </button>
       ))}
-      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-3">
+      <div className="absolute inset-x-0 bottom-3 flex items-end justify-center gap-3">
+        <button onClick={() => { if (pickBush(biome.id)) { chime(); setToast(`You picked ${BUSH_BERRIES} 🍓 from the berry bush!`); say("Berries!"); } else setToast("The berry bush is regrowing. Come back soon!"); }}
+          className={`rounded-2xl px-4 py-3 text-lg font-bold shadow-xl active:scale-95 ${wait > 0 ? "bg-white/60 text-emerald-900/70" : "bg-pink-400 text-white ring-4 ring-pink-200"}`}>
+          <span className="emoji">🍓</span> Berry Bush
+          <span className="block text-xs font-normal">{wait > 0 ? `regrowing ${Math.floor(wait / 60000)}:${String(Math.floor((wait % 60000) / 1000)).padStart(2, "0")}` : `tap for +${BUSH_BERRIES} 🍓`}</span>
+        </button>
         <button onClick={buyLure} className={`rounded-2xl px-5 py-3 text-lg font-bold shadow-xl active:scale-95 ${lure ? "bg-yellow-300 text-black ring-4 ring-yellow-100" : "bg-white/90 text-purple-800"}`}>
           <span className="emoji">🍯</span> Lure {lure ? "set!" : <>· {LURE_COST} <span className="emoji">🍓</span></>}<span className="block text-xs font-normal">finds a special visitor</span>
         </button>

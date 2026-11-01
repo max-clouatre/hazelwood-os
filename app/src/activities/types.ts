@@ -7,7 +7,7 @@ export interface Activity {
   title: string;
   emoji: string;
   titles?: Partial<Record<ProfileId, string>>; // per-child title override
-  color: string; // tailwind gradient classes
+  color: string; // flat tailwind background class
   profiles: ProfileId[];
   Component: ComponentType<ActivityProps>;
 }

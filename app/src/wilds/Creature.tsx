@@ -55,6 +55,21 @@ function tail(kind: TailKind, x: number, y: number, c: Pal): ReactNode {
 function extraBehind(ex: Extra, b: BodyDef, c: Pal, elementColor: string): ReactNode {
   switch (ex) {
     case "aura": return null; // handled separately
+    case "sunrays": return (
+      <g>
+        {Array.from({ length: 12 }, (_, i) => {
+          const a = (Math.PI * 2 * i) / 12;
+          const x1 = 100 + Math.cos(a - 0.13) * 74, y1 = b.cy + Math.sin(a - 0.13) * 70, x2 = 100 + Math.cos(a + 0.13) * 74, y2 = b.cy + Math.sin(a + 0.13) * 70;
+          return <path key={i} d={`M${x1} ${y1}L${100 + Math.cos(a) * 100} ${b.cy + Math.sin(a) * 96}L${x2} ${y2}Z`} fill="#ffd84a" {...P} strokeWidth={2.6} />;
+        })}
+      </g>
+    );
+    case "moonstars": return (
+      <g>
+        <path d="M156 34A24 24 0 1 0 156 82A18 18 0 1 1 156 34Z" fill="#ffe9a8" {...P} />
+        {[[34, 46, 11], [22, 104, 8], [176, 118, 9], [44, 170, 7]].map(([x, y, r], i) => <path key={i} d={starD(x, y, r, r * 0.45)} fill="#fff3b0" stroke={OUT} strokeWidth={1.8} className="twinkle" style={{ animationDelay: `${i * 0.4}s` }} />)}
+      </g>
+    );
     case "wings": return (
       <g>
         {[0, 1].map((s) => (
@@ -193,9 +208,11 @@ export interface CreatureProps {
   mood?: "happy" | "sleep" | "wow";
   className?: string;
   silhouette?: boolean;
+  branch?: "sun" | "moon"; // final form (only used at form 3)
+  teaser?: boolean; // dark silhouette of a form she hasn't reached yet
 }
 
-export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, personality = "gentle", mood = "happy", className, silhouette }: CreatureProps) {
+export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, personality = "gentle", mood = "happy", className, silhouette, branch, teaser }: CreatureProps) {
   const uid = "c" + useId().replace(/[^a-zA-Z0-9]/g, "");
   const v = useMemo(() => {
     const r = mulberry32(seed * 7919 + sp.id.length);
@@ -206,11 +223,17 @@ export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, pers
     return { dh, pattern, spots, size };
   }, [seed, shiny, sp]);
 
-  const dsat = shiny ? 0.06 : 0;
-  const base = (h: string) => shift(h, v.dh, dsat);
+  const br = stage === 3 ? branch : undefined;
+  const dsat = (shiny ? 0.06 : 0) + (br === "sun" ? 0.05 : br === "moon" ? -0.05 : 0);
+  const dl = br === "sun" ? 0.05 : br === "moon" ? -0.04 : 0;
+  const dhue = v.dh + (br === "sun" ? 22 : br === "moon" ? -34 : 0);
+  const base = (h: string) => shift(h, dhue, dsat, dl);
   const c: Pal = { main: base(sp.main), light: base(sp.light), accent: sp.accent === "#ffd84a" || sp.accent === "#ffd23f" ? sp.accent : base(sp.accent), dark: base(darken(sp.main, 0.3)) };
   const b = BODY[sp.body];
-  const extras = sp.grow[stage - 1];
+  const extras = Array.from(new Set<Extra>([...sp.grow[stage - 1], ...(br === "sun" ? (["sunrays", "halo"] as Extra[]) : br === "moon" ? (["moonstars"] as Extra[]) : [])]));
+  // "Simple to complex": babies are plain (no tail, pattern or mark, smaller ears); each form adds more.
+  const showTail = stage >= 2 || sp.rarity === 4;
+  const pattern = stage >= 2 ? v.pattern : "plain";
   const scale = (stage === 1 ? 0.84 : stage === 2 ? 0.96 : 1.04) * v.size;
   const hasAura = extras.includes("aura");
 
@@ -226,9 +249,10 @@ export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, pers
     );
   }
 
-  const earLeft = ear(sp.ears, b.ear[0], b.ear[1], c);
+  const earLeftRaw = ear(sp.ears, b.ear[0], b.ear[1], c);
+  const earLeft = earLeftRaw && (stage === 1 ? <g transform={`translate(${b.ear[0]} ${b.ear[1]}) scale(0.8) translate(${-b.ear[0]} ${-b.ear[1]})`}>{earLeftRaw}</g> : earLeftRaw);
   return (
-    <svg viewBox="-26 -26 252 252" className={className} role="img" aria-label={sp.names[stage - 1]}>
+    <svg viewBox="-26 -26 252 252" className={className} role="img" aria-label={teaser ? "a mystery form" : sp.names[stage - 1]} style={teaser ? { filter: "brightness(0) opacity(0.45)" } : undefined}>
       <defs>
         <clipPath id={`${uid}b`}><path d={b.d} /></clipPath>
         <radialGradient id={`${uid}a`}><stop offset="0%" stopColor={shiny ? "#fff3b0" : c.accent} stopOpacity={0.55} /><stop offset="100%" stopColor={c.accent} stopOpacity={0} /></radialGradient>
@@ -237,13 +261,13 @@ export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, pers
       <ellipse cx={100} cy={188} rx={52 * scale} ry={7} fill="#000" opacity={0.18} />
       <g transform={`translate(100 186) scale(${scale}) translate(-100 -186)`}>
         {extras.map((x) => <g key={x}>{extraBehind(x, b, c, c.accent)}</g>)}
-        {tail(sp.tail, b.tail[0], b.tail[1], c)}
+        {showTail && tail(sp.tail, b.tail[0], b.tail[1], c)}
         {earLeft && <g>{earLeft}<g transform="translate(200 0) scale(-1 1)">{earLeft}</g></g>}
         <path d={b.d} fill={c.main} {...P} />
         <g clipPath={`url(#${uid}b)`}>
           <ellipse cx={b.belly[0]} cy={b.belly[1]} rx={b.belly[2]} ry={b.belly[3]} fill={c.light} />
-          {v.pattern === "spots" && v.spots.map((s, i) => <circle key={i} cx={46 + s[0] * 108} cy={b.top + 14 + s[1] * 70} r={s[2]} fill={c.dark} opacity={0.32} />)}
-          {v.pattern === "stripes" && [0, 1, 2].map((i) => <path key={i} d={`M${54 + i * 34} ${b.top - 4}L${34 + i * 34} ${b.top + 52}`} stroke={c.dark} strokeWidth={11} opacity={0.3} strokeLinecap="round" />)}
+          {pattern === "spots" && v.spots.map((s, i) => <circle key={i} cx={46 + s[0] * 108} cy={b.top + 14 + s[1] * 70} r={s[2]} fill={c.dark} opacity={0.32} />)}
+          {pattern === "stripes" && [0, 1, 2].map((i) => <path key={i} d={`M${54 + i * 34} ${b.top - 4}L${34 + i * 34} ${b.top + 52}`} stroke={c.dark} strokeWidth={11} opacity={0.3} strokeLinecap="round" />)}
           <ellipse cx={78} cy={b.top + 28} rx={26} ry={14} transform={`rotate(-24 78 ${b.top + 28})`} fill="#fff" opacity={0.28} />
         </g>
         <path d={b.d} fill="none" {...P} />
@@ -263,5 +287,6 @@ export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, pers
   );
 }
 
+export const branchOf = (o: { branch?: "sun" | "moon" }) => o.branch;
 export const stageOf = (xp: number): 1 | 2 | 3 => (xp >= 40 ? 3 : xp >= 14 ? 2 : 1);
 export const nameOf = (sp: Species, xp: number) => sp.names[stageOf(xp) - 1];

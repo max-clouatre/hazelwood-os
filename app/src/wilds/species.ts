@@ -2,7 +2,7 @@ export type ElementId = "leaf" | "water" | "fire" | "sun" | "moon" | "star";
 export type BodyKind = "blob" | "round" | "tall" | "long" | "drop";
 export type EarKind = "pointy" | "round" | "long" | "leaf" | "fin" | "floppy" | "none";
 export type TailKind = "fluffy" | "curl" | "leaf" | "flame" | "fin" | "star" | "plume" | "none";
-export type Extra = "horn" | "crest" | "sprout" | "flametuft" | "antenna" | "antlers" | "crown" | "blossom" | "halo" | "wings" | "moths" | "mane" | "aura";
+export type Extra = "sunrays" | "moonstars" | "horn" | "crest" | "sprout" | "flametuft" | "antenna" | "antlers" | "crown" | "blossom" | "halo" | "wings" | "moths" | "mane" | "aura";
 export type PatternKind = "plain" | "spots" | "stripes";
 export type FoodId = "honey" | "cookie" | "candy" | "carrot";
 export type Personality = "gentle" | "zippy" | "sleepy" | "brave" | "shy" | "silly";
@@ -25,6 +25,17 @@ export const FOODS: Record<FoodId, { name: string; emoji: string }> = {
   carrot: { name: "Crunchy Carrot", emoji: "🥕" },
 };
 export const FOOD_COST = 2;
+export const FOOD_SIDE: Record<FoodId, "sun" | "moon"> = { honey: "sun", carrot: "sun", cookie: "moon", candy: "moon" };
+
+export interface Family { name: string; blurb: string }
+export const FAMILIES: Record<ElementId, Family> = {
+  leaf: { name: "Sproutkin", blurb: "Gentle growers of the green." },
+  water: { name: "Tidefolk", blurb: "Splashy friends of pond and shore." },
+  fire: { name: "Emberkin", blurb: "Warm hearts with flickering tails." },
+  sun: { name: "Dawnkin", blurb: "Bright, fluffy bringers of morning." },
+  moon: { name: "Duskkin", blurb: "Quiet dreamers of the night." },
+  star: { name: "Skykin", blurb: "Sparkling wanderers of the heavens." },
+};
 
 export const PERSONALITIES: Record<Personality, { label: string; pet: string[] }> = {
   gentle: { label: "Gentle", pet: ["Hee hee, that tickles!", "I love you!", "Soft pats are the best."] },
@@ -151,5 +162,10 @@ export const BIOMES: Biome[] = [
   { id: "peak", name: "Star Peak", emoji: "🏔️", need: 12, sky: ["#1b1b4d", "#4a3f9b"], ground: "#8d98c9", decor: ["🏔️", "⭐", "🌙", "☄️", "✨"], blurb: "Up above the clouds, where the sky sparkles." },
 ];
 
-export const STAGE_AT = [0, 14, 40]; // bond points needed for stage 1, 2, 3
+export const STAGE_AT = [0, 14, 40];
+export type FormKey = "1" | "2" | "3s" | "3m";
+export const FORM_KEYS: FormKey[] = ["1", "2", "3s", "3m"];
+export const FORM_LABEL: Record<FormKey, string> = { "1": "Baby", "2": "Grown", "3s": "Sunlit", "3m": "Moonlit" };
+export const formName = (sp: Species, key: FormKey) => (key === "1" ? sp.names[0] : key === "2" ? sp.names[1] : `${key === "3s" ? "Sunlit" : "Moonlit"} ${sp.names[2]}`);
+export const familyMembers = (el: ElementId) => COLLECTABLE.filter((s) => s.element === el); // bond points needed for stage 1, 2, 3
 export const RARITY_LABEL = ["", "Common", "Uncommon", "Rare", "Legendary"];

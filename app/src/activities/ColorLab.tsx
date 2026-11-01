@@ -75,10 +75,10 @@ export default function ColorLab({ profile }: ActivityProps) {
         <div className="max-w-[16rem] text-2xl">{msg || (hint ? "Try the glowing drops! 💡" : "Tap two color drops to mix them.")}</div>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-2 sm:gap-4">
         {Object.entries(DROPS).map(([name, hex]) => (
           <button key={name} onClick={() => drop(name)} aria-label={name}
-            className={`flex h-28 w-24 flex-col items-center justify-center rounded-[2.5rem] border-4 text-xl font-bold text-black shadow-xl active:scale-90 ${hint?.includes(name) && !busy.current ? "animate-pulse border-yellow-300 ring-4 ring-yellow-300" : "border-white/80"}`}
+            className={`flex h-24 w-[4.4rem] flex-col items-center justify-center rounded-[2rem] border-4 text-base font-bold sm:h-28 sm:w-24 sm:rounded-[2.5rem] sm:text-xl text-black shadow-xl active:scale-90 ${hint?.includes(name) && !busy.current ? "animate-pulse border-yellow-300 ring-4 ring-yellow-300" : "border-white/80"}`}
             style={{ background: hex }}>
             <span className="emoji text-4xl">💧</span>{name}
           </button>

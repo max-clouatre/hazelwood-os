@@ -2,6 +2,7 @@ import { useState } from "react";
 import { chime } from "../lib/audio";
 import { say } from "../lib/speech";
 import { useStore } from "../lib/store";
+import { BerryPill } from "./BerryGuide";
 import { buyEgg, EGG_COST, EGG_NEED, hatchSpecies, makeOwned, removeEgg, rollShiny } from "./game";
 import { Back } from "./Collection";
 import { Reveal } from "./Reveal";
@@ -24,8 +25,8 @@ export function Eggs({ onBack, onAdopt }: { onBack: () => void; onAdopt: (o: Own
   };
 
   return (
-    <div className="relative flex h-full flex-col gap-2 bg-gradient-to-b from-emerald-700 to-teal-900 p-3">
-      <div className="flex items-center justify-between"><Back onClick={onBack} /><p className="text-2xl font-bold">🥚 Eggs</p><span className="rounded-full bg-black/30 px-3 py-1 text-xl font-bold"><span className="emoji">🍓</span> {w.berries}</span></div>
+    <div className="relative flex h-full flex-col gap-2 bg-forest p-3">
+      <div className="flex items-center justify-between"><Back onClick={onBack} /><p className="text-2xl font-bold">🥚 Eggs</p><BerryPill n={w.berries} /></div>
       <p className="text-center text-lg">Every ⭐ star you earn in any activity warms your eggs. A hatched egg is always something special!</p>
       <div className="flex flex-1 flex-wrap content-start items-start justify-center gap-4 overflow-y-auto">
         {w.eggs.length === 0 && <p className="mt-6 text-center text-xl text-white/80">No eggs yet. Find them in the wild, or buy one below!</p>}

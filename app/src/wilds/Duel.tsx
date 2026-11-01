@@ -3,7 +3,7 @@ import { Burst } from "../components/Burst";
 import { chime, oops, tone } from "../lib/audio";
 import { cheer, say } from "../lib/speech";
 import { addStar, useStore } from "../lib/store";
-import { addBerries, gainBond, setWilds, stageFor, todayKey } from "./game";
+import { addBerries, bump, gainBond, setWilds, stageFor, todayKey } from "./game";
 import { Back } from "./Collection";
 import { Creature } from "./Creature";
 import { COLLECTABLE, ELEMENTS, SPECIES_BY_ID } from "./species";
@@ -123,7 +123,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
     const ids = team.map((f) => f.oid!).filter(Boolean);
     if (win) {
       chime(); say(`${cheer()} You won the duel!`);
-      addBerries(6); gainBond(ids, 3);
+      addBerries(6); gainBond(ids, 3); bump("duel");
       let r = "+6 🍓 and +3 💖 for your team!";
       if (w.duelDay !== todayKey()) { addStar("hazel", 1); r += " First win today: +1 ⭐!"; }
       setWilds((x) => ({ duelDay: todayKey(), duelWins: x.duelWins + 1 }));
@@ -142,7 +142,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
 
   if (phase === "pick") {
     return (
-      <div className="relative flex h-full flex-col gap-2 bg-gradient-to-b from-indigo-800 to-purple-900 p-3">
+      <div className="relative flex h-full flex-col gap-2 bg-night p-3">
         <div className="flex items-center justify-between"><Back onClick={onBack} /><p className="text-2xl font-bold">⚔️ Friendly Duel</p><button onClick={() => setChart(true)} className="rounded-2xl bg-white/90 px-3 py-2 text-lg font-bold text-indigo-900 active:scale-95">❓ Who beats who?</button></div>
         <p className="text-center text-lg">Pick up to 3 friends. Use <b>Super effective</b> moves to win!</p>
         <div className="grid flex-1 grid-cols-3 content-start gap-2 overflow-y-auto sm:grid-cols-5">
@@ -166,7 +166,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
 
   const me = mine[pi], foe = theirs[oi];
   return (
-    <div className="relative flex h-full flex-col gap-2 bg-gradient-to-b from-indigo-800 to-purple-900 p-3">
+    <div className="relative flex h-full flex-col gap-2 bg-night p-3">
       <div className="flex items-center justify-between"><Back onClick={onBack} label="◀ Leave" /><button onClick={() => setChart(true)} className="rounded-2xl bg-white/90 px-3 py-2 text-lg font-bold text-indigo-900 active:scale-95">❓ Who beats who?</button></div>
       {phase === "fight" && me && foe && (
         <>

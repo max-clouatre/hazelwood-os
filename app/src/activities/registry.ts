@@ -12,15 +12,15 @@ import TraceIt from "./TraceIt";
 import type { Activity } from "./types";
 
 export const ACTIVITIES: Activity[] = [
-  { id: "kitty-count", title: "Count Friends", emoji: "🐱", color: "from-pink-400 to-rose-500", profiles: ["violet"], Component: KittyCount },
-  { id: "letter-pals", title: "Letter Pals", emoji: "🔤", color: "from-violet-400 to-fuchsia-500", profiles: ["violet"], Component: LetterPals },
-  { id: "trace-it", title: "Trace It", emoji: "✏️", color: "from-teal-400 to-cyan-500", profiles: ["violet"], Component: TraceIt },
-  { id: "hazelwild", title: "Hazelwild", emoji: "🐾", color: "from-emerald-400 to-teal-600", profiles: ["hazel"], Component: Hazelwild },
-  { id: "spelling", title: "Spelling Unicorn", emoji: "🦄", color: "from-fuchsia-400 to-purple-600", profiles: ["hazel"], Component: SpellingUnicorn },
-  { id: "sink-float", title: "Sink or Float?", emoji: "🌊", color: "from-sky-400 to-blue-600", profiles: ["hazel"], Component: SinkFloat },
-  { id: "magnet", title: "Magnet Mystery", emoji: "🧲", color: "from-red-400 to-rose-600", profiles: ["hazel"], Component: MagnetMystery },
-  { id: "color-lab", title: "Color Lab", emoji: "🧪", color: "from-emerald-400 to-teal-600", profiles: ["hazel"], Component: ColorLab },
-  { id: "coloring", title: "Coloring Book", titles: { hazel: "Color by Number" }, emoji: "🖍️", color: "from-rose-400 to-orange-400", profiles: ["hazel", "violet"], Component: ColoringBook },
-  { id: "sparkle-paint", title: "Sparkle Paint", emoji: "🎨", color: "from-amber-300 to-orange-500", profiles: ["hazel", "violet"], Component: SparklePaint },
-  { id: "stickers", title: "My Stickers", emoji: "🎁", color: "from-yellow-300 to-amber-500", profiles: ["hazel", "violet"], Component: StickerBook },
+  { id: "kitty-count", title: "Count Friends", emoji: "🐱", color: "bg-[#e5736b]", profiles: ["violet"], Component: KittyCount },
+  { id: "letter-pals", title: "Letter Pals", emoji: "🔤", color: "bg-[#8a6bbf]", profiles: ["violet"], Component: LetterPals },
+  { id: "trace-it", title: "Trace It", emoji: "✏️", color: "bg-[#3fa7a0]", profiles: ["violet"], Component: TraceIt },
+  { id: "hazelwild", title: "Hazelwild", emoji: "🐾", color: "bg-[#4f9a5f]", profiles: ["hazel"], Component: Hazelwild },
+  { id: "spelling", title: "Spelling Unicorn", emoji: "🦄", color: "bg-[#9b5fc0]", profiles: ["hazel"], Component: SpellingUnicorn },
+  { id: "sink-float", title: "Sink or Float?", emoji: "🌊", color: "bg-[#3f8fd0]", profiles: ["hazel"], Component: SinkFloat },
+  { id: "magnet", title: "Magnet Mystery", emoji: "🧲", color: "bg-[#d95a50]", profiles: ["hazel"], Component: MagnetMystery },
+  { id: "color-lab", title: "Color Lab", emoji: "🧪", color: "bg-[#2fa07a]", profiles: ["hazel"], Component: ColorLab },
+  { id: "coloring", title: "Coloring Book", titles: { hazel: "Color by Number" }, emoji: "🖍️", color: "bg-[#e58a3f]", profiles: ["hazel", "violet"], Component: ColoringBook },
+  { id: "sparkle-paint", title: "Sparkle Paint", emoji: "🎨", color: "bg-[#f2b84b]", profiles: ["hazel", "violet"], Component: SparklePaint },
+  { id: "stickers", title: "My Stickers", emoji: "🎁", color: "bg-[#d4a02a]", profiles: ["hazel", "violet"], Component: StickerBook },
 ];

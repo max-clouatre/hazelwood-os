@@ -7,7 +7,7 @@ body {
   overflow: hidden; background: #1e1b4b; color: #fff;
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
   overscroll-behavior: none; -webkit-tap-highlight-color: transparent;
-  font-family: "Comic Sans MS", "Chalkboard SE", system-ui, sans-serif;
+  font-family: "Fredoka", system-ui, sans-serif; font-weight: 500;
 }
 button { font: inherit; color: inherit; touch-action: manipulation; }
 .emoji { font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif; }
@@ -26,3 +26,15 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .anim-hop { animation: hop 1.6s ease-in-out infinite; }
 @keyframes wobble { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-14deg) } 75% { transform: rotate(14deg) } }
 .anim-wobble { animation: wobble .5s ease-in-out 3; }
+
+@keyframes wanderA { 0%,100% { transform: translate(0,0) } 25% { transform: translate(50px,-8px) } 50% { transform: translate(90px,12px) } 75% { transform: translate(30px,20px) } }
+@keyframes wanderB { 0%,100% { transform: translate(0,0) } 30% { transform: translate(-60px,10px) } 60% { transform: translate(-30px,-14px) } }
+@keyframes wanderC { 0%,100% { transform: translate(0,0) } 20% { transform: translate(30px,16px) } 55% { transform: translate(-40px,6px) } 80% { transform: translate(-10px,-12px) } }
+
+/* ---- Look: flat color, bold ink outlines, hard offset shadows (no gradients, no soft glows) ---- */
+:root { --ink: #2b2540; }
+button[class*="bg-"], [class*="shadow-"], [class~="shadow"] { border: 3px solid var(--ink); }
+[class*="shadow-"], [class~="shadow"] { box-shadow: 0 4px 0 var(--ink) !important; }
+button[class*="bg-"]:active, [class*="shadow-"]:active { box-shadow: 0 1px 0 var(--ink) !important; transform: translateY(3px); }
+button:disabled { filter: saturate(.6); }
+h1, h2, p, label, span { letter-spacing: .005em; }
