@@ -1,4 +1,4 @@
-# Play Pad
+# hazelwood-os (Play Pad MVP)
 
 A tiny offline, touch-first learning/play app for an old Samsung tablet, in the spirit of [Greia](https://github.com/frozenpepper/Greia) but built as an installable PWA. No Greia name, art, or audio is used.
 

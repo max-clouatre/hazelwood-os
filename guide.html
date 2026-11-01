@@ -88,10 +88,10 @@
   <li>Merge the <code>claude/greia-style-android-app-aoapd7</code> branch into <code>main</code> (or just publish from that branch while testing).</li>
   <li>On GitHub, open the repo → <strong>Settings</strong> → <strong>Pages</strong>.</li>
   <li>Under <strong>Build and deployment</strong>, set <strong>Source</strong> to <em>Deploy from a branch</em>. Choose branch <code>main</code> and folder <code>/docs</code>, then <strong>Save</strong>.</li>
-  <li>Wait about a minute. The page will show your site address, which should look like <code>https://&lt;your-github-username&gt;.github.io/obviously/</code>.</li>
+  <li>Wait about a minute. The page will show your site address, which should look like <code>https://max-clouatre.github.io/hazelwood-os/</code>.</li>
   <li>Open that address on your computer first. You should see a dark purple screen reading "Tap anywhere". If so, you're done with this step.</li>
 </ol>
-<p>All paths in the app are relative, so it works fine under the <code>/obviously/</code> sub-path.</p>
+<p>All paths in the app are relative, so it works fine under the <code>/hazelwood-os/</code> sub-path.</p>
 
 <h3>Option B: Local server on your Wi-Fi (for quick testing)</h3>
 <ol>
@@ -165,7 +165,7 @@ python3 -m http.server 8000</code></pre> (or <code>npx serve docs -l 8000</code>
   <tr><th>Symptom</th><th>Likely cause and fix</th></tr>
   <tr><td>Pill says "not cached yet" forever</td><td>Service worker didn't register. Check the address is <code>https://</code> (or use the flag from Option B). Reload once. Make sure you're not in a private/incognito tab.</td></tr>
   <tr><td>No "Install" option, only "Create shortcut"</td><td>Same HTTPS problem, or you haven't loaded the page long enough. Wait for the offline-ready pill, then check the menu again.</td></tr>
-  <tr><td>GitHub Pages shows a 404</td><td>It takes up to a few minutes after enabling. Confirm the source is <code>main</code> + <code>/docs</code>, and that the branch containing <code>docs/</code> is merged. The URL is case-sensitive and ends with <code>/obviously/</code>.</td></tr>
+  <tr><td>GitHub Pages shows a 404</td><td>It takes up to a few minutes after enabling. Confirm the source is <code>main</code> + <code>/docs</code>, and that the branch containing <code>docs/</code> is merged. The URL is case-sensitive and ends with <code>/hazelwood-os/</code>.</td></tr>
   <tr><td>Icon launches but a browser bar shows</td><td>It was added as a shortcut, not installed. Long-press the icon → remove, then redo Step 2 and choose <strong>Install</strong>. Or use Chrome instead of Samsung Internet.</td></tr>
   <tr><td>No sound</td><td>Raise media volume (not ringer). Make sure the tablet isn't on silent. Tap once first, since audio unlocks on a touch.</td></tr>
   <tr><td>Fails when Airplane mode is on</td><td>The cache never filled. Go online, open the app, wait for "offline-ready ✓", and retest. Also try clearing Chrome's site data for the address and reloading.</td></tr>
