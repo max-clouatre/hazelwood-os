@@ -7,9 +7,10 @@ An offline, touch-first learning and play space for Hazel (7) and Violet (3), bu
 ## What's in it
 | Who | Activities |
 | --- | --- |
-| Violet (3) | **Count Friends** (touch to count cats, unicorns, puppies; later "pick exactly N"), **Letter Pals** (find the letter; later "what does this start with?"), **Trace It** (finger-trace letters and numbers), Sparkle Paint, My Stickers |
-| Hazel (7) | **Spelling Unicorn** (editable list, repeats missed words, rainbow every 5 words), **Sink or Float?** (22 items, streak bonus), **Magnet Mystery**, **Color Lab** (mix potions incl. pastels, hints), Sparkle Paint (rainbow brush, sizes, undo), My Stickers |
+| Violet (3) | **Count Friends** (touch to count cats, unicorns, puppies; later "pick exactly N"), **Letter Pals** (find the letter; later "what does this start with?"), **Trace It** (finger-trace letters and numbers), **Coloring Book**, Sparkle Paint, My Stickers |
+| Hazel (7) | **Spelling Unicorn** (editable list, repeats missed words, rainbow every 5 words), **Sink or Float?** (22 items, streak bonus), **Magnet Mystery**, **Color Lab** (mix potions incl. pastels, hints), **Coloring Book**, Sparkle Paint (rainbow brush, sizes, undo), My Stickers |
 
+- **Coloring Book:** 8 original line-art pictures (unicorn, kitty, puppy, castle, butterfly, flowers, rocket, rainbow). Tap a shape to fill it; the color name is spoken. Each girl's colored pages are saved, and finishing a page earns a star. Art lives in `app/src/coloring/pages.ts` (shapes are generated from small helpers, so adding a page is a few lines).
 - **Rewards:** every star counts toward the next sticker (one per 5 stars, 24 per child), with a "New sticker!" celebration.
 - **Voices** use the tablet's built-in text-to-speech. Stars, stickers and the spelling list are saved on the device (`localStorage`); nothing leaves the tablet.
 - **Grown-up area:** press and hold the "Who is playing?" title for 1.5 seconds, then answer the multiplication question. There you can set a daily play limit per child (a gentle break screen appears when it's reached), edit Hazel's spelling list, see which words she needs again, and reset progress.

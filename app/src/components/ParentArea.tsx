@@ -70,7 +70,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           ) : (
             <div className="flex items-center gap-3">
               <span>Erase all stars, stickers, and progress?</span>
-              <button onClick={() => { update(() => ({ stars: { hazel: 0, violet: 0 }, stickers: { hazel: 0, violet: 0 }, newSticker: null, letterRight: 0, countRight: 0, traceRight: 0, misses: {} })); setConfirm(false); }}
+              <button onClick={() => { update(() => ({ stars: { hazel: 0, violet: 0 }, stickers: { hazel: 0, violet: 0 }, newSticker: null, letterRight: 0, countRight: 0, traceRight: 0, misses: {}, colored: { hazel: {}, violet: {} } })); setConfirm(false); }}
                 className="rounded-xl bg-red-500 px-5 py-2 text-lg font-bold">Yes, erase</button>
               <button onClick={() => setConfirm(false)} className="rounded-xl bg-white/20 px-5 py-2 text-lg">Cancel</button>
             </div>

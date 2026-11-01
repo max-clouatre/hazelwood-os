@@ -21,7 +21,7 @@ export function Home({ profile, onOpen, onHome }: { profile: ProfileId; onOpen: 
         <span className="emoji ml-1 text-3xl">🎁</span>
       </div>
       <div className="flex flex-1 items-center justify-center overflow-y-auto p-4">
-        <div className="grid w-full max-w-4xl grid-cols-2 gap-5 sm:grid-cols-3">
+        <div className="grid w-full max-w-4xl grid-cols-3 gap-4 sm:grid-cols-4">
           {mine.map((a, i) => (
             <button key={a.id} onClick={() => { say(a.title); onOpen(a.id); }}
               style={{ animationDelay: `${i * 60}ms` }}

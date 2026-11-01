@@ -18,6 +18,8 @@ interface State {
   traceRight: number; // Violet: grows the trace pool
   spelling: string[]; // Hazel's list (editable in the parent area)
   misses: Record<string, number>; // spelling word -> how often she needs it again
+  coloring: PerKid<Record<string, Record<string, string>>>; // page -> region -> color
+  colored: PerKid<Record<string, boolean>>; // pages already rewarded with a star
   limitMin: PerKid<number>; // daily play limit in minutes, 0 = none
   played: PerKid<{ day: string; sec: number }>;
   sound: boolean;
@@ -33,6 +35,8 @@ const initial: State = {
   traceRight: 0,
   spelling: DEFAULT_SPELLING,
   misses: {},
+  coloring: { hazel: {}, violet: {} },
+  colored: { hazel: {}, violet: {} },
   limitMin: { hazel: 0, violet: 0 },
   played: { hazel: { day: "", sec: 0 }, violet: { day: "", sec: 0 } },
   sound: true,
@@ -48,6 +52,8 @@ function load(): State {
         ...initial, ...saved,
         stars: { ...initial.stars, ...saved.stars },
         stickers: { ...initial.stickers, ...saved.stickers },
+        coloring: { ...initial.coloring, ...saved.coloring },
+        colored: { ...initial.colored, ...saved.colored },
         limitMin: { ...initial.limitMin, ...saved.limitMin },
         played: { ...initial.played, ...saved.played },
       };
@@ -104,3 +110,24 @@ export function noteSpellingResult(word: string, missed: boolean) {
     return { misses };
   });
 }
+
+export function setFill(p: ProfileId, page: string, region: string, color: string | null) {
+  update((s) => {
+    const pages = { ...s.coloring[p] };
+    const fills = { ...(pages[page] ?? {}) };
+    if (color === null) delete fills[region]; else fills[region] = color;
+    pages[page] = fills;
+    return { coloring: { ...s.coloring, [p]: pages } };
+  });
+}
+
+export function clearPage(p: ProfileId, page: string) {
+  update((s) => {
+    const pages = { ...s.coloring[p] }; delete pages[page];
+    const colored = { ...s.colored[p] }; delete colored[page];
+    return { coloring: { ...s.coloring, [p]: pages }, colored: { ...s.colored, [p]: colored } };
+  });
+}
+
+export const markColored = (p: ProfileId, page: string) =>
+  update((s) => ({ colored: { ...s.colored, [p]: { ...s.colored[p], [page]: true } } }));
