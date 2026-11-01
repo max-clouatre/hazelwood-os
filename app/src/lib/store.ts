@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from "react";
+import { STARS_PER_STICKER, STICKERS } from "./stickers";
 
 export type ProfileId = "hazel" | "violet";
+type PerKid<T> = Record<ProfileId, T>;
 
 export const DEFAULT_SPELLING = [
   "because", "friend", "school", "people", "again", "little",
@@ -8,26 +10,48 @@ export const DEFAULT_SPELLING = [
 ];
 
 interface State {
-  stars: Record<ProfileId, number>;
-  letterRight: number; // Violet's letter progress, grows the letter pool
-  countRight: number; // Violet's counting progress, grows the max number
-  spelling: string[]; // Hazel's spelling list (editable)
+  stars: PerKid<number>;
+  stickers: PerKid<number>; // how many stickers unlocked
+  newSticker: { profile: ProfileId; index: number } | null; // celebration waiting to be shown
+  letterRight: number; // Violet: grows the letter pool
+  countRight: number; // Violet: grows the counting range
+  traceRight: number; // Violet: grows the trace pool
+  spelling: string[]; // Hazel's list (editable in the parent area)
+  misses: Record<string, number>; // spelling word -> how often she needs it again
+  limitMin: PerKid<number>; // daily play limit in minutes, 0 = none
+  played: PerKid<{ day: string; sec: number }>;
   sound: boolean;
 }
 
-const KEY = "hwos:v1";
+const KEY = "hwos:v1"; // same key as before: older saves load and fill in new fields
 const initial: State = {
   stars: { hazel: 0, violet: 0 },
+  stickers: { hazel: 0, violet: 0 },
+  newSticker: null,
   letterRight: 0,
   countRight: 0,
+  traceRight: 0,
   spelling: DEFAULT_SPELLING,
+  misses: {},
+  limitMin: { hazel: 0, violet: 0 },
+  played: { hazel: { day: "", sec: 0 }, violet: { day: "", sec: 0 } },
   sound: true,
 };
 
 function load(): State {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...initial, ...JSON.parse(raw) };
+    if (raw) {
+      const saved = JSON.parse(raw);
+      // Old saves lack the per-kid fields above; merge each object so nothing is undefined.
+      return {
+        ...initial, ...saved,
+        stars: { ...initial.stars, ...saved.stars },
+        stickers: { ...initial.stickers, ...saved.stickers },
+        limitMin: { ...initial.limitMin, ...saved.limitMin },
+        played: { ...initial.played, ...saved.played },
+      };
+    }
   } catch { /* storage unavailable: run in memory */ }
   return initial;
 }
@@ -49,4 +73,34 @@ export function useStore(): State {
 }
 
 export const getState = () => state;
-export const addStar = (p: ProfileId) => update((s) => ({ stars: { ...s.stars, [p]: s.stars[p] + 1 } }));
+
+/** +1 star. Every STARS_PER_STICKER stars unlocks the next sticker and queues a celebration. */
+export function addStar(p: ProfileId, n = 1) {
+  update((s) => {
+    const stars = s.stars[p] + n;
+    const earned = Math.min(Math.floor(stars / STARS_PER_STICKER), STICKERS[p].length);
+    const gained = earned > s.stickers[p];
+    return {
+      stars: { ...s.stars, [p]: stars },
+      stickers: { ...s.stickers, [p]: Math.max(earned, s.stickers[p]) },
+      newSticker: gained ? { profile: p, index: earned - 1 } : s.newSticker,
+    };
+  });
+}
+
+export const today = () => new Date().toDateString();
+export const playedToday = (s: State, p: ProfileId) => (s.played[p].day === today() ? s.played[p].sec : 0);
+
+export function addPlayTime(p: ProfileId, sec: number) {
+  update((s) => ({ played: { ...s.played, [p]: { day: today(), sec: playedToday(s, p) + sec } } }));
+}
+
+export function noteSpellingResult(word: string, missed: boolean) {
+  update((s) => {
+    const cur = s.misses[word] ?? 0;
+    const next = missed ? Math.min(cur + 1, 5) : Math.max(cur - 1, 0);
+    const misses = { ...s.misses };
+    if (next === 0) delete misses[word]; else misses[word] = next;
+    return { misses };
+  });
+}

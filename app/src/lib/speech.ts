@@ -24,3 +24,6 @@ export function say(text: string, rate = 0.85) {
     speechSynthesis.speak(u);
   } catch { /* ignore */ }
 }
+
+const CHEERS = ["Great job!", "Wow!", "You did it!", "Awesome!", "Hooray!", "Fantastic!", "Super!"];
+export const cheer = () => CHEERS[Math.floor(Math.random() * CHEERS.length)];

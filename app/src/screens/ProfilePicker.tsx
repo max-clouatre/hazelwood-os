@@ -1,5 +1,8 @@
-import { say } from "../lib/speech";
+import { useEffect, useRef, useState } from "react";
+import { ParentArea } from "../components/ParentArea";
+import { ParentGate } from "../components/ParentGate";
 import { unlockAudio } from "../lib/audio";
+import { say } from "../lib/speech";
 import { useStore } from "../lib/store";
 import type { ProfileId } from "../lib/store";
 
@@ -10,9 +13,16 @@ export const PROFILES: Record<ProfileId, { name: string; emoji: string; bg: stri
 
 export function ProfilePicker({ onPick }: { onPick: (p: ProfileId) => void }) {
   const { stars } = useStore();
+  const [step, setStep] = useState<"idle" | "gate" | "area">("idle");
+  const hold = useRef<number>();
+  useEffect(() => () => window.clearTimeout(hold.current), []);
+  const stop = () => window.clearTimeout(hold.current);
   return (
     <div className="flex h-full flex-col items-center justify-center gap-6 bg-gradient-to-br from-indigo-900 via-purple-800 to-fuchsia-700 p-6">
-      <h1 className="text-center text-4xl font-bold drop-shadow sm:text-5xl">Who is playing?</h1>
+      {/* Long-press the title for 1.5s to reach the grown-up area. */}
+      <h1 onPointerDown={() => { hold.current = window.setTimeout(() => setStep("gate"), 1500); }}
+        onPointerUp={stop} onPointerLeave={stop} onPointerCancel={stop}
+        className="text-center text-4xl font-bold drop-shadow sm:text-5xl">Who is playing?</h1>
       <div className="flex w-full max-w-3xl flex-wrap justify-center gap-6">
         {(Object.keys(PROFILES) as ProfileId[]).map((id) => {
           const p = PROFILES[id];
@@ -27,8 +37,8 @@ export function ProfilePicker({ onPick }: { onPick: (p: ProfileId) => void }) {
           );
         })}
       </div>
+      {step === "gate" && <ParentGate onPass={() => setStep("area")} onCancel={() => setStep("idle")} />}
+      {step === "area" && <ParentArea onClose={() => setStep("idle")} />}
     </div>
   );
 }
-
-export { PROFILES as profiles };

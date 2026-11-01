@@ -163,8 +163,14 @@ python3 -m http.server 8000</code></pre> (or <code>npx serve docs -l 8000</code>
 <div class="card note">The service worker updates itself automatically, so there's no version number to bump. The stars and the spelling list live on the tablet and are kept across updates.</div>
 <p><strong>Not sure you have the newest version?</strong> Open <code>https://max-clouatre.github.io/hazelwood-os/</code> in Chrome (not the installed icon) while online, wait a few seconds, then fully close and reopen the icon.</p>
 
-<h3>Hazel's spelling list</h3>
-<p>Open <strong>Spelling Unicorn</strong> and press and hold the faint ⚙️ in the bottom-right corner for about 1.5 seconds. Type or paste one word per line, then <strong>Save</strong>. The list is stored on the tablet. Hold the gear for the editor to open; kids tapping it won't.</p>
+<h3>The grown-up area (spelling list, time limits)</h3>
+<ol>
+  <li>On the "Who is playing?" screen, <strong>press and hold the title</strong> for about 1.5 seconds.</li>
+  <li>Answer the multiplication question. This keeps the girls out.</li>
+  <li><strong>Daily play time:</strong> pick a limit for each child (or "No limit"). When it's reached, a calm "time for a break" screen appears until tomorrow. Tap <em>Grown-up</em> on that screen to change the limit.</li>
+  <li><strong>Hazel's spelling list:</strong> type or paste one word per line, then <strong>Save list</strong>. Words she misses come up more often until she gets them right.</li>
+  <li><strong>Reset</strong> erases stars, stickers and progress (it asks first).</li>
+</ol>
 
 <h2 id="trouble">Troubleshooting</h2>
 <table>
@@ -181,10 +187,10 @@ python3 -m http.server 8000</code></pre> (or <code>npx serve docs -l 8000</code>
 </table>
 
 <h2 id="next">What's next</h2>
-<p>The app now has a profile picker and six activities. Ideas for later, in the order I'd do them:</p>
+<p>The app now has a profile picker, nine activities, stickers, and a grown-up area. Ideas for later, in the order I'd do them:</p>
 <ol>
-  <li>A parent area (long-press) with per-child time limits and the spelling list editor.</li>
-  <li>More activities for each girl, and a sound or voice check at the start.</li>
+  <li>More activities for each girl (ideas: clocks and shapes for Violet, number sums and the solar system for Hazel).</li>
+  <li>Optional voice recordings instead of the tablet's robot voice.</li>
   <li>The launcher wrapper (Capacitor) so the tablet boots straight into Hazelwood OS and Home returns to it.</li>
 </ol>
 <p style="color:var(--muted); font-size:.9rem">Inspired by <a href="https://github.com/frozenpepper/Greia">Greia</a> (MPL-2.0). This project uses no Greia name, logo, art, or audio; all assets here are original.</p>

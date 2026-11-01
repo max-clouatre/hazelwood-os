@@ -5,14 +5,14 @@ An offline, touch-first learning and play space for Hazel (7) and Violet (3), bu
 **Live:** https://max-clouatre.github.io/hazelwood-os/ · **Setup guide:** open `guide.html`
 
 ## What's in it
-| Who | Activity |
+| Who | Activities |
 | --- | --- |
-| Violet | Count Friends (tap to count cats, unicorns, puppies), Letter Pals (find the letter, letter + picture + voice), Sparkle Paint |
-| Hazel | Spelling Unicorn (spelling list, editable), Sink or Float? (science), Color Lab (mixing colors), Sparkle Paint |
+| Violet (3) | **Count Friends** (touch to count cats, unicorns, puppies; later "pick exactly N"), **Letter Pals** (find the letter; later "what does this start with?"), **Trace It** (finger-trace letters and numbers), Sparkle Paint, My Stickers |
+| Hazel (7) | **Spelling Unicorn** (editable list, repeats missed words, rainbow every 5 words), **Sink or Float?** (22 items, streak bonus), **Magnet Mystery**, **Color Lab** (mix potions incl. pastels, hints), Sparkle Paint (rainbow brush, sizes, undo), My Stickers |
 
-Voices use the tablet's built-in text-to-speech. Stars and the spelling list are saved on the device (`localStorage`); nothing leaves the tablet.
-
-**Edit Hazel's spelling list:** open Spelling Unicorn and press and hold the faint ⚙️ in the bottom right for 1.5 seconds.
+- **Rewards:** every star counts toward the next sticker (one per 5 stars, 24 per child), with a "New sticker!" celebration.
+- **Voices** use the tablet's built-in text-to-speech. Stars, stickers and the spelling list are saved on the device (`localStorage`); nothing leaves the tablet.
+- **Grown-up area:** press and hold the "Who is playing?" title for 1.5 seconds, then answer the multiplication question. There you can set a daily play limit per child (a gentle break screen appears when it's reached), edit Hazel's spelling list, see which words she needs again, and reset progress.
 
 ## Layout
 - `app/`: source (Vite + React + TypeScript + Tailwind 3, `vite-plugin-pwa`).

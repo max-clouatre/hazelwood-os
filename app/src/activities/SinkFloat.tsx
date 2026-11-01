@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Burst } from "../components/Burst";
 import { chime, oops, tone } from "../lib/audio";
-import { say } from "../lib/speech";
 import { addStar } from "../lib/store";
+import { cheer, say } from "../lib/speech";
 import { shuffle } from "../lib/util";
 import type { ActivityProps } from "./types";
 
@@ -25,6 +25,12 @@ const ITEMS: Item[] = [
   { e: "🍴", name: "fork and knife", floats: false, why: "Metal silverware is denser than water." },
   { e: "🎈", name: "balloon", floats: true, why: "A balloon is full of air, which is very light." },
   { e: "⚽", name: "soccer ball", floats: true, why: "Mostly air inside, so it floats." },
+  { e: "🍌", name: "banana", floats: true, why: "Bananas are a little lighter than water, so they float." },
+  { e: "🍋", name: "lemon", floats: true, why: "A lemon with its peel on floats, because the peel traps tiny air pockets." },
+  { e: "🥕", name: "carrot", floats: false, why: "A carrot is denser than water, so it sinks." },
+  { e: "🥔", name: "potato", floats: false, why: "A raw potato is packed tighter than water, so it sinks." },
+  { e: "🥚", name: "egg", floats: false, why: "A fresh egg sinks. As an egg gets old, it gains air inside and can float!" },
+  { e: "⛵", name: "sailboat", floats: true, why: "A boat floats because of its shape. It holds lots of air and pushes aside lots of water." },
 ];
 
 export default function SinkFloat({ profile }: ActivityProps) {
@@ -32,6 +38,7 @@ export default function SinkFloat({ profile }: ActivityProps) {
   const [item, setItem] = useState<Item>(() => queue.current.pop()!);
   const [guess, setGuess] = useState<boolean | null>(null); // true = guessed floats
   const [burst, setBurst] = useState(0);
+  const [streak, setStreak] = useState(0);
   const timer = useRef<number>();
 
   useEffect(() => { say(`Will the ${item.name} sink or float?`); }, [item]);
@@ -43,8 +50,11 @@ export default function SinkFloat({ profile }: ActivityProps) {
     const right = floats === item.floats;
     tone(floats ? 600 : 200, 0, 0.3); // splash!
     timer.current = window.setTimeout(() => {
-      if (right) { chime(); setBurst((b) => b + 1); addStar(profile); } else oops();
-      say(`${right ? "You got it! " : "Surprise! "}It ${item.floats ? "floats" : "sinks"}. ${item.why}`, 0.9);
+      const ns = right ? streak + 1 : 0;
+      setStreak(ns);
+      if (right) { chime(); setBurst((b) => b + 1); addStar(profile); if (ns > 0 && ns % 3 === 0) addStar(profile); } else oops();
+      const bonus = right && ns % 3 === 0 ? " Three in a row! Bonus star!" : "";
+      say(`${right ? cheer() + " " : "Surprise! "}It ${item.floats ? "floats" : "sinks"}. ${item.why}${bonus}`, 0.9);
     }, 1400);
   };
 
@@ -60,7 +70,10 @@ export default function SinkFloat({ profile }: ActivityProps) {
 
   return (
     <div className="flex h-full flex-col items-center justify-between px-4 pb-4">
-      <p className="text-center text-3xl font-bold drop-shadow">Will the {item.name} sink or float?</p>
+      <p className="text-center text-3xl font-bold drop-shadow">
+        Will the {item.name} sink or float?
+        {streak > 0 && <span className="ml-3 rounded-full bg-black/30 px-3 py-1 text-xl"><span className="emoji">🔥</span> {streak} in a row</span>}
+      </p>
 
       <div className="relative h-72 w-full max-w-md overflow-hidden rounded-3xl border-4 border-white/70 bg-sky-200/20">
         <div className="absolute inset-x-0 bottom-0 top-[30%] bg-sky-500/70" />
