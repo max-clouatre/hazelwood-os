@@ -5,11 +5,18 @@ import { cheer, say } from "../lib/speech";
 import { addStar, clearPage, markColored, setFill, useStore } from "../lib/store";
 import { PageSvg } from "../coloring/PageSvg";
 import { PAGE_ORDER, PAGES, PALETTE } from "../coloring/pages";
+import ColorByNumber from "./ColorByNumber";
 import type { ActivityProps } from "./types";
 
 interface Undo { page: string; region: string; prev: string | null }
 
 export default function ColoringBook({ profile }: ActivityProps) {
+  // Hazel prefers color by number; Violet gets free coloring.
+  if (profile === "hazel") return <ColorByNumber profile={profile} />;
+  return <FreeColoring profile={profile} />;
+}
+
+function FreeColoring({ profile }: ActivityProps) {
   const { coloring, colored } = useStore();
   const [pageId, setPageId] = useState<string | null>(null);
   const [color, setColor] = useState(PALETTE[7]); // pink

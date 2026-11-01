@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ACTIVITIES } from "./activities/registry";
+import { titleOf } from "./activities/types";
 import { BreakScreen } from "./components/BreakScreen";
 import { StickerOverlay } from "./components/StickerOverlay";
 import { TopBar } from "./components/TopBar";
@@ -44,7 +45,7 @@ export default function App() {
   else {
     body = (
       <div className={`flex h-full flex-col bg-gradient-to-br ${PROFILES[profile].bg}`}>
-        <TopBar profile={profile} title={activity.title} onHome={() => setActivityId(null)} />
+        <TopBar profile={profile} title={titleOf(activity, profile)} onHome={() => setActivityId(null)} />
         <div className="min-h-0 flex-1"><activity.Component key={activity.id} profile={profile} /></div>
       </div>
     );

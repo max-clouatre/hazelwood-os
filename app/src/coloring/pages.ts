@@ -2,7 +2,7 @@
 // a child can fill with a tap. "lines" are decorative strokes (whiskers, smiles, ...).
 
 export interface Region { id: string; d: string; t?: string }
-export interface Line { d: string; w?: number }
+export interface Line { d: string; w?: number; for?: string } // for: only draw once this region is colored (pupils, nostrils) so they don't sit on top of its number
 export interface Page { id: string; title: string; emoji: string; regions: Region[]; lines: Line[] }
 
 // ---- shape helpers (all return SVG path data) ----
@@ -64,7 +64,7 @@ const cat: Page = {
   lines: [
     { d: "M200 194V206" }, { d: "M200 206Q186 222 170 209" }, { d: "M200 206Q214 222 230 209" },
     { d: "M105 182L52 170" }, { d: "M105 195L48 200" }, { d: "M295 182L348 170" }, { d: "M295 195L352 200" },
-    { d: "M162 150V152", w: 9 }, { d: "M246 150V152", w: 9 },
+    { d: "M162 150V152", w: 9, for: "eye-l" }, { d: "M246 150V152", w: 9, for: "eye-r" },
   ],
 };
 
@@ -91,8 +91,8 @@ const unicorn: Page = {
     { id: "star2", d: star(62, 52, 17, 7) },
   ],
   lines: [
-    { d: "M184 254Q200 266 216 254" }, { d: "M168 174V176", w: 8 }, { d: "M236 174V176", w: 8 },
-    { d: "M186 236V238", w: 9 }, { d: "M214 236V238", w: 9 },
+    { d: "M184 254Q200 266 216 254" }, { d: "M168 174V176", w: 8, for: "eye-l" }, { d: "M236 174V176", w: 8, for: "eye-r" },
+    { d: "M186 236V238", w: 9, for: "snout" }, { d: "M214 236V238", w: 9, for: "snout" },
   ],
 };
 
@@ -113,8 +113,8 @@ const puppy: Page = {
   ],
   lines: [
     { d: "M200 199V226" }, { d: "M200 226Q176 238 166 222" }, { d: "M200 226Q224 238 234 222" },
-    { d: "M164 140V142", w: 9 }, { d: "M238 140V142", w: 9 },
-    { d: "M150 112Q164 102 178 112" }, { d: "M222 112Q238 102 252 112" },
+    { d: "M164 140V142", w: 9, for: "eye-l" }, { d: "M238 140V142", w: 9, for: "eye-r" },
+    { d: "M150 112Q164 102 178 112", for: "eye-l" }, { d: "M222 112Q238 102 252 112", for: "eye-r" },
   ],
 };
 
@@ -208,3 +208,52 @@ export const PALETTE: { name: string; hex: string }[] = [
   { name: "purple", hex: "#a855f7" }, { name: "pink", hex: "#f472b6" }, { name: "brown", hex: "#92400e" },
   { name: "gray", hex: "#9ca3af" }, { name: "black", hex: "#1f2937" }, { name: "white", hex: "#ffffff" },
 ];
+
+// ---- Color by number (Hazel) ----
+export interface Swatch { name: string; hex: string }
+export interface NumberKey { legend: Swatch[]; numbers: Record<string, number> } // numbers: region id -> 1-based legend index
+
+const C = {
+  red: { name: "red", hex: "#ef4444" }, orange: { name: "orange", hex: "#fb923c" }, yellow: { name: "yellow", hex: "#facc15" },
+  green: { name: "green", hex: "#22c55e" }, dkgreen: { name: "dark green", hex: "#15803d" }, lblue: { name: "light blue", hex: "#7dd3fc" },
+  blue: { name: "blue", hex: "#3b82f6" }, purple: { name: "purple", hex: "#a855f7" }, lilac: { name: "lilac", hex: "#c4b5fd" },
+  pink: { name: "pink", hex: "#f472b6" }, brown: { name: "brown", hex: "#92400e" }, tan: { name: "tan", hex: "#d6a76a" },
+  cream: { name: "cream", hex: "#fde68a" }, gray: { name: "gray", hex: "#9ca3af" }, black: { name: "black", hex: "#1f2937" },
+};
+const n = (num: number, ...ids: string[]) => Object.fromEntries(ids.map((id) => [id, num]));
+const range = (pre: string, count: number, suf = "") => Array.from({ length: count }, (_, i) => `${pre}${i}${suf}`);
+
+export const NUMBER_KEYS: Record<string, NumberKey> = {
+  unicorn: {
+    legend: [C.lilac, C.pink, C.yellow, C.purple, C.blue, C.green],
+    numbers: { ...n(1, "head", "snout"), ...n(2, "ear-l", "ear-r", "fore-1", "fore-2", "fore-3", "cheek-l", "cheek-r"), ...n(3, "horn-base", "star"), ...n(4, "mane-l", "mane-r", "eye-l", "eye-r"), ...n(5, "horn-tip", "star2"), ...n(6, "horn-mid") },
+  },
+  castle: {
+    legend: [C.gray, C.red, C.brown, C.lblue, C.yellow, C.green, C.purple],
+    numbers: { ...n(1, "wall"), ...n(2, "roof-l", "roof-r", "roof-c"), ...n(3, "door"), ...n(4, "win-l", "win-r", "win-c"), ...n(5, "flag"), ...n(6, "ground"), ...n(7, "tower-l", "tower-r", "tower-c") },
+  },
+  butterfly: {
+    legend: [C.orange, C.purple, C.yellow, C.pink, C.brown],
+    numbers: { ...n(1, "wing-up", "wing-up-r"), ...n(2, "wing-low", "wing-low-r"), ...n(3, "spot-up", "spot-up-r"), ...n(4, "spot-low", "spot-low-r"), ...n(5, "body", "head") },
+  },
+  cat: {
+    legend: [C.orange, C.pink, C.green, C.red, C.brown, C.yellow],
+    numbers: { ...n(1, "head", "ear-l", "ear-r"), ...n(2, "inner-l", "inner-r", "cheek-l", "cheek-r"), ...n(3, "eye-l", "eye-r"), ...n(4, "bow-l", "bow-r"), ...n(5, "nose"), ...n(6, "knot") },
+  },
+  puppy: {
+    legend: [C.brown, C.tan, C.cream, C.pink, C.black, C.red, C.yellow],
+    numbers: { ...n(1, "ear-l", "ear-r", "patch"), ...n(2, "head"), ...n(3, "snout"), ...n(4, "tongue"), ...n(5, "nose", "eye-l", "eye-r"), ...n(6, "collar"), ...n(7, "tag") },
+  },
+  flowers: {
+    legend: [C.pink, C.yellow, C.purple, C.orange, C.green, C.dkgreen],
+    numbers: { ...n(1, ...range("f1-p", 6)), ...n(2, "f1-c", "sun"), ...n(3, ...range("f2-p", 5)), ...n(4, "f2-c"), ...n(5, "stem1", "stem2", "leaf1", "leaf2", "leaf3"), ...n(6, "ground") },
+  },
+  rocket: {
+    legend: [C.red, C.lblue, C.yellow, C.gray, C.blue, C.purple, C.orange],
+    numbers: { ...n(1, "body"), ...n(2, "window"), ...n(3, "moon", "star1", "star2", "star3", "star4"), ...n(4, "nozzle", "crater1", "crater2"), ...n(5, "fin-l", "fin-r"), ...n(6, "planet"), ...n(7, "flame") },
+  },
+  rainbow: {
+    legend: [C.red, C.orange, C.yellow, C.green, C.blue, C.gray],
+    numbers: { ...n(1, "band0"), ...n(2, "band1"), ...n(3, "band2", "sun"), ...n(4, "band3"), ...n(5, "band4"), ...n(6, "cloud-l", "cloud-r", "cloud-top") },
+  },
+};
