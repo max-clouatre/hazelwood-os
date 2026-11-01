@@ -1,17 +1,1 @@
-{
-  "name": "Play Pad",
-  "short_name": "Play Pad",
-  "description": "A tiny offline touch-play app for kids.",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
-  "orientation": "any",
-  "background_color": "#1e1b4b",
-  "theme_color": "#1e1b4b",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
-}
+{"name":"Hazelwood OS","short_name":"Hazelwood","description":"An offline learning and play space for Hazel and Violet.","start_url":"./","display":"fullscreen","background_color":"#1e1b4b","theme_color":"#1e1b4b","lang":"en","scope":"./","display_override":["fullscreen","standalone"],"icons":[{"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},{"src":"icons/maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}

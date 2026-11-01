@@ -12,6 +12,6 @@ def make(size, path, pad_ratio):
     d.polygon([(p + inner*.28, p + inner*.95), (p + inner*.52, p + inner*.55), (p + inner*.76, p + inner*.95)], fill="#f472b6")
     img.save(path)
 
-make(192, "docs/icons/icon-192.png", 0.12)
-make(512, "docs/icons/icon-512.png", 0.12)
-make(512, "docs/icons/maskable-512.png", 0.22)  # extra safe-zone padding for maskable
+make(192, "app/public/icons/icon-192.png", 0.12)
+make(512, "app/public/icons/icon-512.png", 0.12)
+make(512, "app/public/icons/maskable-512.png", 0.22)  # extra safe-zone padding for maskable
