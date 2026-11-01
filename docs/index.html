@@ -93,7 +93,7 @@
     ctx.beginPath();
     const kind = Math.floor(Math.random() * 3);
     if (kind === 0) ctx.arc(x, y, r, 0, Math.PI * 2);
-    else if (kind === 1) ctx.roundRect(x - r, y - r, r * 2, r * 2, r * 0.25);
+    else if (kind === 1) ctx.rect(x - r, y - r, r * 2, r * 2); // plain rect: roundRect is missing on older Chrome (Tab A)
     else { ctx.moveTo(x, y - r); ctx.lineTo(x + r, y + r * 0.8); ctx.lineTo(x - r, y + r * 0.8); ctx.closePath(); }
     ctx.fill();
   }

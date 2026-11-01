@@ -1,5 +1,5 @@
 // Minimal offline-first service worker. Bump VERSION whenever you change any cached file.
-const VERSION = "playpad-v1";
+const VERSION = "playpad-v2";
 const ASSETS = [
   "./",
   "./index.html",
