@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { STARS_PER_STICKER, STICKERS } from "./stickers";
+import { initialWilds } from "../wilds/types";
+import type { Wilds } from "../wilds/types";
 
 export type ProfileId = "hazel" | "violet";
 type PerKid<T> = Record<ProfileId, T>;
@@ -20,6 +22,7 @@ interface State {
   misses: Record<string, number>; // spelling word -> how often she needs it again
   coloring: PerKid<Record<string, Record<string, string>>>; // page -> region -> color
   colored: PerKid<Record<string, boolean>>; // pages already rewarded with a star
+  wilds: Wilds; // Hazel's creature game
   limitMin: PerKid<number>; // daily play limit in minutes, 0 = none
   played: PerKid<{ day: string; sec: number }>;
   sound: boolean;
@@ -37,6 +40,7 @@ const initial: State = {
   misses: {},
   coloring: { hazel: {}, violet: {} },
   colored: { hazel: {}, violet: {} },
+  wilds: initialWilds,
   limitMin: { hazel: 0, violet: 0 },
   played: { hazel: { day: "", sec: 0 }, violet: { day: "", sec: 0 } },
   sound: true,
@@ -54,6 +58,7 @@ function load(): State {
         stickers: { ...initial.stickers, ...saved.stickers },
         coloring: { ...initial.coloring, ...saved.coloring },
         colored: { ...initial.colored, ...saved.colored },
+        wilds: { ...initialWilds, ...saved.wilds },
         limitMin: { ...initial.limitMin, ...saved.limitMin },
         played: { ...initial.played, ...saved.played },
       };
@@ -86,7 +91,13 @@ export function addStar(p: ProfileId, n = 1) {
     const stars = s.stars[p] + n;
     const earned = Math.min(Math.floor(stars / STARS_PER_STICKER), STICKERS[p].length);
     const gained = earned > s.stickers[p];
+    // Hazel's stars also feed her creature game: berries, and progress toward hatching eggs.
+    const wilds = p === "hazel"
+      ? { ...s.wilds, berries: s.wilds.berries + 3 * n, fromStars: s.wilds.fromStars + 3 * n,
+          eggs: s.wilds.eggs.map((e) => ({ ...e, have: Math.min(e.need, e.have + n) })) }
+      : s.wilds;
     return {
+      wilds,
       stars: { ...s.stars, [p]: stars },
       stickers: { ...s.stickers, [p]: Math.max(earned, s.stickers[p]) },
       newSticker: gained ? { profile: p, index: earned - 1 } : s.newSticker,

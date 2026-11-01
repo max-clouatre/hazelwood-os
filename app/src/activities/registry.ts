@@ -1,5 +1,6 @@
 import ColorLab from "./ColorLab";
 import ColoringBook from "./ColoringBook";
+import Hazelwild from "./Hazelwild";
 import KittyCount from "./KittyCount";
 import LetterPals from "./LetterPals";
 import MagnetMystery from "./MagnetMystery";
@@ -14,6 +15,7 @@ export const ACTIVITIES: Activity[] = [
   { id: "kitty-count", title: "Count Friends", emoji: "🐱", color: "from-pink-400 to-rose-500", profiles: ["violet"], Component: KittyCount },
   { id: "letter-pals", title: "Letter Pals", emoji: "🔤", color: "from-violet-400 to-fuchsia-500", profiles: ["violet"], Component: LetterPals },
   { id: "trace-it", title: "Trace It", emoji: "✏️", color: "from-teal-400 to-cyan-500", profiles: ["violet"], Component: TraceIt },
+  { id: "hazelwild", title: "Hazelwild", emoji: "🐾", color: "from-emerald-400 to-teal-600", profiles: ["hazel"], Component: Hazelwild },
   { id: "spelling", title: "Spelling Unicorn", emoji: "🦄", color: "from-fuchsia-400 to-purple-600", profiles: ["hazel"], Component: SpellingUnicorn },
   { id: "sink-float", title: "Sink or Float?", emoji: "🌊", color: "from-sky-400 to-blue-600", profiles: ["hazel"], Component: SinkFloat },
   { id: "magnet", title: "Magnet Mystery", emoji: "🧲", color: "from-red-400 to-rose-600", profiles: ["hazel"], Component: MagnetMystery },

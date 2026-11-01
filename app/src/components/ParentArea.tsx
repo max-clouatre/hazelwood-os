@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DEFAULT_SPELLING, playedToday, update, useStore } from "../lib/store";
+import { initialWilds } from "../wilds/types";
 import type { ProfileId } from "../lib/store";
 import { STICKERS } from "../lib/stickers";
 
@@ -29,6 +30,7 @@ function Editor({ words }: { words: string[] }) {
 export function ParentArea({ onClose }: { onClose: () => void }) {
   const s = useStore();
   const [confirm, setConfirm] = useState(false);
+  const [confirmW, setConfirmW] = useState(false);
   const kids: [ProfileId, string][] = [["hazel", "Hazel"], ["violet", "Violet"]];
   const hard = Object.entries(s.misses).sort((a, b) => b[1] - a[1]).map(([w]) => w);
   return (
@@ -65,8 +67,17 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
 
         <section className="rounded-2xl bg-white/10 p-4">
           <h2 className="mb-2 text-xl font-bold">Reset</h2>
-          {!confirm ? (
-            <button onClick={() => setConfirm(true)} className="rounded-xl bg-red-400/80 px-5 py-2 text-lg font-bold">Reset stars and stickers…</button>
+          {confirmW ? (
+            <div className="flex items-center gap-3">
+              <span>Release all of Hazel's creatures and eggs?</span>
+              <button onClick={() => { update(() => ({ wilds: initialWilds })); setConfirmW(false); }} className="rounded-xl bg-red-500 px-5 py-2 text-lg font-bold">Yes, reset</button>
+              <button onClick={() => setConfirmW(false)} className="rounded-xl bg-white/20 px-5 py-2 text-lg">Cancel</button>
+            </div>
+          ) : !confirm ? (
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => setConfirm(true)} className="rounded-xl bg-red-400/80 px-5 py-2 text-lg font-bold">Reset stars and stickers…</button>
+              <button onClick={() => setConfirmW(true)} className="rounded-xl bg-red-400/80 px-5 py-2 text-lg font-bold">Reset Hazel's creatures…</button>
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <span>Erase all stars, stickers, and progress?</span>

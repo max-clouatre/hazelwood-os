@@ -19,3 +19,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .anim-pop { animation: pop .35s ease-out backwards; } /* backwards: keeps active:scale-* working after it ends */
 .anim-shake { animation: shake .35s ease-in-out; }
 .anim-bob { animation: bob 2.2s ease-in-out infinite; }
+
+@keyframes twinkle { 0%,100% { opacity: .25; transform: scale(.6) } 50% { opacity: 1; transform: scale(1.15) } }
+.twinkle { animation: twinkle 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hop { 0%,100% { transform: translateY(0) } 40% { transform: translateY(-18px) } 60% { transform: translateY(-18px) } }
+.anim-hop { animation: hop 1.6s ease-in-out infinite; }
+@keyframes wobble { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-14deg) } 75% { transform: rotate(14deg) } }
+.anim-wobble { animation: wobble .5s ease-in-out 3; }

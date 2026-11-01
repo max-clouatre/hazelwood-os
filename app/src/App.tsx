@@ -8,12 +8,18 @@ import { unlockAudio } from "./lib/audio";
 import { addPlayTime, playedToday, useStore } from "./lib/store";
 import type { ProfileId } from "./lib/store";
 import { Home } from "./screens/Home";
+import Gallery from "./wilds/Gallery";
 import { PROFILES, ProfilePicker } from "./screens/ProfilePicker";
 
 const TICK = 10; // seconds between play-time updates
 
 // Tiny state machine instead of a router: picker -> home -> activity.
-export default function App() {
+export default function Root() {
+  // Dev-only art preview: open the app address followed by #wilds-gallery
+  return location.hash === "#wilds-gallery" ? <Gallery /> : <App />;
+}
+
+function App() {
   const [profile, setProfile] = useState<ProfileId | null>(null);
   const [activityId, setActivityId] = useState<string | null>(null);
   const [online, setOnline] = useState(navigator.onLine);
