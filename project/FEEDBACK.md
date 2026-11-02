@@ -49,3 +49,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-02 (late): Pixel Lab result
 - Max: "I'm seeing 46-51 fps" in the Pixel Lab. Device unstated (phone vs Tab A). Status: recorded; B-10 partly answered.
+
+## 2026-11-02 (late): Pixel meadow result
+- Max: "incredible, so good. looks to be steady around 25 fps" (Pixel meadow on the Tab A; cap is 30). Status: liked; fps is under the 30 cap, above the auto-degrade line (22). Option: tune for a steady 30 (B-25).
