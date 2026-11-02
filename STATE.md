@@ -9,7 +9,7 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
-**Max measured 46-51 fps in the first Pixel Lab on the Tab A (280x158, 3 sprites).** **Pixel meadow (Grown-up > Game modes) is built, beta, off by default. Max tried it on the Tab A: loves it, steady ~25 fps (cap 30, auto-degrade below 22).** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
+**Max measured 46-51 fps in the first Pixel Lab on the Tab A (280x158, 3 sprites).** **Narrator voice in Hazelwild is OFF by default (🗣️ button on the landing turns it on); music and sounds stay.** **Pixel meadow (Grown-up > Game modes) is built, beta, off by default. Max tried it on the Tab A: loves it, steady ~25 fps (cap 30, auto-degrade below 22).** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
 
 **Newest (unseen by Max):** sound overlap fix (B-21), Camp yard with wandering/sparkling workers (B-22), workers on the map and zone cards (B-23), merged landing meadow with crew picker, Today/Map sheets (B-24, replaces Hub and Home). Ask Max: do songs still overlap? Is the landing clearer? Does Hazel pick her own crew? Are the Camp sparkles fun?
 

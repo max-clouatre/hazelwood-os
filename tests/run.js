@@ -19,6 +19,7 @@ const TESTS = [
   { name: "music", file: "music.js", fast: true, what: "every song renders at sane levels; live switching has no errors" },
   { name: "music-switching", file: "music-switching.js", fast: true, what: "only one song chain alive; leaving Hazelwild silences it" },
   { name: "landing", file: "landing.js", fast: true, what: "merged landing meadow, crew picker, workers in camp yard and on the map" },
+  { name: "narrator", file: "narrator.js", fast: true, what: "Hazelwild narrator is off by default; the button toggles it" },
   { name: "pixel-lab", file: "pixel-lab.js", fast: false, what: "Grown-up Pixel Lab opens, dials work, three.js loads lazily" },
   { name: "pixel-meadow", file: "pixel-meadow.js", fast: false, what: "Pixel meadow mode: island, taps, turning, camp workers, flat fallback" },
   { name: "catch-flow", file: "catch-flow.js", fast: false, what: "starter, explore, throw, catch, reveal" },

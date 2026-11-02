@@ -59,6 +59,7 @@ export function Landing({ w, onExplore, onVisitor, onNav, onTips }: {
         {w.modes.camp && <GlowPill n={w.glow} className="!px-3 !text-lg" />}
         <span className="rounded-full bg-black/30 px-3 py-1 text-lg font-bold"><span className="emoji">📖</span> {have.size}/{COLLECTABLE.length}</span>
         <span className="hidden rounded-full bg-black/30 px-3 py-1 text-lg font-bold sm:inline"><span className="emoji">🌳</span> Forms {totalFormsFound(w)}/{TOTAL_FORMS}</span>
+        <button onClick={() => setWilds((x) => ({ voice: x.voice !== true }))} aria-label="Narrator voice" className="emoji rounded-full bg-black/30 px-3 py-1 text-lg font-bold active:scale-95">{w.voice === true ? "🗣️" : "🤐"}</button>
         <button onClick={onTips} aria-label="How to play" className="rounded-full bg-white/90 px-3 py-1 text-lg font-bold text-emerald-900 active:scale-95">? Help</button>
       </div>
       {w.fromStars > 0 && (

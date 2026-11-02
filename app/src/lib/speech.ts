@@ -14,9 +14,13 @@ if (speechSupported) {
   speechSynthesis.addEventListener?.("voiceschanged", pickVoice);
 }
 
+/** Hazelwild can switch the narrator off without touching sounds, music or other activities. */
+let narrator = true;
+export const setNarrator = (on: boolean) => { narrator = on; if (!on && speechSupported) { try { speechSynthesis.cancel(); } catch { /* ignore */ } } };
+
 /** Speak text with the tablet's built-in voice (works offline if an offline voice is installed). */
 export function say(text: string, rate = 0.85) {
-  if (!speechSupported || !getState().sound) return;
+  if (!speechSupported || !narrator || !getState().sound) return;
   try {
     duck(Math.min(5000, 1200 + text.length * 70));
     speechSynthesis.cancel();

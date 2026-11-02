@@ -1,4 +1,4 @@
-import{r as nr,s as Mn,C as $o,a as Fo}from"./index-HwR_Iuyr.js";const Eo={palette:!0,outline:!0,dither:!0},Po="#2b2540",To=8,_o="varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",zo=`
+import{r as nr,s as Mn,C as $o,a as Fo}from"./index--nMfDZkL.js";const Eo={palette:!0,outline:!0,dither:!0},Po="#2b2540",To=8,_o="varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",zo=`
 precision highp float;
 uniform sampler2D tColor; uniform sampler2D tDepth;
 uniform vec2 texel; uniform vec2 res; uniform float thr; uniform float levels;

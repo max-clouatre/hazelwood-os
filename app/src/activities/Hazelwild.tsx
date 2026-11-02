@@ -20,6 +20,7 @@ import type { Biome } from "../wilds/species";
 import type { Owned } from "../wilds/types";
 import { useStore } from "../lib/store";
 import { playTheme, stopMusic } from "../lib/music";
+import { setNarrator } from "../lib/speech";
 import type { ThemeId } from "../lib/music";
 import type { ActivityProps } from "./types";
 
@@ -42,6 +43,8 @@ export default function Hazelwild(_: ActivityProps) {
     playTheme(themeKey as ThemeId);
   }, [themeKey]);
   useEffect(() => () => stopMusic(), []);
+  useEffect(() => { setNarrator(w.voice === true); }, [w.voice]);
+  useEffect(() => () => setNarrator(true), []); // other activities keep their voice (Hazelwild only is quiet)
   useEffect(() => { const f = () => setGuide(true); window.addEventListener("wilds:guide", f); return () => window.removeEventListener("wilds:guide", f); }, []);
 
   // Add the creature, and celebrate if that completed the Wilddex.

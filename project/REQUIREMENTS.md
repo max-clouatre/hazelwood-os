@@ -26,3 +26,5 @@ Keep these true in every change. Add new ones as they appear.
 - **Be honest** about what was and was not verified. Ask for a photo or specific observation when stuck.
 - Deliver to `main` (the live site) each time; he updates the tablet himself.
 - Keep project state durable in the repo so any session can continue (this harness).
+
+- Hazelwild: music and sound effects yes, narrator voice no by default (2026-11-02, "way too busy"). Voice stays in learning activities.

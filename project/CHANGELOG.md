@@ -2,6 +2,9 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: Hazelwild narrator off by default
+- The talking voice in Hazelwild is now **off by default** (it was "way too busy"); music and sound effects are unchanged. A 🗣️/🤐 button in the landing top bar turns it on or off (saved as `wilds.voice`). Other activities (Spelling, Violet's games) keep their voice. Test `narrator`. Verified: narrator, landing, camp, pixel-meadow, progression, music-switching pass; not verified on the real tablet.
+
 ## 2026-11-02: Pixel meadow mode (beta, off by default)
 - Grown-up area > Game modes > **Pixel meadow**: the landing becomes a floating 3D pixel island (turnable in quarter turns). Her chosen crew wander, hop, sleep with z's and are petted by tapping; friends working at camps stand by a striped tent and campfire and sparkle Glow. Clouds, butterflies, a pond, flowers, wishing-tree sparkles. Dock, Map, Today and Crew work as before over it. If WebGL fails it falls back to the flat meadow; if it runs slow (< 22 fps for 3 s) it drops effects, then uses bigger pixels.
 - New pixel engine (`wilds/pixel/`): low-res render target, fixed 512-color palette with Bayer dither, ink outlines from depth jumps, banded toon light on the island; creatures are sampled from their SVG to 40x40, inflated into pillows and meshed with only visible faces (about 3k triangles each). Rendering is capped at 30 pictures a second.
