@@ -9,6 +9,8 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
+**Sound overlap (B-21) fixed in code, test `music-switching`; ask Max whether songs still overlap.** Next after that: B-22 Camp workers on screen, B-23 workers on map, B-24 merged landing + Home crew picker.
+
 **Ask Max to confirm on the real tablet** (we can only simulate the old browser here):
 1. **Gray boxes gone** around creatures in Home Meadow and capture icons (root cause: old Chrome drops Tailwind's `:where()` button reset; fixed in `app/src/index.css`, guarded by `tests/e2e/old-chrome.js`).
 2. **Mystery capture**: a dark shadow and "A wild ??? appeared!", reveal only after the catch.

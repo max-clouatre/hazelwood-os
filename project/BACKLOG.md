@@ -6,6 +6,12 @@ Each item has an acceptance test. Add items from `FEEDBACK.md`; keep this list s
 ## Verify on the real tablet (Max)
 - **B-01 👀 P0: check the recent fixes on the tablet.** Gray boxes gone (Home Meadow, capture icons); mystery shadow in the catch screen; update button works (first update must be manual); music plays; Camp tab works. *Accept:* Max says so, or sends a photo.
 
+## Requested 2026-11-02 evening
+- **B-21 ✅ fixed, awaiting Max's ear (test `music-switching`) P0: music from different screens plays at once.** Landing/menu music keeps playing when a zone's song starts. *Accept:* switching screens leaves exactly one song audible (test measures the song scheduler and real output level).
+- **B-22 🔧 P1: Camp shows its workers moving around and animates each Glow they produce.** *Accept:* workers visible and moving in Camp; a visible sparkle when Glow is produced; basket reacts when Glow arrives.
+- **B-23 🔧 P1: workers also show on the map** (their zone's scene and the zone card on the map). *Accept:* assigned workers visible in that zone's Explore scene and on its map card.
+- **B-24 🔧 P1: merge Home meadow and landing page; Hazel chooses 5 or more friends who wander at home; rethink the flow** (Home as the landing screen, Map for zones, a "Today" panel for daily things). *Accept:* landing screen is the living meadow with her chosen crew; she can change the crew; all old features still reachable.
+
 ## Next up
 - **B-02 ⏳ P1: staging channel.** Publish a second build to `/hazelwood-os/next/` (same Pages site) so experiments can be tried on Max's phone without reaching the kids' tablet. *Accept:* `next/` loads, has its own service worker scope and save key, and `main` build is unaffected; documented in `CLAUDE.md`.
 - **B-10 ⏳ P1: performance probe page** (`#perf`): small 3D scene that reports frames per second, GPU string, memory; used on the tablet and phone to decide whether 3D is feasible. *Accept:* a number from the tablet; decision recorded in `DECISIONS.md`.

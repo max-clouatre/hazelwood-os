@@ -37,10 +37,9 @@ export default function Hazelwild(_: ActivityProps) {
   const [tips, setTips] = useState(false);
   useEffect(() => { rollDay(); }, []);
   // Songs: calm at the menus, each zone has its own while exploring (faster while catching), a fast one for duels.
-  const themeKey = view.n === "zone" || view.n === "catch" ? `${view.biome.id}:${view.n === "catch" ? "catch" : "zone"}` : view.n === "duel" ? "duel" : "hub";
+  const themeKey = view.n === "zone" || view.n === "catch" ? view.biome.id : view.n === "duel" ? "duel" : "hub"; // one song for a whole zone visit (no restart when a catch starts)
   useEffect(() => {
-    const [id, mode] = themeKey.split(":");
-    playTheme(id as ThemeId, mode === "catch");
+    playTheme(themeKey as ThemeId);
   }, [themeKey]);
   useEffect(() => () => stopMusic(), []);
   useEffect(() => { const f = () => setGuide(true); window.addEventListener("wilds:guide", f); return () => window.removeEventListener("wilds:guide", f); }, []);

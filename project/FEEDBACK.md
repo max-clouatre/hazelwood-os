@@ -39,3 +39,10 @@ Add new entries the moment they arrive (`/log-feedback`).
 - "**Why the white box around them!?** Also make sure to add **unknowns so it's a mystery** what they are trying to capture."
   - Photo showed light gray rectangles behind every creature. Reproduced: old Chrome (before 88) cannot parse Tailwind's `:where()` button reset, drops the whole rule, and every button without a background gets the default gray face. ✅ fixed + regression test.
   - Mystery: capture screen shows a dark shadow, "???"; Wild of the Day mystery; Wilddex hints where to look. ✅ (needs Max's eyes on the tablet)
+
+## 2026-11-02 (evening): after Max tried the harness delivery on the tablet
+- "Yup, it all worked it seems." 📝 (gray boxes fixed, mystery capture, update button, Camp: no complaints) [B-01]
+- **Sound bug:** "the map sounds and home screen sounds are all running together, like the landing page sounds don't stop and the map sounds play on top." ⏳ [B-21 P0]
+- **Camp:** "workers should be shown on the screen moving around and an animation should happen when they produce a glow." ⏳ [B-22]
+- "Adding workers to the **map camps also show them**, think that's a really good idea." ⏳ [B-23]
+- **Home area:** "I want her to be able to **choose which 5 or more friends are wandering** around her home area. Feels like the **home area and the landing page could be merged**... reimagine the flow and experience a bit." ⏳ [B-24]

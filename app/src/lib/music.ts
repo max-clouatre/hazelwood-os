@@ -156,8 +156,11 @@ export function scheduleBar(ctx: BaseAudioContext, out: AudioNode, id: ThemeId, 
   }
 }
 
-/** Reverb-ish echo bus feeding `dest`. */
-export function makeChain(ctx: BaseAudioContext, fx: Theme["fx"], dest: AudioNode): GainNode {
+export interface Chain { bus: GainNode; kill: (fadeSec?: number) => void }
+let chainsAlive = 0;
+/** Reverb-ish echo bus feeding `dest`. kill() fades it out fast and then disconnects EVERY node (including the echo loop),
+ *  so nothing from an old song can keep sounding or keep the audio processor busy. */
+export function makeChain(ctx: BaseAudioContext, fx: Theme["fx"], dest: AudioNode): Chain {
   const bus = ctx.createGain();
   const dry = ctx.createGain(); dry.gain.value = 1;
   const delay = ctx.createDelay(1.5); delay.delayTime.value = fx.time;
@@ -166,7 +169,16 @@ export function makeChain(ctx: BaseAudioContext, fx: Theme["fx"], dest: AudioNod
   const wet = ctx.createGain(); wet.gain.value = fx.wet;
   bus.connect(dry).connect(dest);
   bus.connect(delay); delay.connect(lp); lp.connect(fb).connect(delay); lp.connect(wet).connect(dest);
-  return bus;
+  const nodes: AudioNode[] = [bus, dry, delay, fb, lp, wet];
+  let killed = false;
+  chainsAlive++;
+  const kill = (fadeSec = 0.25) => {
+    if (killed) return; killed = true;
+    const t = ctx.currentTime;
+    for (const g of [bus.gain, wet.gain, fb.gain]) { g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(0, t + fadeSec); }
+    setTimeout(() => { nodes.forEach((n) => { try { n.disconnect(); } catch { /* already gone */ } }); chainsAlive--; }, fadeSec * 1000 + 150);
+  };
+  return { bus, kill };
 }
 
 /** Render a theme off-screen (used by the music test page to check levels). */
@@ -176,7 +188,7 @@ export async function renderTheme(id: ThemeId, bars: number, tempoMul = 1) {
   const len = Math.ceil((bars * 4 * spb + 3) * sr);
   const ctx = new OfflineAudioContext(1, len, sr);
   const master = ctx.createGain(); master.gain.value = 0.95; master.connect(ctx.destination);
-  const bus = makeChain(ctx, THEMES[id].fx, master);
+  const bus = makeChain(ctx, THEMES[id].fx, master).bus;
   for (let b = 0; b < bars; b++) scheduleBar(ctx, bus, id, b, 0.1 + b * 4 * spb, tempoMul);
   const buf = await ctx.startRendering();
   const d = buf.getChannelData(0);
@@ -186,10 +198,14 @@ export async function renderTheme(id: ThemeId, bars: number, tempoMul = 1) {
 }
 
 // ------------------------------------------------------------------ live playback
-let live: { id: ThemeId; intense: boolean; bus: GainNode; next: number; bar: number } | null = null;
+let live: { id: ThemeId; intense: boolean; chain: Chain; next: number; bar: number } | null = null;
 let master: GainNode | null = null;
 let timer: number | undefined;
 let duckUntil = 0;
+
+/** Diagnostics for tests: how many bars each song has scheduled, and which song is current. */
+export const musicDebug = { bars: {} as Record<string, number>, current: (): string | null => (live ? `${live.id}${live.intense ? "!" : ""}` : null), alive: () => chainsAlive };
+if (typeof window !== "undefined") (window as unknown as { __hwMusic: typeof musicDebug }).__hwMusic = musicDebug;
 
 const enabled = () => getState().sound && getState().music && !document.hidden;
 
@@ -205,24 +221,29 @@ function tick() {
   if (!want) { live.next = Math.max(live.next, ctx.currentTime + 0.2); return; }
   const mul = live.intense ? 1.14 : 1;
   const barLen = 4 * 60 / (THEMES[live.id].bpm * mul);
-  while (live.next < ctx.currentTime + 1.2) { scheduleBar(ctx, live.bus, live.id, live.bar, live.next, mul); live.next += barLen; live.bar++; }
+  while (live.next < ctx.currentTime + 1.2) {
+    scheduleBar(ctx, live.chain.bus, live.id, live.bar, live.next, mul); live.next += barLen; live.bar++;
+    const k = `${live.id}${live.intense ? "!" : ""}`; musicDebug.bars[k] = (musicDebug.bars[k] ?? 0) + 1;
+  }
 }
 
-/** Start (or switch to) a theme. Safe to call again with the same theme. */
+/** Start (or switch to) a theme. Safe to call again with the same theme. Only ONE song is ever alive:
+ *  the old one is cut with a quick fade and fully taken apart. */
 export function playTheme(id: ThemeId, intense = false) {
   const ctx = audioCtx(); if (!ctx) return;
   if (live && live.id === id && live.intense === intense) return;
   const m = ensureMaster(ctx);
-  if (live) { const old = live.bus; old.gain.setTargetAtTime(0, ctx.currentTime, 0.2); setTimeout(() => old.disconnect(), 1500); }
-  const bus = makeChain(ctx, THEMES[id].fx, m);
-  live = { id, intense, bus, next: ctx.currentTime + 0.15, bar: 0 };
+  if (live) live.chain.kill(0.25);
+  const chain = makeChain(ctx, THEMES[id].fx, m);
+  chain.bus.gain.setValueAtTime(0.0001, ctx.currentTime);
+  chain.bus.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.35);
+  live = { id, intense, chain, next: ctx.currentTime + 0.1, bar: 0 };
   if (timer === undefined) timer = window.setInterval(tick, 250);
   tick();
 }
 
 export function stopMusic() {
-  const ctx = audioCtx();
-  if (live && ctx) { const old = live.bus; old.gain.setTargetAtTime(0, ctx.currentTime, 0.15); setTimeout(() => old.disconnect(), 1200); }
+  if (live) live.chain.kill(0.25);
   live = null;
   if (timer !== undefined) { clearInterval(timer); timer = undefined; }
 }
