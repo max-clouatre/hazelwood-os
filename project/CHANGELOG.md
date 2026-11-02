@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: living landing, Camp yard, workers on the map
+- Landing and Home meadow merged into one screen: her meadow with a crew she chooses (5 to 10, saved in `homeCrew`; automatic top 5 for old saves; friends working at a camp stay at camp). Bottom dock: Adventure!, Today, Friends, Crew, Dex, Eggs, Duel. Today panel holds goals, Wild of the Day, Daily Visitor, Wishing Tree. Map panel lists zones with their workers and a ✨ badge when Glow waits. `Habitat.tsx` removed.
+- Camp has a yard where workers wander and hop, a ✨ rises from them, and the basket pops with +1 when Glow ticks up. Workers also wander (tap-through, behind bushes) on their zone's Explore scene.
+- Verified: fast suite (9 files) and slow suite (progression 26, catch-flow, color-by-number, duel) green; screenshots checked at phone and tablet. A real bug found by the suite: the crew layer blocked taps on the top pills (fixed, guarded). Not verified: real tablet, how it feels to play, sound on the tablet.
+- Tests: new `landing` (30 checks, phone + tablet); `progression`, `old-chrome`, `camp` and others updated for the new navigation.
+
 ## 2026-11-02: sound overlap fix
 - Music engine now keeps exactly one song chain alive (old echo loops are disconnected after a quick fade); catching a creature no longer restarts the zone song; leaving Hazelwild silences everything. Test `music-switching` (chain count, silence on exit). Verified: F on that test only; **not verified on the real tablet**.
 

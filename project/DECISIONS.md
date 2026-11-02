@@ -39,3 +39,9 @@
 **D-19 Creatures are a mystery until caught** (dark shadow, "???"). Wilddex reveals a species only after a catch; ??? tiles show where to look. Sparkling shadow hints at shiny, rare, or special-color creatures without naming them.
 
 **D-20 The project is a delivery factory with durable state.** `CLAUDE.md` (rules), `STATE.md` (where we are), `project/*` (backlog, feedback, decisions, changelog), a Playwright suite in `tests/`, and hooks (`.claude/settings.json` + `scripts/harness.js`) that load state at session start and block finishing with unsaved work. (2026-11-02)
+
+## D-21: one landing screen instead of Hub + Home (2026-11-02)
+Max asked to merge them. The landing is her meadow with a chosen crew wandering (alive first, menus second); Today/Map/Crew are sheets over it so there is one place to be. Crew is saved as ids in `wilds.homeCrew` (default `[]` = auto top 5 by growth). Friends assigned to a Camp are not in the home crew, because they are visibly working elsewhere. Min 5 / max 10 keeps the meadow lively without crowding a small tablet.
+
+## D-22: one music chain at a time (2026-11-02)
+Overlap came from echo/feedback loops that were never disconnected, plus the song restarting on every catch. `makeChain` returns a handle whose `kill()` fades and disconnects every node; only one chain lives; the zone song keeps playing through a catch. Guard: `tests/e2e/music-switching.js`.

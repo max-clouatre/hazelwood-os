@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Burst } from "../components/Burst";
 import { chime, note, oops } from "../lib/audio";
 import { say } from "../lib/speech";
@@ -11,6 +11,7 @@ import { GlowIcon } from "./Icons";
 import { stageFor } from "./game";
 import { ModeTabs } from "./ModeTabs";
 import type { Mode } from "./ModeTabs";
+import { Roamers } from "./Roamers";
 import { Scene } from "./Scene";
 import { ELEMENTS, FAMILIES, SPECIES_BY_ID } from "./species";
 import type { Biome } from "./species";
@@ -43,6 +44,11 @@ export function Camp({ biome, mode, onMode, onBack }: { biome: Biome; mode: Mode
   const fillPct = workers.length ? Math.min(100, ((cap - full) / cap) * 100) : 0;
   const boostMs = boostLeftMs(w, now);
   const free = slotsOf(camp) - workers.length;
+  // when the whole-number Glow count goes up, pop the basket and float a +1 over it
+  const whole = Math.floor(pending);
+  const [ticks, setTicks] = useState(0);
+  const lastWhole = useRef(whole);
+  useEffect(() => { if (whole > lastWhole.current) setTicks((t) => t + 1); lastWhole.current = whole; }, [whole]);
 
   const collect = () => {
     const n = collectCamp(biome.id);
@@ -78,6 +84,13 @@ export function Camp({ biome, mode, onMode, onBack }: { biome: Biome; mode: Mode
       <ModeTabs biome={biome} mode={mode} onMode={onMode} />
 
       <div className="absolute inset-x-0 bottom-0 top-[8.6rem] overflow-y-auto px-3 pb-3">
+        {/* the yard: working friends wander about and sparkle as they make Glow */}
+        <div className="relative mx-auto mb-2 h-32 max-w-4xl overflow-hidden rounded-3xl bg-black/20 sm:h-36" data-testid="camp-yard">
+          {workers.length === 0
+            ? <p className="absolute inset-0 flex items-center justify-center px-4 text-center text-lg font-bold">Add a friend and watch them work here!</p>
+            : <Roamers list={workers} size="h-16 w-16 sm:h-20 sm:w-20" top={[22, 52]} sparkle onTap={(o) => setCard(o.id)} />}
+          {ticks > 0 && <span key={ticks} aria-hidden className="pointer-events-none absolute right-3 top-2 rounded-full bg-mustard px-3 py-1 text-xl font-bold text-black" style={{ animation: "floatup 1.6s ease-out forwards" }}>+1 ✨</span>}
+        </div>
         <div className="mx-auto grid max-w-4xl gap-3 sm:grid-cols-2">
           {/* left: workers + basket */}
           <div className="flex flex-col gap-2">
@@ -104,7 +117,7 @@ export function Camp({ biome, mode, onMode, onBack }: { biome: Biome; mode: Mode
             <div className="rounded-3xl bg-white/90 p-3 text-emerald-950">
               <div className="flex items-center justify-between"><p className="text-lg font-bold">🧺 Camp basket</p><p className="text-sm">Making <b>{fmt(rate)}</b> Glow/min{boostMs > 0 && <span className="ml-1 rounded-full bg-yellow-300 px-2 font-bold">⭐ ×{T.boostMult}</span>}</p></div>
               <div className="my-1 flex items-center gap-2">
-                <GlowIcon className="h-10 w-10" /><p className="text-4xl font-bold">{Math.floor(pending)}</p>
+                <span key={ticks} style={ticks ? { animation: "basketpop 0.5s ease-out" } : undefined}><GlowIcon className="h-10 w-10" /></span><p className="text-4xl font-bold">{Math.floor(pending)}</p>
                 <div className="flex-1"><div className="h-4 overflow-hidden rounded-full bg-emerald-200"><div className="h-full bg-mustard transition-all" style={{ width: `${fillPct}%` }} /></div>
                   <p className="text-xs">{!workers.length ? "Add a friend to start working" : full <= 0 ? "Basket is full! Collect it." : `Full in ${Math.ceil(full)} min · works up to ${cap} min`}</p></div>
               </div>

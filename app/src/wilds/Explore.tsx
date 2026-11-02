@@ -26,6 +26,8 @@ export const LURE_COST = 8;
 
 interface Pop { id: number; x: number; y: number; icon: PopKind; text: string; good: boolean }
 
+import { Roamers } from "./Roamers";
+import { workersOf } from "./camp";
 export function Explore({ biome, onEncounter, onBack, tabs }: { biome: Biome; onEncounter: (draft: Owned, lure: boolean) => void; onBack: () => void; tabs?: ReactNode }) {
   const [round, setRound] = useState(0);
   const [toast, setToast] = useState("Tap a rustling spot to look!");
@@ -84,6 +86,7 @@ export function Explore({ biome, onEncounter, onBack, tabs }: { biome: Biome; on
   return (
     <div className="absolute inset-0">
       <Scene biome={biome} />
+      {w.modes.camp && <div className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }} data-testid="map-workers"><Roamers list={workersOf(w, biome.id)} size="h-14 w-14 sm:h-16 sm:w-16" top={[44, 74]} sparkle interactive={false} /></div>}
       <div className="absolute inset-x-0 top-2 flex items-center justify-between gap-2 px-3">
         <button onClick={onBack} className="rounded-2xl bg-white/90 px-4 py-2 text-xl font-bold text-purple-800 active:scale-95">◀ Map</button>
         <p className="min-w-0 flex-1 truncate rounded-full bg-black/40 px-4 py-1 text-center text-lg font-bold">{toast}</p>

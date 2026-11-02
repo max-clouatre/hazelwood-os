@@ -10,13 +10,15 @@ const ok = (l, v) => console.log((v ? 'PASS ' : 'FAIL ') + l);
   await p.evaluate((s) => localStorage.setItem('hwos:v1', JSON.stringify(s)), wildsState([owned('a', 'ducky', 0)]));
   await p.reload(); await p.waitForTimeout(600);
   await p.getByText('Hazel', { exact: true }).click(); await p.getByText('Hazelwild').first().click(); await p.waitForTimeout(500);
+  await p.getByRole('button',{name:/Today/}).click(); await p.waitForTimeout(300);
   const hubText = await p.evaluate(() => document.getElementById('root').innerText);
   ok('Wild of the Day is a mystery until caught (shows a hint instead of a name)', /Wild of the Day[\s\S]*(\?\?\? Mystery[\s\S]*Hint:|appears more often today)/.test(hubText));
+  await p.getByRole('button',{name:'Close'}).click(); await p.waitForTimeout(200);
   await p.locator('button', { hasText: /^📖Dex/ }).click(); await p.waitForTimeout(400);
   ok('unknown creatures show ??? and where to look', (await p.getByText('???', { exact: true }).count()) > 5);
   await p.screenshot({ path: `${OUT}/shots/mystery-dex.png` });
   await p.getByText('◀ Back').click(); await p.waitForTimeout(300);
-  await p.locator('button', { hasText: 'Meadow' }).first().click(); await p.waitForTimeout(500);
+  await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(500);
   let found = false;
   for (let i = 0; i < 40 && !found; i++) {
     await p.getByLabel('Rustling bush').first().click({ timeout: 3000 }).catch(() => {}); await p.waitForTimeout(1100);

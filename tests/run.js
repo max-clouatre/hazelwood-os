@@ -18,6 +18,7 @@ const TESTS = [
   { name: "update", file: "update.js", fast: true, own: true, what: "Grown-up update button installs a newer build, keeps progress" },
   { name: "music", file: "music.js", fast: true, what: "every song renders at sane levels; live switching has no errors" },
   { name: "music-switching", file: "music-switching.js", fast: true, what: "only one song chain alive; leaving Hazelwild silences it" },
+  { name: "landing", file: "landing.js", fast: true, what: "merged landing meadow, crew picker, workers in camp yard and on the map" },
   { name: "catch-flow", file: "catch-flow.js", fast: false, what: "starter, explore, throw, catch, reveal" },
   { name: "progression", file: "progression.js", fast: false, what: "evolution branches, badges, goals, berry guide, eggs" },
   { name: "color-by-number", file: "color-by-number.js", fast: false, what: "Hazel's color-by-number pages complete" },

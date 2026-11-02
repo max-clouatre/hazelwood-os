@@ -20,10 +20,11 @@ const ok = (l,v)=>console.log((v?'PASS ':'FAIL ')+l);
   await p.screenshot({path:`${S}/shots/w-hub.png`});
   
   // Wishing tree
-  await p.getByText('Wishing Tree').click();
+  await p.getByRole('button',{name:/Today/}).click(); await p.waitForTimeout(300); await p.getByText('Wishing Tree').click(); await p.getByRole('button',{name:'Close'}).click(); await p.waitForTimeout(200);
+  
   
   // Explore meadow until an encounter
-  await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(400);
+  await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(400);
   await p.screenshot({path:`${S}/shots/w-explore.png`});
   let enc=false;
   for (let i=0;i<40 && !enc;i++){

@@ -19,7 +19,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   ok('starter names are plain animals', (await p.getByText('Mousey',{exact:true}).isVisible()) && (await p.getByText('Fishy',{exact:true}).isVisible()) && (await p.getByText('Drakey',{exact:true}).isVisible()));
   await p.getByText('Drakey',{exact:true}).click(); await p.waitForTimeout(300);
   await p.getByText('Welcome home!').click(); await p.waitForTimeout(400); await p.getByText("Let's go!").click();
-  await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(400);
+  await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(400);
   let near = 0, tried = 0, seenKinds = new Set();
   for (let i=0;i<14 && tried<10;i++) {
     if (await p.getByText('Throw!').isVisible().catch(()=>false)) { await p.getByRole('button',{name:'Run'}).click(); await p.waitForTimeout(600); continue; }

@@ -9,7 +9,7 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
-**Sound overlap (B-21) fixed in code, test `music-switching`; ask Max whether songs still overlap.** Next after that: B-22 Camp workers on screen, B-23 workers on map, B-24 merged landing + Home crew picker.
+**Newest (unseen by Max):** sound overlap fix (B-21), Camp yard with wandering/sparkling workers (B-22), workers on the map and zone cards (B-23), merged landing meadow with crew picker, Today/Map sheets (B-24, replaces Hub and Home). Ask Max: do songs still overlap? Is the landing clearer? Does Hazel pick her own crew? Are the Camp sparkles fun?
 
 **Ask Max to confirm on the real tablet** (we can only simulate the old browser here):
 1. **Gray boxes gone** around creatures in Home Meadow and capture icons (root cause: old Chrome drops Tailwind's `:where()` button reset; fixed in `app/src/index.css`, guarded by `tests/e2e/old-chrome.js`).
@@ -58,7 +58,7 @@ Error boundary around every activity + crash log shown in the Grown-up area. Shi
 - **Special colors:** shiny 1 in 16; golden, storm, shadow, autumn (biome-weighted).
 - **Zones:** Meadow, Forest (4 species to unlock), Shore (8), Cave (12), Peak (16). Each zone has mode tabs: **Explore** (default) and **Camp** (beta).
 - **Explore/catch:** tap rustling spots (zone-specific vector icons); big result message at the tap; finds: creature 50%, berries 24%, friend-snack bond 10%, egg 4%. **Creatures are a mystery shadow until caught**; hints: sparkle if shiny/rare/special color. Timing-ring throw, 3 tries, sweet berry +15%. Berry bush (+2 per 2 min per zone), lure (8 berries).
-- **Care:** pet (3 per day each), feed (2 berries, favorite food +5, secret favorite), rename, Friends list, **Home meadow** where friends wander.
+- **Care:** pet (3 per day each), feed (2 berries, favorite food +5, secret favorite), rename, Friends list, the **landing meadow** where her chosen crew wanders (tap to pet).
 - **Collection:** Wilddex by family with ??? tiles that hint where to look; badges: family (+20 berries), form master (+10), **Species Mastery ★** at 3/8/20/50/100 catches.
 - **Economy:** ⭐ = 3 berries; berry guide on the 🍓 pill everywhere; daily Wishing Tree (+5), Daily Visitor, Wild of the Day (mystery), 3 daily goals, duel wins, badges.
 - **Eggs:** 15 berries, hatch after 5 ⭐ earned anywhere. **Duels:** 6-element wheel with science reasons.
@@ -70,7 +70,7 @@ Error boundary around every activity + crash log shown in the Grown-up area. Shi
 app/src/App.tsx            profile picker > home > activity; time limit; update check; ErrorBoundary
 app/src/activities/        one file per activity + registry.ts (cards) + types.ts
 app/src/wilds/             Hazelwild: species.ts (data), Creature.tsx (art), game.ts (rules), camp.ts + mastery.ts (incremental),
-                           Hub / Zone / Explore / Camp / Catch / Reveal / Collection / Dex / Eggs / Duel / Habitat / Overlays / BerryGuide / Goals
+                           Landing (meadow + dock + Map/Today/Crew sheets) / Roamers / Zone / Explore / Camp / Catch / Reveal / Collection / Dex / Eggs / Duel / Overlays / BerryGuide / Goals
 app/src/lib/               store.ts (all saved state), audio.ts, music.ts, speech.ts, update.ts, errlog.ts, shims.ts
 app/src/components/        TopBar, ParentArea (Grown-up), ParentGate, BreakScreen, ErrorBoundary, Burst, StickerOverlay
 app/src/coloring/          SVG coloring pages + color-by-number keys
@@ -81,7 +81,7 @@ docs/                      BUILT output served by Pages (do not edit)     guide.
 ## Data model (saves)
 `localStorage["hwos:v1"]` = `{ stars, stickers, newSticker, letterRight, countRight, traceRight, spelling, misses, limitMin, played, coloring,
 colored, sound, music, wilds }`. `wilds` (`wilds/types.ts`): `started, owned[], seen, berries, fromStars, eggs, day, visitorDone, treeDone,
-duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp}`.
+duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp}, homeCrew[]`.
 Each owned friend: `id, sp, name, shiny, variant?, seed, pers, xp, got, pet, foods[2], branch?, level?`. Other keys: `hwos:lasterror`. **Every new field needs a default so old saves load.**
 
 ## Quality gates (see CLAUDE.md section 3)

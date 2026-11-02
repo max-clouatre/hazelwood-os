@@ -23,6 +23,8 @@ const T = CAMP_TUNING;
 export const emptyCamp = (now = Date.now()): Camp => ({ workers: [], extra: 0, basket: 0, speed: 0, since: now });
 export const campOf = (w: Wilds, zone: string): Camp => w.camps[zone] ?? emptyCamp(0);
 export const slotsOf = (c: Camp) => T.baseSlots + c.extra;
+/** The friends currently working at a zone's camp (shown on screen, on the map and in the camp yard). */
+export const workersOf = (w: Wilds, zone: string): Owned[] => campOf(w, zone).workers.map((id) => w.owned.find((o) => o.id === id)).filter(Boolean) as Owned[];
 export const levelOf = (o: Owned) => o.level ?? 1;
 export const capMinutes = (c: Camp) => T.baseMinutes + T.basketMinutes * c.basket;
 
@@ -38,7 +40,6 @@ export function workerBreakdown(w: Wilds, zone: string, o: Owned, teammates: Own
   const family = 1 + T.familyBonus * Math.min(T.familyMax, sameFamily);
   return { rate: T.baseRate * form * level * mastery * home * family, form, level, mastery, stars, home, family, sameFamily };
 }
-const workersOf = (w: Wilds, zone: string) => campOf(w, zone).workers.map((id) => w.owned.find((o) => o.id === id)).filter(Boolean) as Owned[];
 export function campRate(w: Wilds, zone: string): number {
   const c = campOf(w, zone), team = workersOf(w, zone);
   return team.reduce((n, o) => n + workerBreakdown(w, zone, o, team).rate, 0) * (1 + T.speedBonus * c.speed);
@@ -111,3 +112,14 @@ export function train(ownedId: string): boolean {
   return true;
 }
 export const modeEnabled = (mode: "camp") => getState().wilds.modes[mode];
+
+/** Who wanders on the landing meadow: her chosen crew, else the most grown friends. Friends at work in a camp are busy there.
+ *  Always returns at least CREW_MIN (if she owns that many) and at most CREW_MAX. */
+export const CREW_MIN = 5, CREW_MAX = 10;
+export function homeCrew(w: Wilds): Owned[] {
+  const busy = new Set(Object.keys(w.camps).flatMap((z) => w.camps[z].workers));
+  const free = w.owned.filter((o) => !busy.has(o.id));
+  const chosen = w.homeCrew.map((id) => free.find((o) => o.id === id)).filter(Boolean) as Owned[];
+  const rest = free.filter((o) => !chosen.includes(o)).sort((a, b) => b.xp - a.xp);
+  return [...chosen, ...rest.slice(0, Math.max(0, CREW_MIN - chosen.length))].slice(0, CREW_MAX);
+}

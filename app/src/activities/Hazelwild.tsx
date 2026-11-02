@@ -6,12 +6,12 @@ import { Duel } from "../wilds/Duel";
 import { Eggs } from "../wilds/Eggs";
 import { Zone } from "../wilds/Zone";
 import type { Mode } from "../wilds/ModeTabs";
-import { Hub, Starter } from "../wilds/Hub";
-import type { Nav } from "../wilds/Hub";
+import { Starter } from "../wilds/Hub";
+import { Landing } from "../wilds/Landing";
+import type { Nav } from "../wilds/Landing";
 import { Detail, MyWilds } from "../wilds/Collection";
 import { Reveal } from "../wilds/Reveal";
 import { BerryGuide } from "../wilds/BerryGuide";
-import { Habitat } from "../wilds/Habitat";
 import { BadgeOverlay, Tips } from "../wilds/Overlays";
 import { addOwned, bump, dailyVisitorSpecies, makeOwned, rollDay, rollShiny, rollVariant, setWilds, wilds } from "../wilds/game";
 import { SPECIES_BY_ID } from "../wilds/species";
@@ -24,7 +24,7 @@ import type { ThemeId } from "../lib/music";
 import type { ActivityProps } from "./types";
 
 type View =
-  | { n: "hub" } | { n: "zone"; biome: Biome; mode: Mode } | { n: "wilds" } | { n: "detail"; id: string } | { n: "dex" } | { n: "eggs" } | { n: "duel" } | { n: "home" }
+  | { n: "hub" } | { n: "zone"; biome: Biome; mode: Mode } | { n: "wilds" } | { n: "detail"; id: string } | { n: "dex" } | { n: "eggs" } | { n: "duel" }
   | { n: "catch"; draft: Owned; biome: Biome; bonus: number; headline: string; visitor: boolean };
 
 export default function Hazelwild(_: ActivityProps) {
@@ -67,7 +67,7 @@ export default function Hazelwild(_: ActivityProps) {
   return (
     <div className="relative h-full overflow-hidden">
       {view.n === "hub" && (
-        <Hub w={w}
+        <Landing w={w}
           onExplore={(b) => setView({ n: "zone", biome: b, mode: "explore" })}
           onVisitor={() => startCatch(makeOwned(dailyVisitorSpecies(), rollShiny(0.06), undefined, rollVariant()), BIOMES[0], 0.25, "Daily Visitor:", true)}
           onNav={(n: Nav) => setView({ n })} onTips={() => setTips(true)} />
@@ -86,7 +86,6 @@ export default function Hazelwild(_: ActivityProps) {
       {view.n === "dex" && <Dex onBack={toHub} />}
       {view.n === "eggs" && <Eggs onBack={toHub} onAdopt={adopt} />}
       {view.n === "duel" && <Duel onBack={toHub} />}
-      {view.n === "home" && <Habitat onBack={toHub} />}
 
       {w.newBadge && !draft && !legend && <BadgeOverlay id={w.newBadge} />}
       {tips && <Tips onClose={() => { setTips(false); setWilds(() => ({ tipSeen: true })); }} />}

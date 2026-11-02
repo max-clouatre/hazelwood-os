@@ -16,7 +16,7 @@ const path = require('path');
   let s = await st();
   ok('hub song plays, one chain alive ' + JSON.stringify(s), s.cur === 'hub' && s.alive === 1);
   for (let i = 0; i < 4; i++) {
-    await p.locator('button', { hasText: 'Meadow' }).first().click(); await p.waitForTimeout(400);
+    await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(400);
     await p.getByText('◀ Map').first().click(); await p.waitForTimeout(400);
   }
   await p.waitForTimeout(1500);

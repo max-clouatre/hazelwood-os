@@ -20,7 +20,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   ok('how-to-play guide appears after first friend', await p.getByText('How to play Hazelwild').isVisible());
   ok('guide explains berries', await p.getByText(/Tap the 🍓 any time/).isVisible());
   await p.getByText("Let's go!").click(); await p.waitForTimeout(300);
-  ok('hub shows 3 daily goals', (await p.locator('text=/^0\\/\\d · \\+\\d+/').count()) === 3);
+  await p.getByRole('button',{name:/Today/}).click(); await p.waitForTimeout(300); ok('Today panel shows 3 daily goals', (await p.locator('text=/^0\\/\\d · \\+\\d+/').count()) === 3); await p.getByRole('button',{name:'Close'}).click(); await p.waitForTimeout(200); 
   const b0 = await berries(p); console.log('  starting berries', b0);
   await p.locator('button[aria-label="How to get more berries"]').first().click(); await p.waitForTimeout(300);
   await p.screenshot({path:`${S}/shots/n-guide.png`});
@@ -28,7 +28,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   await p.getByRole('button',{name:'Get +5'}).click(); await p.waitForTimeout(200);
   await p.getByRole('button',{name:'Close'}).click(); await p.waitForTimeout(200);
   ok('wishing tree from guide adds 5', (await berries(p)) === b0 + 5);
-  await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(300);
+  await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.getByText('Sunny Meadow').click(); await p.waitForTimeout(300);
   const b1 = await berries(p);
   await p.getByRole('button',{name:/Berry Bush/}).click(); await p.waitForTimeout(250);
   ok('berry bush gives +2', (await berries(p)) === b1 + 2);
@@ -82,12 +82,11 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   await p.getByText('Mousey').first().click(); await p.waitForTimeout(250);
   await p.screenshot({path:`${S}/shots/n-dexinfo.png`});
   await p.mouse.click(10,300); await p.getByText('◀ Back').click(); await p.waitForTimeout(200);
-  // Habitat
-  await p.locator('button',{hasText:/Home$/}).last().click(); await p.waitForTimeout(500);
+  // Landing meadow: friends wander there and can be petted
   await p.screenshot({path:`${S}/shots/n-habitat.png`});
-  await p.locator('button',{hasText:/Mousey|Leaf Mouse|Bunny|Grove/}).first().click({force:true}); await p.waitForTimeout(250);
-  ok('habitat creature reacts to petting', await p.locator('span.anim-pop').first().isVisible().catch(()=>false));
-  await p.getByText('◀ Back').click(); await p.waitForTimeout(200);
+  await p.getByTestId('landing-crew').locator('button').first().click({force:true}); await p.waitForTimeout(250);
+  ok('landing creature reacts to petting', await p.locator('span.anim-pop').first().isVisible().catch(()=>false));
+
   // Goals: complete 'feed' (we fed 7 times) if it was one of today's goals, else just check progress text exists
   const goalsState = await p.evaluate(()=>JSON.parse(localStorage.getItem('hwos:v1')).wilds.goals.list.map(g=>[g.kind,g.have,g.target]));
   console.log('  goals now:', JSON.stringify(goalsState));
@@ -120,6 +119,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   await p.reload(); await p.waitForTimeout(500);
   await p.getByText('Hazel',{exact:true}).click(); await p.getByText('Hazelwild').first().click(); await p.waitForTimeout(400);
   const bb = await berries(p);
+  await p.getByRole('button',{name:/Today/}).click(); await p.waitForTimeout(250);
   await p.getByRole('button',{name:/Claim \+6/}).click(); await p.waitForTimeout(250);
   ok('goal claim pays +6', (await berries(p)) === bb + 6);
   ok('claimed goal marked done', await p.locator('text=✅').first().isVisible());
@@ -133,8 +133,8 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   await p.getByText('Hazel',{exact:true}).click(); await p.getByText('Hazelwild').first().click(); await p.waitForTimeout(400);
   const hOver = async (label) => { const o = await p.evaluate(() => { const w=innerWidth; return [...document.querySelectorAll('button,p,input')].filter(e=>{const r=e.getBoundingClientRect();return r.width&&(r.right>w+2||r.left<-2)&&!e.closest('.overflow-y-auto,.overflow-auto')}).map(e=>(e.textContent||'').slice(0,18)); }); console.log(o.length?'FAIL':'PASS', 'phone', label, o.length? JSON.stringify(o):''); };
   await hOver('hub');
-  for (const [re,label] of [[/Friends$/,'friends'],[/Home$/,'habitat'],[/Dex$/,'dex'],[/Eggs/,'eggs'],[/Duel$/,'duel']]) { await p.locator('button',{hasText:re}).last().click(); await p.waitForTimeout(350); await p.screenshot({path:`${S}/shots/n-ph-${label}.png`}); await hOver(label); await p.getByText('◀ Back').first().click(); await p.waitForTimeout(200); }
-  await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(1200); await hOver('explore'); // wait for the pop-in animation to settle
+  for (const [re,label] of [[/Friends$/,'friends'],[/Dex$/,'dex'],[/Eggs/,'eggs'],[/Duel$/,'duel']]) { await p.locator('button',{hasText:re}).last().click(); await p.waitForTimeout(350); await p.screenshot({path:`${S}/shots/n-ph-${label}.png`}); await hOver(label); await p.getByText('◀ Back').first().click(); await p.waitForTimeout(200); }
+  await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(1200); await hOver('explore'); // wait for the pop-in animation to settle
   console.log('errors', errs);
   await b.close();
 })();
