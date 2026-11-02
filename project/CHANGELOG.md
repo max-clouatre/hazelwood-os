@@ -2,6 +2,9 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: Pixel Lab experiment (Grown-up area)
+- Grown-up area > Labs > **Pixel Lab**: our SVG creatures sampled to 36x36 pixel art, built from cubes in a three.js scene drawn at low resolution (Chunky/Classic/Fine) and enlarged with hard edges; live fps counter doubles as the first tablet performance probe (B-10). three.js is lazy-loaded (separate 670 KB chunk, not used by the game). Test `pixel-lab` (slow list; software GL ~13 fps here, **real tablet fps unknown**).
+
 ## 2026-11-02: living landing, Camp yard, workers on the map
 - Landing and Home meadow merged into one screen: her meadow with a crew she chooses (5 to 10, saved in `homeCrew`; automatic top 5 for old saves; friends working at a camp stay at camp). Bottom dock: Adventure!, Today, Friends, Crew, Dex, Eggs, Duel. Today panel holds goals, Wild of the Day, Daily Visitor, Wishing Tree. Map panel lists zones with their workers and a ✨ badge when Glow waits. `Habitat.tsx` removed.
 - Camp has a yard where workers wander and hop, a ✨ rises from them, and the basket pops with +1 when Glow ticks up. Workers also wander (tap-through, behind bushes) on their zone's Explore scene.

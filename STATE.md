@@ -9,6 +9,8 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
+**Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
+
 **Newest (unseen by Max):** sound overlap fix (B-21), Camp yard with wandering/sparkling workers (B-22), workers on the map and zone cards (B-23), merged landing meadow with crew picker, Today/Map sheets (B-24, replaces Hub and Home). Ask Max: do songs still overlap? Is the landing clearer? Does Hazel pick her own crew? Are the Camp sparkles fun?
 
 **Ask Max to confirm on the real tablet** (we can only simulate the old browser here):

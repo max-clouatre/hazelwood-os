@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { DEFAULT_SPELLING, playedToday, update, useStore } from "../lib/store";
 import { initialWilds } from "../wilds/types";
 import { clearError, lastError } from "../lib/errlog";
@@ -6,6 +6,7 @@ import { BUILD, latestKnown, refreshAppFiles, updateNow, useUpdateInfo } from ".
 import type { ProfileId } from "../lib/store";
 import { STICKERS } from "../lib/stickers";
 
+const PixelLab = lazy(() => import("../wilds/PixelLab").then((m) => ({ default: m.PixelLab })));
 const LIMITS = [0, 15, 20, 30, 45, 60];
 
 function Editor({ words }: { words: string[] }) {
@@ -32,6 +33,7 @@ function Editor({ words }: { words: string[] }) {
 export function ParentArea({ onClose }: { onClose: () => void }) {
   const s = useStore();
   const [confirm, setConfirm] = useState(false);
+  const [lab, setLab] = useState(false);
   const [confirmW, setConfirmW] = useState(false);
   const [, setTick] = useState(0);
   const [upd, setUpd] = useState<string>("");
@@ -58,6 +60,12 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           <p className="mb-2 text-sm text-white/70">Explore is always on. New ways to play appear as tabs inside each zone. Turn an experiment off if it isn't working.</p>
           <label className="flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={s.wilds.modes.camp} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, camp: e.target.checked } } }))} />
             <span><b>🏕️ Camp</b> (beta): friends work and make Glow while she's away; train them up.</span></label>
+        </section>
+
+        <section className="rounded-2xl bg-white/10 p-4">
+          <h2 className="mb-2 text-xl font-bold">Labs (try-outs for you)</h2>
+          <p className="mb-2 text-sm text-white/70">Experiments that are not part of the kids' game. Opening one loads extra code only then.</p>
+          <button onClick={() => setLab(true)} className="rounded-xl bg-mustard px-5 py-3 text-xl font-bold text-black active:scale-95">🧊 Pixel Lab (3D pixel art)</button>
         </section>
 
         <section className="rounded-2xl bg-white/10 p-4">
@@ -130,6 +138,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           )}
         </section>
       </div>
+      {lab && <Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-night text-xl">Loading…</div>}><PixelLab onClose={() => setLab(false)} /></Suspense>}
     </div>
   );
 }
