@@ -3,7 +3,7 @@ import { chime } from "../lib/audio";
 import { say } from "../lib/speech";
 import { useStore } from "../lib/store";
 import { BerryPill } from "./BerryGuide";
-import { buyEgg, EGG_COST, EGG_NEED, hatchSpecies, makeOwned, removeEgg, rollShiny } from "./game";
+import { buyEgg, EGG_COST, EGG_NEED, hatchSpecies, makeOwned, removeEgg, rollShiny, rollVariant } from "./game";
 import { Back } from "./Collection";
 import { Reveal } from "./Reveal";
 import type { Owned } from "./types";
@@ -19,7 +19,7 @@ export function Eggs({ onBack, onAdopt }: { onBack: () => void; onAdopt: (o: Own
     setShaking(id); chime();
     window.setTimeout(() => {
       const sp = hatchSpecies();
-      setHatch({ egg: id, draft: makeOwned(sp, rollShiny(1 / 16)) });
+      setHatch({ egg: id, draft: makeOwned(sp, rollShiny(1 / 16), undefined, rollVariant()) });
       setShaking(null);
     }, 1400);
   };

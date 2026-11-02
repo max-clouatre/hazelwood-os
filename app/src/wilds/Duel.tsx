@@ -8,8 +8,9 @@ import { Back } from "./Collection";
 import { Creature } from "./Creature";
 import { COLLECTABLE, ELEMENTS, SPECIES_BY_ID } from "./species";
 import type { ElementId, Personality, Species } from "./species";
+import type { Owned } from "./types";
 
-interface Fighter { oid?: string; sp: Species; stage: 1 | 2 | 3; name: string; max: number; hp: number; shiny: boolean; seed: number; pers: Personality }
+interface Fighter { variant?: Owned["variant"]; oid?: string; sp: Species; stage: 1 | 2 | 3; name: string; max: number; hp: number; shiny: boolean; seed: number; pers: Personality }
 const maxHp = (stage: number) => 70 + 25 * (stage - 1);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const mult = (a: ElementId, d: ElementId) => (ELEMENTS[a].beats === d ? 1.6 : ELEMENTS[d].beats === a ? 0.6 : 1);
@@ -56,7 +57,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
     const team: Fighter[] = sel.map((id) => {
       const o = w.owned.find((x) => x.id === id)!;
       const stage = stageFor(o.xp);
-      return { oid: id, sp: SPECIES_BY_ID[o.sp], stage, name: o.name, max: maxHp(stage), hp: maxHp(stage), shiny: o.shiny, seed: o.seed, pers: o.pers };
+      return { oid: id, sp: SPECIES_BY_ID[o.sp], stage, name: o.name, max: maxHp(stage), hp: maxHp(stage), shiny: o.shiny, variant: o.variant, seed: o.seed, pers: o.pers };
     });
     const avg = Math.round(team.reduce((a, f) => a + f.stage, 0) / team.length);
     const foes: Fighter[] = team.map((_, i) => {
@@ -150,7 +151,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
             const on = sel.includes(o.id); const st = stageFor(o.xp);
             return (
               <button key={o.id} onClick={() => toggle(o.id)} className={`relative rounded-2xl p-1 text-center active:scale-95 ${on ? "bg-yellow-300/40 ring-4 ring-yellow-300" : "bg-white/10"}`}>
-                <Creature species={SPECIES_BY_ID[o.sp]} stage={st} shiny={o.shiny} seed={o.seed} personality={o.pers} className="mx-auto h-20 w-20" />
+                <Creature species={SPECIES_BY_ID[o.sp]} stage={st} shiny={o.shiny} variant={o.variant} seed={o.seed} personality={o.pers} className="mx-auto h-20 w-20" />
                 <p className="truncate text-sm font-bold">{o.name}</p>
                 <p className="text-xs"><span className="emoji">{ELEMENTS[SPECIES_BY_ID[o.sp].element].emoji}</span> Form {st}</p>
                 {on && <span className="absolute right-1 top-1 rounded-full bg-yellow-300 px-2 text-sm font-bold text-black">{sel.indexOf(o.id) + 1}</span>}
@@ -171,7 +172,7 @@ export function Duel({ onBack }: { onBack: () => void }) {
       {phase === "fight" && me && foe && (
         <>
           <div className="grid min-h-0 flex-1 grid-cols-2 items-center gap-3">
-            <div className="flex flex-col items-center gap-1"><div className={hit === "p" ? "anim-shake" : "anim-bob"}><Creature species={me.sp} stage={me.stage} shiny={me.shiny} seed={me.seed} personality={me.pers} mood={me.hp <= 0 ? "sleep" : "happy"} className="h-40 w-40 sm:h-48 sm:w-48" /></div>{bar(me)}<p className="text-xs text-white/70">Team {mine.filter((f) => f.hp > 0).length}/{mine.length} ready</p></div>
+            <div className="flex flex-col items-center gap-1"><div className={hit === "p" ? "anim-shake" : "anim-bob"}><Creature species={me.sp} stage={me.stage} shiny={me.shiny} variant={me.variant} seed={me.seed} personality={me.pers} mood={me.hp <= 0 ? "sleep" : "happy"} className="h-40 w-40 sm:h-48 sm:w-48" /></div>{bar(me)}<p className="text-xs text-white/70">Team {mine.filter((f) => f.hp > 0).length}/{mine.length} ready</p></div>
             <div className="flex flex-col items-center gap-1"><div className={hit === "o" ? "anim-shake" : "anim-bob"}><Creature species={foe.sp} stage={foe.stage} seed={foe.seed} personality={foe.pers} mood={foe.hp <= 0 ? "sleep" : "happy"} className="h-40 w-40 sm:h-48 sm:w-48" /></div>{bar(foe)}<p className="text-xs text-white/70">Their team {theirs.filter((f) => f.hp > 0).length}/{theirs.length}</p></div>
           </div>
           <p className="min-h-[3.2rem] rounded-2xl bg-black/40 px-3 py-2 text-center text-lg font-bold">{log}</p>

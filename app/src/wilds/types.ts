@@ -1,4 +1,4 @@
-import type { ElementId, Personality } from "./species";
+import type { ElementId, Personality, VariantId } from "./species";
 
 export type Branch = "sun" | "moon";
 
@@ -7,6 +7,7 @@ export interface Owned {
   xp: number; got: string; pet: { day: string; n: number };
   foods?: [number, number]; // day foods and night foods fed so far; decides the final form
   branch?: Branch; // final form (decided when it reaches form 3)
+  variant?: VariantId; // special color: golden, storm, shadow, autumn
 }
 export type GoalKind = "catch" | "catchEl" | "feed" | "pet" | "explore" | "duel" | "evolve";
 export interface Goal { id: string; kind: GoalKind; el?: ElementId; target: number; have: number; reward: number; claimed: boolean }

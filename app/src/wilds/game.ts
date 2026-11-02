@@ -1,7 +1,7 @@
 import { getState, update } from "../lib/store";
 import { hashString, mulberry32 } from "./colors";
-import { BIOMES, COLLECTABLE, ELEMENTS, FAMILIES, FOOD_COST, FOOD_SIDE, FORM_KEYS, SPECIES_BY_ID, STAGE_AT, familyMembers } from "./species";
-import type { ElementId, FoodId, FormKey, Personality, Species } from "./species";
+import { BIOMES, COLLECTABLE, ELEMENTS, FAMILIES, FOOD_COST, FOOD_SIDE, FORM_KEYS, LEGACY_NAMES, SPECIES_BY_ID, STAGE_AT, familyMembers } from "./species";
+import type { ElementId, FoodId, FormKey, Personality, Species, VariantId } from "./species";
 import type { Branch, Egg, Goal, GoalKind, Owned, Wilds } from "./types";
 
 export const todayKey = () => new Date().toDateString();
@@ -17,6 +17,10 @@ export const addBerries = (n: number) => setWilds((w) => ({ berries: w.berries +
 // ---------------------------------------------------------------- daily rollover, Wild of the Day
 export function rollDay() {
   const w = wilds();
+  // Names changed to plain animal names: rename friends that still carry an old default name.
+  if (w.owned.some((o) => LEGACY_NAMES[o.sp]?.includes(o.name))) {
+    setWilds((x) => ({ owned: x.owned.map((o) => { const old = LEGACY_NAMES[o.sp]; if (!old?.includes(o.name)) return o; return { ...o, name: SPECIES_BY_ID[o.sp].names[stageFor(o.xp) - 1] }; }) }));
+  }
   // Older saves: fully grown friends without a final form get one (and the food tally field).
   if (w.owned.some((o) => !o.foods || (stageFor(o.xp) === 3 && !o.branch && SPECIES_BY_ID[o.sp].rarity < 4))) {
     setWilds((x) => ({ owned: x.owned.map((o) => ({ ...o, foods: o.foods ?? [0, 0], branch: o.branch ?? (stageFor(o.xp) === 3 && SPECIES_BY_ID[o.sp].rarity < 4 ? (o.seed % 2 ? "sun" : "moon") : undefined) })) }));
@@ -76,11 +80,32 @@ export function catchChance(sp: Species, quality: "great" | "nice" | "ok" | "mis
   return Math.max(0.05, Math.min(0.96, base + q + (berry ? 0.15 : 0) + bonus));
 }
 
-export function makeOwned(sp: Species, shiny: boolean, name?: string): Owned {
+const VAR_BASE: Record<VariantId, number> = { golden: 1 / 60, storm: 1 / 32, shadow: 1 / 32, autumn: 1 / 20 };
+const VAR_BOOST: Record<string, Partial<Record<VariantId, number>>> = {
+  meadow: { autumn: 2 }, forest: { autumn: 2, shadow: 2 }, shore: { storm: 2 }, cave: { shadow: 2 }, peak: { storm: 2, shadow: 1.5 },
+};
+/** Special colors turn up more in some places: shadow in dark places, storm by the sea and peaks, autumn in forests. */
+export function rollVariant(biome?: string): VariantId | undefined {
+  let r = Math.random();
+  for (const id of Object.keys(VAR_BASE) as VariantId[]) {
+    const p = VAR_BASE[id] * ((biome && VAR_BOOST[biome]?.[id]) || 1);
+    if (r < p) return id;
+    r -= p;
+  }
+  return undefined;
+}
+/** Which special colors of a species she has found ("shiny" counts too). */
+export function colorsFound(w: Wilds, spId: string): Set<string> {
+  const s = new Set<string>();
+  w.owned.filter((o) => o.sp === spId).forEach((o) => { if (o.shiny) s.add("shiny"); if (o.variant) s.add(o.variant); });
+  return s;
+}
+
+export function makeOwned(sp: Species, shiny: boolean, name?: string, variant?: VariantId): Owned {
   const w = wilds();
   return {
     id: `${Date.now().toString(36)}${w.seq}`, sp: sp.id, name: name || sp.names[0], shiny,
-    seed: 1 + Math.floor(Math.random() * 100000), pers: pickOf(PERS_LIST), xp: 0, got: todayKey(), pet: { day: "", n: 0 }, foods: [0, 0],
+    seed: 1 + Math.floor(Math.random() * 100000), pers: pickOf(PERS_LIST), xp: 0, got: todayKey(), pet: { day: "", n: 0 }, foods: [0, 0], variant,
   };
 }
 export function markSeen(spId: string) { setWilds((w) => ({ seen: { ...w.seen, [spId]: (w.seen[spId] ?? 0) + 1 } })); }

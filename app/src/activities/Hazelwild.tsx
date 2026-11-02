@@ -12,17 +12,17 @@ import { Reveal } from "../wilds/Reveal";
 import { BerryGuide } from "../wilds/BerryGuide";
 import { Habitat } from "../wilds/Habitat";
 import { BadgeOverlay, Tips } from "../wilds/Overlays";
-import { addOwned, bump, dailyVisitorSpecies, makeOwned, rollDay, rollShiny, setWilds, wilds } from "../wilds/game";
+import { addOwned, bump, dailyVisitorSpecies, makeOwned, rollDay, rollShiny, rollVariant, setWilds, wilds } from "../wilds/game";
 import { SPECIES_BY_ID } from "../wilds/species";
 import { BIOMES } from "../wilds/species";
-import type { Biome, Species } from "../wilds/species";
+import type { Biome } from "../wilds/species";
 import type { Owned } from "../wilds/types";
 import { useStore } from "../lib/store";
 import type { ActivityProps } from "./types";
 
 type View =
   | { n: "hub" } | { n: "explore"; biome: Biome } | { n: "wilds" } | { n: "detail"; id: string } | { n: "dex" } | { n: "eggs" } | { n: "duel" } | { n: "home" }
-  | { n: "catch"; sp: Species; shiny: boolean; biome: Biome; bonus: number; headline: string; visitor: boolean };
+  | { n: "catch"; draft: Owned; biome: Biome; bonus: number; headline: string; visitor: boolean };
 
 export default function Hazelwild(_: ActivityProps) {
   const { wilds: w } = useStore();
@@ -52,24 +52,24 @@ export default function Hazelwild(_: ActivityProps) {
   }
 
   const toHub = () => setView({ n: "hub" });
-  const startCatch = (sp: Species, shiny: boolean, biome: Biome, bonus: number, headline: string, visitor: boolean) =>
-    setView({ n: "catch", sp, shiny, biome, bonus, headline, visitor });
+  const startCatch = (draft: Owned, biome: Biome, bonus: number, headline: string, visitor: boolean) =>
+    setView({ n: "catch", draft, biome, bonus, headline, visitor });
 
   return (
     <div className="relative h-full overflow-hidden">
       {view.n === "hub" && (
         <Hub w={w}
           onExplore={(b) => setView({ n: "explore", biome: b })}
-          onVisitor={() => startCatch(dailyVisitorSpecies(), rollShiny(0.06), BIOMES[0], 0.25, "Daily Visitor:", true)}
+          onVisitor={() => startCatch(makeOwned(dailyVisitorSpecies(), rollShiny(0.06), undefined, rollVariant()), BIOMES[0], 0.25, "Daily Visitor:", true)}
           onNav={(n: Nav) => setView({ n })} onTips={() => setTips(true)} />
       )}
       {view.n === "explore" && (
         <Explore biome={view.biome} onBack={toHub}
-          onEncounter={(sp, shiny, lure) => startCatch(sp, shiny, view.biome, lure ? 0.1 : 0, lure ? "Your lure worked! A special" : "A wild", false)} />
+          onEncounter={(draft, lure) => startCatch(draft, view.biome, lure ? 0.1 : 0, lure ? "Your lure worked! A special" : "A wild", false)} />
       )}
       {view.n === "catch" && (
-        <Catch sp={view.sp} shiny={view.shiny} biome={view.biome} bonus={view.bonus} headline={view.headline}
-          onCaught={() => setDraft({ o: makeOwned(view.sp, view.shiny), back: view.visitor ? { n: "hub" } : { n: "explore", biome: view.biome }, visitor: view.visitor })}
+        <Catch draft={view.draft} biome={view.biome} bonus={view.bonus} headline={view.headline}
+          onCaught={() => setDraft({ o: view.draft, back: view.visitor ? { n: "hub" } : { n: "explore", biome: view.biome }, visitor: view.visitor })}
           onFled={() => setView(view.visitor ? { n: "hub" } : { n: "explore", biome: view.biome })} />
       )}
       {view.n === "wilds" && <MyWilds onOpen={(id) => setView({ n: "detail", id })} onBack={toHub} />}

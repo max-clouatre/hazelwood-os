@@ -3,7 +3,7 @@ import { Burst } from "../components/Burst";
 import { chime } from "../lib/audio";
 import { say } from "../lib/speech";
 import { Creature } from "./Creature";
-import { ELEMENTS, RARITY_LABEL, SPECIES_BY_ID } from "./species";
+import { ELEMENTS, RARITY_LABEL, SPECIES_BY_ID, VARIANTS } from "./species";
 import type { Owned } from "./types";
 
 /** "You got a new friend!" Name it and welcome it home. */
@@ -15,10 +15,11 @@ export function Reveal({ draft, headline, legendary, onDone }: { draft: Owned; h
   return (
     <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-1 overflow-y-auto bg-indigo-950/90 p-3 text-center sm:flex-row sm:gap-6">
       <Burst emojis={draft.shiny ? ["✨", "⭐", "💖", "🌟"] : ["⭐", "💖", "✨"]} />
-      <div className="anim-pop shrink-0"><Creature species={sp} stage={legendary ? 3 : 1} shiny={draft.shiny} seed={draft.seed} personality={draft.pers} className="anim-bob h-44 w-44 sm:h-72 sm:w-72" /></div>
+      <div className="anim-pop shrink-0"><Creature species={sp} stage={legendary ? 3 : 1} shiny={draft.shiny} seed={draft.seed} personality={draft.pers} variant={draft.variant} className="anim-bob h-44 w-44 sm:h-72 sm:w-72" /></div>
       <div className="flex max-w-md flex-col items-center gap-1">
         <p className="text-2xl font-bold sm:text-3xl">{headline}</p>
         {draft.shiny && <p className="anim-pop rounded-full bg-yellow-300 px-4 py-1 text-xl font-bold text-black">✨ A shiny one! ✨</p>}
+        {draft.variant && <p className="anim-pop rounded-full bg-white px-4 py-1 text-xl font-bold text-indigo-900">{VARIANTS[draft.variant].emoji} {VARIANTS[draft.variant].name} color! <span className="text-base font-normal">{VARIANTS[draft.variant].blurb}</span></p>}
         <p className="text-xl"><span className="emoji">{el.emoji}</span> <b>{sp.names[0]}</b> · {RARITY_LABEL[sp.rarity]}</p>
         <p className="text-base text-white/80">{sp.blurb}</p>
         <label className="mt-1 flex items-center gap-2 text-lg">Name:

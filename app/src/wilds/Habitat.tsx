@@ -31,7 +31,7 @@ export function Habitat({ onBack }: { onBack: () => void }) {
               const l = PERSONALITIES[o.pers].pet; const text = r.ok ? l[Math.floor(Math.random() * l.length)] : `${o.name} is all cuddled out today!`;
               setBubble({ id: o.id, text }); say(text); if (r.ok) setHearts((h) => h + 1);
             }} className="relative block active:scale-95" style={{ animation: `${VARIANTS[i % 3]} ${16 + (i % 5) * 3}s ease-in-out infinite`, animationDelay: `-${i * 3}s` }}>
-              <Creature species={sp} stage={stageFor(o.xp)} shiny={o.shiny} seed={o.seed} personality={o.pers} branch={o.branch} className="h-24 w-24 sm:h-28 sm:w-28" />
+              <Creature species={sp} stage={stageFor(o.xp)} shiny={o.shiny} variant={o.variant} seed={o.seed} personality={o.pers} branch={o.branch} className="h-24 w-24 sm:h-28 sm:w-28" />
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/45 px-2 text-xs font-bold">{o.name} {petsLeft(o) > 0 && "💖"}</span>
               {bubble?.id === o.id && <span className="anim-pop absolute -top-10 left-1/2 w-40 -translate-x-1/2 rounded-xl bg-white px-2 py-1 text-center text-sm font-bold leading-tight text-emerald-900">{bubble.text}</span>}
             </button>

@@ -4,19 +4,22 @@ import { say } from "../lib/speech";
 import { setWilds } from "./game";
 import { catchChance, wilds } from "./game";
 import { Creature } from "./Creature";
-import { ELEMENTS, RARITY_LABEL } from "./species";
-import type { Biome, Species } from "./species";
+import { ELEMENTS, RARITY_LABEL, SPECIES_BY_ID, VARIANTS } from "./species";
+import type { Biome } from "./species";
+import type { Owned } from "./types";
 import { Scene } from "./Scene";
 
 type Phase = "aim" | "throw" | "wobble" | "result";
 const CYCLE = 1500;
 
 export interface CatchProps {
-  sp: Species; shiny: boolean; biome: Biome; bonus?: number; headline: string;
+  draft: Owned; biome: Biome; bonus?: number; headline: string;
   onCaught: () => void; onFled: () => void;
 }
 
-export function Catch({ sp, shiny, biome, bonus = 0, headline, onCaught, onFled }: CatchProps) {
+export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: CatchProps) {
+  const sp = SPECIES_BY_ID[draft.sp];
+  const shiny = draft.shiny;
   const [tries, setTries] = useState(3);
   const [phase, setPhase] = useState<Phase>("aim");
   const intro = `${headline} ${sp.names[0]} appeared!`;
@@ -90,14 +93,14 @@ export function Catch({ sp, shiny, biome, bonus = 0, headline, onCaught, onFled 
       <div className="absolute inset-x-0 top-2 flex flex-col items-center gap-1 px-3 text-center">
         <p className="rounded-full bg-black/40 px-4 py-1 text-xl font-bold drop-shadow">{msg}</p>
         <p className="rounded-full bg-black/30 px-3 py-0.5 text-base">
-          <span className="emoji">{el.emoji}</span> {sp.names[0]} · {"⭐".repeat(sp.rarity).replace(/⭐/g, "★")} {RARITY_LABEL[sp.rarity]} {shiny && "· ✨ Shiny!"}
+          <span className="emoji">{el.emoji}</span> {sp.names[0]} · {"★".repeat(sp.rarity)} {RARITY_LABEL[sp.rarity]} {shiny && "· ✨ Shiny!"} {draft.variant && `· ${VARIANTS[draft.variant].emoji} ${VARIANTS[draft.variant].name}!`}
         </p>
       </div>
       <div className="absolute left-3 top-24 flex gap-1">{[0, 1, 2].map((i) => <span key={i} className={`h-5 w-5 rounded-full border-2 border-white ${i < tries ? "bg-yellow-300" : "bg-black/30"}`} />)}</div>
 
       <div className="absolute left-1/2 top-[48%] -translate-x-1/2 -translate-y-1/2">
         <div className={wob ? "anim-wobble" : phase === "result" && msg.startsWith("Gotcha") ? "" : "anim-hop"} style={{ transition: "transform .4s", transform: wob || (phase === "result" && msg.startsWith("Gotcha")) ? "scale(.35)" : "scale(1)" }}>
-          <Creature species={sp} stage={1} shiny={shiny} seed={7} personality="gentle" mood={phase === "result" && !msg.startsWith("Gotcha") ? "sleep" : "happy"} className="h-56 w-56 sm:h-64 sm:w-64" />
+          <Creature species={sp} stage={1} shiny={shiny} variant={draft.variant} seed={draft.seed} personality={draft.pers} mood={phase === "result" && !msg.startsWith("Gotcha") ? "sleep" : "happy"} className="h-56 w-56 sm:h-64 sm:w-64" />
         </div>
         {wob && <span className="emoji absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl">🔮</span>}
         {/* target circle + shrinking ring */}

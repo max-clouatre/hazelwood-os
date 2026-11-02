@@ -22,14 +22,20 @@ Every ⭐ Hazel earns in *any* other activity does two things in Hazelwild: **+3
 ## Families and evolution (what Hazel loves most)
 - **Simple to complex.** Babies are plain: body, face and small ears. Form 2 adds the tail, pattern, an element mark and more parts. Form 3 adds the rest and an aura.
 - **Branching final forms.** At bond 40 a creature locks in its final form from what it was fed: day foods (🍯🥕) give a **Sunlit** form (sun rays, halo, warmer colors); night foods (🍪🍬) give a **Moonlit** form (crescent, floating stars, cooler colors). Hazel chooses, and the creature page shows her running tally and teaser silhouettes of forms she hasn't reached.
-- **Form dex.** 19 species × 4 forms (baby, grown, Sunlit, Moonlit) = 76 forms. Finding all four of one species earns a **Master** badge (+10 🍓).
-- **Families.** The 19 species sit in 6 element families (Sproutkin, Tidefolk, Emberkin, Dawnkin, Duskkin, Skykin). The Wilddex is grouped by family; meeting a whole family earns a badge (+20 🍓).
+- **Form dex.** 38 species × 4 forms (baby, grown, Sunlit, Moonlit) = 152 forms. Finding all four of one species earns a **Master** badge (+10 🍓).
+- **Families.** The 38 species sit in 6 element families (Sproutkin, Tidefolk, Emberkin, Dawnkin, Duskkin, Skykin). The Wilddex is grouped by family; meeting a whole family earns a badge (+20 🍓).
 
 ## Where berries come from (always visible)
 Tap the 🍓 counter anywhere in the game to open the guide. Sources: ⭐ stars from any activity (3 🍓 each); a **berry bush** in every biome (+2 🍓, regrows in 2 minutes, so she is never stuck); the Wishing Tree (+5/day); daily goals (+4 to +12); duels (+6 win, +2 loss); badges. When she can't afford something, the game opens the guide for her.
 
 ## Daily goals and the home meadow
 Three goals a day (catch, feed, pet, explore, win a duel, evolve a friend, catch a specific element), claimed with a tap. The Home meadow shows her friends in their current forms, wandering; tapping one pets it.
+
+## Special colors
+Besides ✨ shiny (1 in 16), a creature can appear in a special color: 🌟 Golden (rare), ⚡ Storm, 🌑 Shadow, 🍂 Autumn. Some turn up more in certain places (Shadow in caves and forests, Storm by the sea and on the peak, Autumn in forests and meadows). The Wilddex card for each species shows which colors she has found.
+
+## Finds while exploring
+Each tap on a rustling spot shows a big message right where she tapped. Outcomes: a creature (50%), berries (24%), a friend finds a snack and gains bond (10%), a mystery egg (4%), or just a friendly moment. Each zone uses its own spot icon (🌿 🍄 🐚 💎 ☁️).
 
 ## Core loop
 Explore → find a creature → catch → name → feed/pet → it evolves → new biomes unlock (collect 3, 6, 9, 12 species) → duel → repeat.
@@ -61,6 +67,13 @@ Flat color, bold outlines and hard offset shadows; one rounded font; no gradient
 
 ## 3D: why not yet, and the plan
 A 3D renderer is possible, but the Samsung Galaxy Tab A is the limiting device and I can't measure its graphics speed from here. The plan is: (1) a small **performance probe page** you open on the tablet and phone to read frames per second, (2) generate toy-style low-poly 3D creatures from the same species recipes (every variation carries over), (3) a 3D diorama per biome, (4) automatic fallback to today's 2D art if the frame rate drops.
+
+## Next (from the first play session)
+- **Music** for each zone (synthesized loops so it stays offline).
+- **A different catch loop per zone** (for example faster rings in the forest, drifting creatures at the shore, flickering light in the cave).
+- Distinct zone **icons and art** beyond the spot icon.
+- More finds and mini-events while exploring.
+- Fewer words on the creature page for the youngest readers; voice for the key labels.
 
 ## Ideas for later
 - Violet's version: a gentle pet-park (cuddle, feed, dress up), sharing the same creature art.
