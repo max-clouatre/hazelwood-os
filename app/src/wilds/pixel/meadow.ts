@@ -25,8 +25,8 @@ export interface Meadow {
 export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h: number, opts: MeadowOpts): Meadow {
   const stage = new Stage(THREE, canvas, w, h, opts.post ?? DEFAULT_POST);
   const scene = stage.scene; scene.background = new THREE.Color("#92dbff");
-  scene.add(new THREE.AmbientLight(0xffffff, 1.15));
-  const sun = new THREE.DirectionalLight(0xfff1d0, 2.1); sun.position.set(6, 12, 7); scene.add(sun);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.05));
+  const sun = new THREE.DirectionalLight(0xfff6dc, 1.9); sun.position.set(6, 12, 7); scene.add(sun);
   const gm = toonMap(THREE);
   const island = buildIsland(THREE, gm); scene.add(island.mesh);
   const toon = new THREE.MeshBasicMaterial({ vertexColors: true }); // sprites carry their own baked light and shade
@@ -45,12 +45,13 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
   const wingMat = new THREE.MeshToonMaterial({ color: 0xffa94d, gradientMap: gm });
   const flies: T.Group[] = [0, 1].map((i) => { const g = new THREE.Group(); const a = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.2, 0.02), wingMat), b = a.clone(); a.position.x = -0.1; b.position.x = 0.1; g.add(a, b); g.userData = { ph: i * 3, a, b }; scene.add(g); return g; });
   // ---- particles (hearts, z's, sparkles, glow): one instanced cube set
-  const MAXP = 140;
+  const MAXP = 64;
   const pm = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial(), MAXP);
   const parts: { x: number; y: number; z: number; vx: number; vy: number; vz: number; life: number; max: number; s: number }[] = [];
   const pc = new THREE.Color(); const zero = new THREE.Matrix4().makeScale(0, 0, 0);
   for (let i = 0; i < MAXP; i++) { pm.setMatrixAt(i, zero); pm.setColorAt(i, pc.set("#ffffff")); }
   pm.frustumCulled = false; scene.add(pm);
+  let pmDirty = false;
   const emit = (x: number, y: number, z: number, color: string, n = 1, up = 0.9, spread = 0.4, size = 0.14) => {
     for (let i = 0; i < n && parts.length < MAXP; i++) {
       const idx = parts.length; parts.push({ x, y, z, vx: rnd(-spread, spread), vy: rnd(up * 0.6, up), vz: rnd(-spread, spread), life: 0, max: rnd(0.9, 1.5), s: size });
@@ -134,11 +135,14 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
       const p = parts[i]; p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
       if (p.life >= p.max) { parts.splice(i, 1); }
     }
+    if (parts.length || pmDirty) {
+    pmDirty = parts.length > 0;
     for (let i = 0; i < MAXP; i++) {
       const p = parts[i]; if (!p) { pm.setMatrixAt(i, zero); continue; }
       const s = p.s * (1 - p.life / p.max * 0.6); dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(0, yaw, 0); dummy.scale.set(s, s, s); dummy.updateMatrix(); pm.setMatrixAt(i, dummy.matrix);
     }
     pm.instanceMatrix.needsUpdate = true;
+    }
     stage.render();
     fpsN++; fpsT += dt; if (fpsT >= 1) { fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; }
     void slow;

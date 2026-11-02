@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: Pixel meadow, lighter and faster
+- **Bug found and fixed:** the post pass showed colors darker than designed (sRGB target read as linear). That was a big part of the "dark, heavy greens". Colors now come out as designed; palette re-tuned to a bright Forager-like set (fresh greens, warm sand dirt, light sky and water), lighter toon bands, sprite colors snapped to the palette so creatures are crisp instead of grainy.
+- **Speed:** hidden dirt/underside blocks no longer drawn (about 60% fewer island boxes), fewer particles and no particle upload when none are alive, medium-precision shaders, no stencil. The picture size now adapts: under 27 fps for 3 seconds it makes pixels bigger first (looks the same, much cheaper), and only then drops effects; the size it settles on is remembered on that device (`hwos:pixelps`).
+- Not verified: real tablet fps (was about 25; target steady 30).
+- Village mode idea written up: `project/PLAN-VILLAGE.md`.
+
 ## 2026-11-02: Hazelwild narrator off by default
 - The talking voice in Hazelwild is now **off by default** (it was "way too busy"); music and sound effects are unchanged. A 🗣️/🤐 button in the landing top bar turns it on or off (saved as `wilds.voice`). Other activities (Spelling, Violet's games) keep their voice. Test `narrator`. Verified: narrator, landing, camp, pixel-meadow, progression, music-switching pass; not verified on the real tablet.
 

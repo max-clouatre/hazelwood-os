@@ -52,3 +52,7 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-02 (late): Pixel meadow result
 - Max: "incredible, so good. looks to be steady around 25 fps" (Pixel meadow on the Tab A; cap is 30). Status: liked; fps is under the 30 cap, above the auto-degrade line (22). Option: tune for a steady 30 (B-25).
+
+## 2026-11-02 (night): tuning and a new idea
+- Max: do performance tuning for a steady 30 fps (was ~25); lighten the pixel area, greens too dark and heavy, picture Forager (bright, fresh). Status: done in code, awaiting the tablet (B-25).
+- Max: Camp as a small **village builder** she designs and builds (buildings, resources that all convert to Glow). Status: planned, `project/PLAN-VILLAGE.md`, B-26.

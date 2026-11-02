@@ -64,7 +64,7 @@ export function buildSprite(THREE: TH, px: Uint8ClampedArray): SpriteGeo {
   const pos: number[] = [], nor: number[] = [], col: number[] = [];
   const c = new THREE.Color();
   // corner offsets (0/1) for each face direction, counter-clockwise seen from outside
-  const SHADE = [1, 0.8, 0.8, 1.14, 0.6]; // baked light: front as drawn, top lighter, sides darker
+  const SHADE = [1, 0.88, 0.88, 1.12, 0.72]; // baked light: front as drawn, top lighter, sides darker
   const FACES: [number, number, number, number[][]][] = [
     [0, 0, 1, [[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]]],   // +z (front, faces the camera)
     [1, 0, 0, [[1, 0, 1], [1, 0, 0], [1, 1, 0], [1, 1, 1]]],   // +x
@@ -74,7 +74,8 @@ export function buildSprite(THREE: TH, px: Uint8ClampedArray): SpriteGeo {
   ];
   for (let y = 0; y < G; y++) for (let x = 0; x < G; x++) {
     const i = y * G + x; if (!H[i]) continue;
-    c.setRGB(px[i * 4] / 255, px[i * 4 + 1] / 255, px[i * 4 + 2] / 255, THREE.SRGBColorSpace);
+    // bake each face's light into a color that sits exactly on a palette step, so the post pass leaves sprites crisp (no dither grain)
+    const shaded = SHADE.map((k) => { const snap = (v: number) => Math.round(Math.min(1, (v / 255) * k) * 7) / 7; c.setRGB(snap(px[i * 4]), snap(px[i * 4 + 1]), snap(px[i * 4 + 2]), THREE.SRGBColorSpace); return [c.r, c.g, c.b]; });
     for (let z = 0; z < H[i]; z++) for (let f = 0; f < FACES.length; f++) {
       const [dx, dy, dz, quad] = FACES[f];
       // world +y is up, pixel row y grows downward, so a world "up" face looks at row y-1
@@ -83,7 +84,7 @@ export function buildSprite(THREE: TH, px: Uint8ClampedArray): SpriteGeo {
       for (const k of idx) {
         const q = quad[k];
         pos.push((x + q[0] - cx) * U, (maxY + 1 - (y + (1 - q[1]))) * U, (z + q[2] - 2) * U);
-        nor.push(dx, dy, dz); col.push(Math.min(1, c.r * SHADE[f]), Math.min(1, c.g * SHADE[f]), Math.min(1, c.b * SHADE[f]));
+        nor.push(dx, dy, dz); col.push(shaded[f][0], shaded[f][1], shaded[f][2]);
       }
     }
   }

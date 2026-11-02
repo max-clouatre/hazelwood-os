@@ -22,7 +22,7 @@ float bayer4(vec2 p){
   return (8.0 * abs(x0 - y0) + 4.0 * y0 + 2.0 * abs(x1 - y1) + y1 + 0.5) / 16.0 - 0.5;
 }
 void main(){
-  vec3 c = texture2D(tColor, vUv).rgb;
+  vec3 c = pow(texture2D(tColor, vUv).rgb, vec3(1.0 / 2.2)); // the target is sRGB: sampling gives linear values, so encode them back for the screen
   if (pal > 0.5) {
     float d = dith > 0.5 ? bayer4(vUv * res) * 0.5 : 0.0;
     c = clamp(floor(c * (levels - 1.0) + 0.5 + d) / (levels - 1.0), 0.0, 1.0);
@@ -41,7 +41,7 @@ void main(){
 
 /** Three-step banded light, so shading looks like hand-placed pixel shades rather than a smooth gradient. */
 export function toonMap(THREE: TH): T.DataTexture {
-  const t = new THREE.DataTexture(new Uint8Array([105, 175, 255]), 3, 1, THREE.RedFormat);
+  const t = new THREE.DataTexture(new Uint8Array([178, 218, 255]), 3, 1, THREE.RedFormat);
   t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t;
 }
 
@@ -51,7 +51,7 @@ export class Stage {
   private postScene: T.Scene; private postCam: T.OrthographicCamera; private postMat: T.ShaderMaterial;
   w = 1; h = 1; halfH = 6.1; post: PostOpts;
   constructor(private THREE: TH, public canvas: HTMLCanvasElement, w: number, h: number, post: PostOpts) {
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: "low-power" });
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: "low-power", stencil: false, precision: "mediump" });
     this.renderer.setPixelRatio(1);
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 90);
