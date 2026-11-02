@@ -37,7 +37,7 @@ export function Dex({ onBack }: { onBack: () => void }) {
                     <button key={sp.id} onClick={() => seen && setSel(sp)} className={`rounded-2xl p-1 text-center ${own ? "bg-white/20" : "bg-black/25"} active:scale-95`}>
                       <Creature species={sp} stage={own ? (best >= 40 ? 3 : best >= 14 ? 2 : 1) : 1} branch={bo?.branch} silhouette={!seen} className={`mx-auto h-20 w-20 ${seen && !own ? "opacity-60" : ""}`} />
                       <p className="truncate text-sm font-bold">{seen ? sp.names[0] : "???"}</p>
-                      <p className="text-xs text-white/80">{own ? <>{FORM_KEYS.map((k) => <span key={k} className={forms.has(k) ? "" : "opacity-30"}>●</span>)} <span className="ml-1">{forms.size}/4</span></> : seen ? "seen" : ""}</p>
+                      <p className="text-xs text-white/80">{!seen ? <span className="emoji">{sp.biomes.map((id) => BIOMES.find((b) => b.id === id)?.emoji).join(" ")}</span> : own ? <>{FORM_KEYS.map((k) => <span key={k} className={forms.has(k) ? "" : "opacity-30"}>●</span>)} <span className="ml-1">{forms.size}/4</span></> : seen ? "seen" : ""}</p>
                     </button>
                   );
                 })}

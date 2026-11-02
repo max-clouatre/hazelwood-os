@@ -4,7 +4,7 @@ import { say } from "../lib/speech";
 import { setWilds } from "./game";
 import { catchChance, wilds } from "./game";
 import { Creature } from "./Creature";
-import { ELEMENTS, RARITY_LABEL, SPECIES_BY_ID, VARIANTS } from "./species";
+import { SPECIES_BY_ID } from "./species";
 import type { Biome } from "./species";
 import type { Owned } from "./types";
 import { Orb, PopIcon } from "./Icons";
@@ -20,10 +20,10 @@ export interface CatchProps {
 
 export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: CatchProps) {
   const sp = SPECIES_BY_ID[draft.sp];
-  const shiny = draft.shiny;
   const [tries, setTries] = useState(3);
   const [phase, setPhase] = useState<Phase>("aim");
-  const intro = `${headline} ${sp.names[0]} appeared!`;
+  const intro = `${headline} ??? appeared!`;
+  const special = draft.shiny || !!draft.variant || sp.rarity >= 3; // a hint, without giving the creature away
   const [msg, setMsg] = useState(intro);
   const [useBerry, setUseBerry] = useState(false);
   const [quality, setQuality] = useState<"great" | "nice" | "ok" | "miss" | null>(null);
@@ -34,10 +34,9 @@ export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: C
   const scale = useRef(1.8);
   const timers = useRef<number[]>([]);
   const later = (fn: () => void, ms: number) => { timers.current.push(window.setTimeout(fn, ms)); };
-  const el = ELEMENTS[sp.element];
   const berries = wilds().berries;
 
-  useEffect(() => { say(intro); return () => timers.current.forEach(clearTimeout); }, [intro]);
+  useEffect(() => { say("Something is here! Who could it be?"); return () => timers.current.forEach(clearTimeout); }, [intro]);
 
   useEffect(() => {
     if (phase !== "aim") return;
@@ -76,14 +75,14 @@ export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: C
       setPhase("wobble"); note(2);
       later(() => {
         const ok = Math.random() < catchChance(sp, q, berry, bonus);
-        if (ok) { chime(); setPhase("result"); setMsg(q === "great" ? "GREAT throw! Gotcha!" : "Gotcha!"); say(`Gotcha! ${sp.names[0]} joined you!`); later(onCaught, 1500); }
+        if (ok) { chime(); setPhase("result"); setMsg(q === "great" ? "GREAT throw! Gotcha!" : "Gotcha!"); say("Gotcha! Who is it?"); later(onCaught, 1500); }
         else { oops(); setMsg("Oh no! It broke free!"); finish(false, left); }
       }, 1700);
     }, 450);
   };
 
   function finish(_: boolean, left: number) {
-    if (left <= 0) { setPhase("result"); setMsg(`${sp.names[0]} ran away... You'll find it again!`); say("It ran away. Try again soon!"); later(onFled, 2200); }
+    if (left <= 0) { setPhase("result"); setMsg("It ran away... Maybe you'll find it again!"); say("It ran away. Try again soon!"); later(onFled, 2200); }
     else later(() => { setPhase("aim"); setMsg("Try again!"); }, 1200);
   }
 
@@ -94,15 +93,18 @@ export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: C
       <div className="absolute inset-x-0 top-2 flex flex-col items-center gap-1 px-3 text-center">
         <p className="rounded-full bg-black/40 px-4 py-1 text-xl font-bold drop-shadow">{msg}</p>
         <p className="rounded-full bg-black/30 px-3 py-0.5 text-base">
-          <span className="emoji">{el.emoji}</span> {sp.names[0]} · {"★".repeat(sp.rarity)} {RARITY_LABEL[sp.rarity]} {shiny && "· ✨ Shiny!"} {draft.variant && `· ${VARIANTS[draft.variant].emoji} ${VARIANTS[draft.variant].name}!`}
+          <span className="emoji">❓</span> Mystery creature · {special ? "✨ It's sparkling... something special!" : "Who could it be?"}
         </p>
       </div>
       <div className="absolute left-3 top-24 flex gap-1">{[0, 1, 2].map((i) => <span key={i} className={`h-5 w-5 rounded-full border-2 border-white ${i < tries ? "bg-yellow-300" : "bg-black/30"}`} />)}</div>
 
       <div className="absolute left-1/2 top-[48%] -translate-x-1/2 -translate-y-1/2">
         <div className={wob ? "anim-wobble" : phase === "result" && msg.startsWith("Gotcha") ? "" : "anim-hop"} style={{ transition: "transform .4s", transform: wob || (phase === "result" && msg.startsWith("Gotcha")) ? "scale(.35)" : "scale(1)" }}>
-          <Creature species={sp} stage={1} shiny={shiny} variant={draft.variant} seed={draft.seed} personality={draft.pers} mood={phase === "result" && !msg.startsWith("Gotcha") ? "sleep" : "happy"} className="h-56 w-56 sm:h-64 sm:w-64" />
+          <Creature mystery species={sp} stage={1} seed={draft.seed} personality={draft.pers} mood={phase === "result" && !msg.startsWith("Gotcha") ? "sleep" : "happy"} className="h-56 w-56 sm:h-64 sm:w-64" />
         </div>
+        {special && phase !== "result" && [[-86, -70], [90, -50], [-70, 60], [84, 70]].map(([x, y], i) => (
+          <svg key={i} viewBox="0 0 20 20" className="twinkle pointer-events-none absolute left-1/2 top-1/2 h-8 w-8" style={{ marginLeft: x - 16, marginTop: y - 16, animationDelay: `${i * 0.4}s` }} aria-hidden><path d="M10 0L12.6 7.4L20 10L12.6 12.6L10 20L7.4 12.6L0 10L7.4 7.4Z" fill="#fff7b0" stroke="#e0b100" strokeWidth={0.8} /></svg>
+        ))}
         {wob && <Orb className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2" />}
         {/* target circle + shrinking ring */}
         {phase === "aim" || phase === "throw" ? (

@@ -152,16 +152,24 @@ python3 -m http.server 8000</code></pre> (or <code>npx serve docs -l 8000</code>
 <p>If your tablet has the Samsung Kids mode (swipe down the quick panel → <strong>Kids</strong>), you can add Hazelwood OS as an allowed app inside it and use its parental controls and timers. It's a good bridge until we build our own parent area.</p>
 
 <h2 id="update">Updating the app later</h2>
-<p>You only have to do this when Claude (or you) change the app.</p>
+<p>When Claude (or you) publish a new version, the tablet picks it up like this. <strong>The very first time</strong> (to get the update button itself) use the manual steps; every time after that, use the button.</p>
+
+<h3>The easy way: the update button</h3>
 <ol>
-  <li>The new build is pushed to <code>main</code> on GitHub. Pages republishes in about a minute. Check by opening the site on your phone.</li>
-  <li><strong>On the tablet:</strong> if it's pinned, unpin it (with your PIN). Make sure it's on Wi-Fi.</li>
-  <li>Open Hazelwood OS from the icon. It downloads the new version quietly in the background.</li>
-  <li><strong>Fully close it</strong> (Recents → swipe Hazelwood OS away) and open it again. The new version is now running. Occasionally it needs one more close and reopen.</li>
-  <li>Pin it again.</li>
+  <li>Make sure the tablet is on Wi-Fi. If the app is pinned, unpin it (with your PIN) or just use the app as is.</li>
+  <li>On the <strong>"Who is playing?"</strong> screen, tap <strong>⚙️ Grown-ups</strong> (bottom right) and answer the multiplication question. (A yellow <em>update!</em> tag means a newer version exists.)</li>
+  <li>Under <strong>App update</strong> it shows the installed version and the newest one. Tap <strong>Check for updates</strong>. If there is a newer one, it installs it and restarts by itself. Stars, friends and settings are kept.</li>
+  <li>Tap <strong>Done</strong>. You can re-pin the app if you unpinned it.</li>
 </ol>
-<div class="card note">The service worker updates itself automatically, so there's no version number to bump. The stars and the spelling list live on the tablet and are kept across updates.</div>
-<p><strong>Not sure you have the newest version?</strong> Open <code>https://max-clouatre.github.io/hazelwood-os/</code> in Chrome (not the installed icon) while online, wait a few seconds, then fully close and reopen the icon.</p>
+<div class="card note">Something looks stuck or old? Open the same screen, expand <em>Something not working?</em> and tap <strong>Refresh app files</strong>. It downloads everything fresh and keeps saved progress.</div>
+
+<h3>The manual way (only needed once, to get the button)</h3>
+<ol>
+  <li>On Wi-Fi, open Hazelwood OS from the icon and leave it a few seconds. It downloads the new version quietly.</li>
+  <li>Swipe it away in Recents (fully close it), then open it again.</li>
+  <li>If you still see the old one, close and reopen once more.</li>
+</ol>
+<p>The version number is shown at the bottom of the "Who is playing?" screen so you can see which one you have.</p>
 
 <h3>The grown-up area (spelling list, time limits)</h3>
 <ol>

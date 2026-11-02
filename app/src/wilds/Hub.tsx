@@ -63,8 +63,10 @@ export function Hub({ w, onExplore, onVisitor, onNav, onTips }: {
 
       <div className="flex flex-wrap items-stretch justify-center gap-2">
         <div className="flex items-center gap-2 rounded-2xl bg-white/15 px-3 py-1">
-          <Creature species={wod} stage={2} seed={5} className="h-16 w-16" />
-          <div className="text-left leading-tight"><p className="text-sm text-white/80">Wild of the Day</p><p className="text-lg font-bold">{wod.names[0]}</p><p className="text-xs text-white/80">appears more often today!</p></div>
+          <Creature species={wod} stage={2} seed={5} mystery={!have.has(wod.id)} className="h-16 w-16" />
+          {have.has(wod.id)
+            ? <div className="text-left leading-tight"><p className="text-sm text-white/80">Wild of the Day</p><p className="text-lg font-bold">{wod.names[0]}</p><p className="text-xs text-white/80">appears more often today!</p></div>
+            : <div className="text-left leading-tight"><p className="text-sm text-white/80">Wild of the Day</p><p className="text-lg font-bold">??? Mystery</p><p className="text-xs text-white/80">Hint: <span className="emoji">{ELEMENTS[wod.element].emoji}</span> {ELEMENTS[wod.element].name} type · lives in {wod.biomes.map((id) => BIOMES.find((b) => b.id === id)?.emoji).join(" ")}</p></div>}
         </div>
         <button onClick={() => { chime(); onVisitor(); }} disabled={w.visitorDone}
           className={`rounded-2xl px-4 py-2 text-lg font-bold shadow-lg active:scale-95 ${w.visitorDone ? "bg-white/20 text-white/60" : "bg-mustard text-black ring-4 ring-white"}`}>

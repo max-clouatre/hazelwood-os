@@ -4,7 +4,7 @@ import { chime, note } from "../lib/audio";
 import { say } from "../lib/speech";
 import { useStore } from "../lib/store";
 import { BerryPill } from "./BerryGuide";
-import { addBerries, BUSH_BERRIES, bump, bushWait, gainBond, giveEgg, makeOwned, markSeen, pickBush, pickSpawn, rollShiny, rollVariant, setWilds, wilds } from "./game";
+import { addBerries, BUSH_BERRIES, bump, bushWait, gainBond, giveEgg, makeOwned, pickBush, pickSpawn, rollShiny, rollVariant, setWilds, wilds } from "./game";
 import { Badge, PopIcon, SpotIcon } from "./Icons";
 import type { PopKind } from "./Icons";
 import { Scene } from "./Scene";
@@ -55,7 +55,6 @@ export function Explore({ biome, onEncounter, onBack, tabs }: { biome: Biome; on
     if (lure || r < 0.5) {
       const sp = pickSpawn(biome.id, { lure });
       const draft = makeOwned(sp, rollShiny(), undefined, rollVariant(biome.id));
-      markSeen(sp.id);
       busy.current = true;
       pop(x, y, "bang", "Something is here!", true); say("Something is here!");
       const wasLure = lure; setLure(false);

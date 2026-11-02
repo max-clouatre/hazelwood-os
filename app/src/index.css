@@ -40,3 +40,15 @@ button:disabled { filter: saturate(.6); }
 h1, h2, p, label, span { letter-spacing: .005em; }
 
 @keyframes floatup { 0% { transform: translate(-50%, 0) scale(.5); opacity: 0 } 12% { transform: translate(-50%, -14px) scale(1.12); opacity: 1 } 70% { opacity: 1 } 100% { transform: translate(-50%, -96px) scale(1); opacity: 0 } }
+
+/* ---- Old Android Chrome (before version 88, like the family tablet) support ----
+   Tailwind writes some rules with :where(). Old Chrome cannot read them and throws the WHOLE rule away,
+   which gave every button a default gray box. These plain versions always work. (Classes like bg-white
+   are more specific than "button", so they still win.) Test: tests/e2e/old-chrome.js */
+button { -webkit-appearance: none; appearance: none; background-color: transparent; background-image: none; }
+[hidden] { display: none; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+@supports not (aspect-ratio: 1 / 1) {
+  .aspect-square { min-height: 5rem; }
+  .aspect-\[4\/3\] { min-height: 9rem; }
+}

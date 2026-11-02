@@ -269,9 +269,10 @@ export interface CreatureProps {
   branch?: "sun" | "moon"; // final form (only used at form 3)
   teaser?: boolean; // dark silhouette of a form she hasn't reached yet
   variant?: VariantId; // special color: golden, storm, shadow, autumn
+  mystery?: boolean; // draw only a dark shadow of the creature (who is it?)
 }
 
-export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, personality = "gentle", mood = "happy", className, silhouette, branch, teaser, variant }: CreatureProps) {
+export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, personality = "gentle", mood = "happy", className, silhouette, branch, teaser, variant, mystery }: CreatureProps) {
   const uid = "c" + useId().replace(/[^a-zA-Z0-9]/g, "");
   const v = useMemo(() => {
     const r = mulberry32(seed * 7919 + sp.id.length);
@@ -320,7 +321,7 @@ export function Creature({ species: sp, stage = 1, shiny = false, seed = 1, pers
   const earLeftRaw = ear(sp.ears, b.ear[0], b.ear[1], c);
   const earLeft = earLeftRaw && (stage === 1 ? <g transform={`translate(${b.ear[0]} ${b.ear[1]}) scale(0.8) translate(${-b.ear[0]} ${-b.ear[1]})`}>{earLeftRaw}</g> : earLeftRaw);
   return (
-    <svg viewBox="-26 -26 252 252" className={className} role="img" aria-label={teaser ? "a mystery form" : sp.names[stage - 1]} style={teaser ? { filter: "brightness(0) opacity(0.45)" } : undefined}>
+    <svg viewBox="-26 -26 252 252" className={className} role="img" aria-label={teaser || mystery ? "a mystery" : sp.names[stage - 1]} style={mystery ? { filter: "brightness(0) opacity(0.82)" } : teaser ? { filter: "brightness(0) opacity(0.45)" } : undefined}>
       <defs>
         <clipPath id={`${uid}b`}><path d={b.d} /></clipPath>
         <radialGradient id={`${uid}a`}><stop offset="0%" stopColor={shiny ? "#fff3b0" : c.accent} stopOpacity={0.55} /><stop offset="100%" stopColor={c.accent} stopOpacity={0} /></radialGradient>
