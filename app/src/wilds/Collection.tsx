@@ -33,6 +33,7 @@ export function MyWilds({ onOpen, onBack }: { onOpen: (id: string) => void; onBa
               <p className="truncate text-xs text-white/80"><span className="emoji">{ELEMENTS[sp.element].emoji}</span> {sp.rarity === 4 ? sp.names[0] : formName(sp, lastForm(o))}</p>
               <div className="mx-auto mt-1 h-2 w-3/4 overflow-hidden rounded-full bg-black/30"><div className="h-full bg-pink-400" style={{ width: `${bond(o.xp).pct * 100}%` }} /></div>
               {o.shiny && <span className="emoji absolute right-1 top-1 text-xl">✨</span>}
+              {(o.level ?? 1) > 1 && <span className="absolute bottom-6 right-1 rounded-full bg-mustard px-1.5 text-xs font-bold text-black">Lv {o.level}</span>}
               {o.variant && <span className="emoji absolute left-1 top-1 text-xl">{VARIANTS[o.variant].emoji}</span>}
             </button>
           );
@@ -128,6 +129,7 @@ export function Detail({ id, onBack }: { id: string; onBack: () => void }) {
             <span className="rounded-full bg-white/15 px-3 py-0.5">{FAMILIES[sp.element].name}</span>
             <span className="rounded-full bg-white/15 px-3 py-0.5">{RARITY_LABEL[sp.rarity]}</span>
             <span className="rounded-full bg-white/15 px-3 py-0.5">{PERSONALITIES[o.pers].label}</span>
+            {w.modes.camp && <span className="rounded-full bg-mustard px-3 py-0.5 font-bold text-black">Lv {o.level ?? 1}</span>}
             {o.shiny && <span className="rounded-full bg-yellow-300 px-3 py-0.5 font-bold text-black">✨ Shiny</span>}
             {o.variant && <span className="rounded-full bg-white px-3 py-0.5 font-bold text-indigo-900">{VARIANTS[o.variant].emoji} {VARIANTS[o.variant].name}</span>}
           </div>

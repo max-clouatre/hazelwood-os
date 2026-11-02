@@ -36,7 +36,8 @@ export function Tips({ onClose }: { onClose: () => void }) {
         {step("💖", "3. Grow", "Pet and feed your friends. Each one grows up in 3 steps, from simple to fancy!")}
         {step("☀️", "4. Choose their final form", "Day foods (🍯🥕) make a Sunlit form. Night foods (🍪🍬) make a Moonlit form. You decide!")}
         {step("📖", "5. Collect families", "Meet every creature in a family for a badge. Find all 4 forms of one creature for another!")}
-        {step("🍓", "6. Berries", "Tap the 🍓 any time to see ways to get more. Playing other activities gives ⭐ stars, and every star becomes berries!")}
+        {step("🏕️", "6. Camp (new!)", "Open any zone and tap the Camp tab. Your friends work there and make ✨ Glow, even while you are away. Collect it to train your friends up!")}
+        {step("🍓", "7. Berries", "Tap the 🍓 any time to see ways to get more. Playing other activities gives ⭐ stars, and every star becomes berries!")}
       </div>
       <button onClick={onClose} className="rounded-2xl bg-yellow-300 px-8 py-3 text-2xl font-bold text-black active:scale-95">Let's go!</button>
     </div>

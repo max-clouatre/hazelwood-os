@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { chime, note } from "../lib/audio";
 import { say } from "../lib/speech";
 import { useStore } from "../lib/store";
@@ -25,7 +26,7 @@ export const LURE_COST = 8;
 
 interface Pop { id: number; x: number; y: number; icon: PopKind; text: string; good: boolean }
 
-export function Explore({ biome, onEncounter, onBack }: { biome: Biome; onEncounter: (draft: Owned, lure: boolean) => void; onBack: () => void }) {
+export function Explore({ biome, onEncounter, onBack, tabs }: { biome: Biome; onEncounter: (draft: Owned, lure: boolean) => void; onBack: () => void; tabs?: ReactNode }) {
   const [round, setRound] = useState(0);
   const [toast, setToast] = useState("Tap a rustling spot to look!");
   const [lure, setLure] = useState(false);
@@ -89,7 +90,7 @@ export function Explore({ biome, onEncounter, onBack }: { biome: Biome; onEncoun
         <p className="min-w-0 flex-1 truncate rounded-full bg-black/40 px-4 py-1 text-center text-lg font-bold">{toast}</p>
         <BerryPill n={w.berries} className="!bg-black/40" />
       </div>
-      <p className="absolute inset-x-0 top-14 text-center text-2xl font-bold drop-shadow"><span className="emoji">{biome.emoji}</span> {biome.name}</p>
+      {tabs ?? <p className="absolute inset-x-0 top-14 text-center text-2xl font-bold drop-shadow"><span className="emoji">{biome.emoji}</span> {biome.name}</p>}
       {spots.map(([x, y], i) => (
         <button key={`${round}-${i}`} onClick={() => look(x, y)} aria-label="Rustling bush"
           className="anim-pop absolute -translate-x-1/2 -translate-y-1/2 active:scale-90"

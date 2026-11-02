@@ -4,7 +4,8 @@ import { Catch } from "../wilds/Catch";
 import { Dex } from "../wilds/Dex";
 import { Duel } from "../wilds/Duel";
 import { Eggs } from "../wilds/Eggs";
-import { Explore } from "../wilds/Explore";
+import { Zone } from "../wilds/Zone";
+import type { Mode } from "../wilds/ModeTabs";
 import { Hub, Starter } from "../wilds/Hub";
 import type { Nav } from "../wilds/Hub";
 import { Detail, MyWilds } from "../wilds/Collection";
@@ -23,7 +24,7 @@ import type { ThemeId } from "../lib/music";
 import type { ActivityProps } from "./types";
 
 type View =
-  | { n: "hub" } | { n: "explore"; biome: Biome } | { n: "wilds" } | { n: "detail"; id: string } | { n: "dex" } | { n: "eggs" } | { n: "duel" } | { n: "home" }
+  | { n: "hub" } | { n: "zone"; biome: Biome; mode: Mode } | { n: "wilds" } | { n: "detail"; id: string } | { n: "dex" } | { n: "eggs" } | { n: "duel" } | { n: "home" }
   | { n: "catch"; draft: Owned; biome: Biome; bonus: number; headline: string; visitor: boolean };
 
 export default function Hazelwild(_: ActivityProps) {
@@ -36,7 +37,7 @@ export default function Hazelwild(_: ActivityProps) {
   const [tips, setTips] = useState(false);
   useEffect(() => { rollDay(); }, []);
   // Songs: calm at the menus, each zone has its own while exploring (faster while catching), a fast one for duels.
-  const themeKey = view.n === "explore" || view.n === "catch" ? `${view.biome.id}:${view.n}` : view.n === "duel" ? "duel" : "hub";
+  const themeKey = view.n === "zone" || view.n === "catch" ? `${view.biome.id}:${view.n === "catch" ? "catch" : "zone"}` : view.n === "duel" ? "duel" : "hub";
   useEffect(() => {
     const [id, mode] = themeKey.split(":");
     playTheme(id as ThemeId, mode === "catch");
@@ -68,18 +69,18 @@ export default function Hazelwild(_: ActivityProps) {
     <div className="relative h-full overflow-hidden">
       {view.n === "hub" && (
         <Hub w={w}
-          onExplore={(b) => setView({ n: "explore", biome: b })}
+          onExplore={(b) => setView({ n: "zone", biome: b, mode: "explore" })}
           onVisitor={() => startCatch(makeOwned(dailyVisitorSpecies(), rollShiny(0.06), undefined, rollVariant()), BIOMES[0], 0.25, "Daily Visitor:", true)}
           onNav={(n: Nav) => setView({ n })} onTips={() => setTips(true)} />
       )}
-      {view.n === "explore" && (
-        <Explore biome={view.biome} onBack={toHub}
+      {view.n === "zone" && (
+        <Zone biome={view.biome} mode={view.mode} onMode={(m) => setView({ ...view, mode: m })} onBack={toHub}
           onEncounter={(draft, lure) => startCatch(draft, view.biome, lure ? 0.1 : 0, lure ? "Your lure worked! A special" : "A wild", false)} />
       )}
       {view.n === "catch" && (
         <Catch draft={view.draft} biome={view.biome} bonus={view.bonus} headline={view.headline}
-          onCaught={() => setDraft({ o: view.draft, back: view.visitor ? { n: "hub" } : { n: "explore", biome: view.biome }, visitor: view.visitor })}
-          onFled={() => setView(view.visitor ? { n: "hub" } : { n: "explore", biome: view.biome })} />
+          onCaught={() => setDraft({ o: view.draft, back: view.visitor ? { n: "hub" } : { n: "zone", biome: view.biome, mode: "explore" }, visitor: view.visitor })}
+          onFled={() => setView(view.visitor ? { n: "hub" } : { n: "zone", biome: view.biome, mode: "explore" })} />
       )}
       {view.n === "wilds" && <MyWilds onOpen={(id) => setView({ n: "detail", id })} onBack={toHub} />}
       {view.n === "detail" && <Detail id={view.id} onBack={() => setView({ n: "wilds" })} />}

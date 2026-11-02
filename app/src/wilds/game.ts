@@ -3,6 +3,7 @@ import { hashString, mulberry32 } from "./colors";
 import { BIOMES, COLLECTABLE, ELEMENTS, FAMILIES, FOOD_COST, FOOD_SIDE, FORM_KEYS, LEGACY_NAMES, SPECIES_BY_ID, STAGE_AT, familyMembers } from "./species";
 import type { ElementId, FoodId, FormKey, Personality, Species, VariantId } from "./species";
 import type { Branch, Egg, Goal, GoalKind, Owned, Wilds } from "./types";
+import { MASTERY_AT, MASTERY_REWARD, masteryStars } from "./mastery";
 
 export const todayKey = () => new Date().toDateString();
 const pickOf = <T,>(a: readonly T[]): T => a[Math.floor(Math.random() * a.length)];
@@ -112,7 +113,7 @@ export function markSeen(spId: string) { setWilds((w) => ({ seen: { ...w.seen, [
 
 /** Adds a creature. Returns true if this completed the Wilddex and unlocked the legendary. */
 export function addOwned(o: Owned): boolean {
-  setWilds((w) => ({ owned: [...w.owned, o], seq: w.seq + 1, seen: { ...w.seen, [o.sp]: Math.max(1, w.seen[o.sp] ?? 0) } }));
+  setWilds((w) => ({ owned: [...w.owned, o], seq: w.seq + 1, seen: { ...w.seen, [o.sp]: Math.max(1, w.seen[o.sp] ?? 0) }, caught: { ...w.caught, [o.sp]: (w.caught[o.sp] ?? 0) + 1 } }));
   let legend = false;
   const w = wilds();
   if (!w.legend && collected(w).size >= COLLECTABLE.length) {
@@ -181,7 +182,8 @@ export function gainBond(ids: string[], n: number) {
 // ---------------------------------------------------------------- badges: family and form mastery
 export interface BadgeInfo { emoji: string; title: string; text: string; reward: number }
 export function badgeInfo(id: string): BadgeInfo {
-  const [kind, key] = id.split(":");
+  const [kind, key, n] = id.split(":");
+  if (kind === "mastery") { const sp = SPECIES_BY_ID[key]; return { emoji: "🎯", title: `${sp.kind} Mastery ${"★".repeat(+n)}`, text: `You caught ${MASTERY_AT[+n - 1]} ${sp.kind}s!`, reward: MASTERY_REWARD[+n - 1] }; }
   if (kind === "family") { const f = FAMILIES[key as ElementId]; return { emoji: ELEMENTS[key as ElementId].emoji, title: `${f.name} Family`, text: `You met every ${f.name}!`, reward: 20 }; }
   const sp = SPECIES_BY_ID[key];
   return { emoji: "🏅", title: `${sp.names[0]} Master`, text: `You found all 4 forms of ${sp.names[0]}!`, reward: 10 };
@@ -198,6 +200,10 @@ export function checkBadges() {
   COLLECTABLE.forEach((sp) => {
     const id = `master:${sp.id}`;
     if (!have.has(id) && formsFound(w, sp.id).size === FORM_KEYS.length) fresh.push(id);
+  });
+  COLLECTABLE.forEach((sp) => {
+    const stars = masteryStars(w, sp.id);
+    for (let n = 1; n <= stars; n++) { const id = `mastery:${sp.id}:${n}`; if (!have.has(id)) fresh.push(id); }
   });
   if (!fresh.length) return;
   const gift = fresh.reduce((n, id) => n + badgeInfo(id).reward, 0);

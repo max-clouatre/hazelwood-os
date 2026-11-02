@@ -5,6 +5,7 @@ import { Creature } from "./Creature";
 import { COLLECTABLE, ELEMENTS, FAMILIES, FOODS, FORM_KEYS, RARITY_LABEL, SPECIES_BY_ID, VARIANTS, familyMembers, formName, BIOMES } from "./species";
 import type { ElementId, FoodId, Species, VariantId } from "./species";
 import { Back } from "./Collection";
+import { MASTERY_AT, MASTERY_BONUS, masteryNext } from "./mastery";
 
 export function Dex({ onBack }: { onBack: () => void }) {
   const { wilds: w } = useStore();
@@ -101,6 +102,13 @@ export function Dex({ onBack }: { onBack: () => void }) {
               <div className="rounded-2xl bg-black/30 p-2"><p className="text-lg font-bold">🗺️ Lives in</p><p className="text-base">{sel.biomes.length ? sel.biomes.map((id) => { const bi = BIOMES.find((x) => x.id === id)!; return <span key={id} className="mr-2 whitespace-nowrap"><span className="emoji">{bi.emoji}</span> {bi.name.split(" ").pop()}</span>; }) : "🌟 A secret place"}</p></div>
               <div className="rounded-2xl bg-black/30 p-2"><p className="text-lg font-bold">💕 Loves</p><p className="text-base">{w.favs[sel.id] ? <><span className="emoji">{FOODS[w.favs[sel.id] as FoodId].emoji}</span> {FOODS[w.favs[sel.id] as FoodId].name}</> : "??? Feed one to find out!"}</p></div>
             </div>
+            {sel.rarity < 4 && (() => { const m = masteryNext(w, sel.id); return (
+              <div className="mt-2 rounded-2xl bg-black/30 p-2">
+                <p className="text-lg font-bold">🎯 Mastery <span className="ml-1 text-amber-300">{"★".repeat(m.stars)}<span className="text-white/30">{"★".repeat(MASTERY_AT.length - m.stars)}</span></span></p>
+                <p className="text-base">You've caught <b>{m.have}</b> {sel.kind}{m.have === 1 ? "" : "s"}.{m.goal ? <> Catch <b>{m.goal - m.have}</b> more for the next ★!</> : " Mastered! 🎉"}</p>
+                {m.goal && <div className="mt-1 h-3 overflow-hidden rounded-full bg-black/40"><div className="h-full bg-amber-300" style={{ width: `${Math.min(100, (m.have / m.goal) * 100)}%` }} /></div>}
+                {w.modes.camp && <p className="mt-1 text-sm text-white/80">Each ★ makes this friend work {Math.round(MASTERY_BONUS * 100)}% faster in the Camp.</p>}
+              </div>); })()}
             {sel.rarity < 4 && (
               <div className="mt-2 rounded-2xl bg-black/30 p-2">
                 <p className="text-lg font-bold">🎨 Special colors found</p>

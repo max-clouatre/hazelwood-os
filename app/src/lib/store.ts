@@ -94,8 +94,12 @@ export function addStar(p: ProfileId, n = 1) {
     const earned = Math.min(Math.floor(stars / STARS_PER_STICKER), STICKERS[p].length);
     const gained = earned > s.stickers[p];
     // Hazel's stars also feed her creature game: berries, and progress toward hatching eggs.
+    const now = Date.now();
+    const b = s.wilds.boost;
+    const live = b.until > now;
+    const boost = { from: live ? b.from : now, until: Math.min(now + 60 * 60000, (live ? b.until : now) + n * 10 * 60000) };
     const wilds = p === "hazel"
-      ? { ...s.wilds, berries: s.wilds.berries + 3 * n, fromStars: s.wilds.fromStars + 3 * n,
+      ? { ...s.wilds, berries: s.wilds.berries + 3 * n, fromStars: s.wilds.fromStars + 3 * n, boost,
           eggs: s.wilds.eggs.map((e) => ({ ...e, have: Math.min(e.need, e.have + n) })) }
       : s.wilds;
     return {

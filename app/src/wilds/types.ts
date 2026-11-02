@@ -8,9 +8,12 @@ export interface Owned {
   foods?: [number, number]; // day foods and night foods fed so far; decides the final form
   branch?: Branch; // final form (decided when it reaches form 3)
   variant?: VariantId; // special color: golden, storm, shadow, autumn
+  level?: number; // training level 1-10 (bought with Glow in the Camp)
 }
 export type GoalKind = "catch" | "catchEl" | "feed" | "pet" | "explore" | "duel" | "evolve";
 export interface Goal { id: string; kind: GoalKind; el?: ElementId; target: number; have: number; reward: number; claimed: boolean }
+/** One zone's camp: friends who work there and its upgrades. */
+export interface Camp { workers: string[]; extra: number; basket: number; speed: number; since: number }
 export interface Egg { id: string; need: number; have: number }
 export interface Wilds {
   started: boolean; // picked a first friend
@@ -26,9 +29,15 @@ export interface Wilds {
   badges: string[]; newBadge: string | null;
   bushAt: Record<string, number>; // biome -> time its berry bush is ready again
   tipSeen: boolean;
+  glow: number; // ✨ made by camps
+  camps: Record<string, Camp>; // by zone id
+  boost: { from: number; until: number }; // Star Boost window (ms timestamps): camps work 2x inside it
+  caught: Record<string, number>; // how many of each species she has caught (Mastery)
+  modes: { camp: boolean }; // which experimental game modes are switched on
 }
 export const initialWilds: Wilds = {
   started: false, owned: [], seen: {}, berries: 10, fromStars: 0, eggs: [], day: "", visitorDone: false,
   treeDone: false, duelDay: "", favs: {}, legend: false, seq: 0, duelWins: 0,
   goals: { day: "", list: [] }, badges: [], newBadge: null, bushAt: {}, tipSeen: false,
+  glow: 0, camps: {}, boost: { from: 0, until: 0 }, caught: {}, modes: { camp: true },
 };

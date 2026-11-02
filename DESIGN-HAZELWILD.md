@@ -68,8 +68,11 @@ Flat color, bold outlines and hard offset shadows; one rounded font; no gradient
 ## 3D: why not yet, and the plan
 A 3D renderer is possible, but the Samsung Galaxy Tab A is the limiting device and I can't measure its graphics speed from here. The plan is: (1) a small **performance probe page** you open on the tablet and phone to read frames per second, (2) generate toy-style low-poly 3D creatures from the same species recipes (every variation carries over), (3) a 3D diorama per biome, (4) automatic fallback to today's 2D art if the frame rate drops.
 
+## Incremental systems
+See `PLAN-INCREMENTAL.md` (Mastery, Camp, training, Star Boost; later: food chains, expeditions, research).
+
 ## Next (from the first play session)
-- **Music** for each zone (synthesized loops so it stays offline).
+- ✅ Music for each zone (done).
 - **A different catch loop per zone** (for example faster rings in the forest, drifting creatures at the shore, flickering light in the cave).
 - Distinct zone **icons and art** beyond the spot icon.
 - More finds and mini-events while exploring.

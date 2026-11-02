@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BerryPill } from "./BerryGuide";
+import { GlowPill } from "./Camp";
 import { Goals } from "./Goals";
 import { addBerries, biomeUnlocked, collected, dailyVisitorSpecies, setWilds, TOTAL_FORMS, totalFormsFound, wildOfDay } from "./game";
 import { Creature } from "./Creature";
@@ -48,6 +49,7 @@ export function Hub({ w, onExplore, onVisitor, onNav, onTips }: {
     <div className="flex h-full flex-col gap-2 overflow-y-auto bg-forest px-3 pb-5">
       <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
         <BerryPill n={w.berries} />
+        {w.modes.camp && <GlowPill n={w.glow} className="!px-3 !text-lg" />}
         <span className="rounded-full bg-black/30 px-3 py-1 text-lg font-bold"><span className="emoji">📖</span> {have.size}/{COLLECTABLE.length}</span>
         <span className="rounded-full bg-black/30 px-3 py-1 text-lg font-bold"><span className="emoji">🌳</span> Forms {totalFormsFound(w)}/{TOTAL_FORMS}</span>
         <button onClick={onTips} aria-label="How to play" className="rounded-full bg-white/90 px-3 py-1 text-lg font-bold text-emerald-900 active:scale-95">? Help</button>

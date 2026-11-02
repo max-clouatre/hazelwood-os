@@ -107,3 +107,33 @@ export function PopIcon({ kind, className, style }: P & { kind: PopKind }) {
   }
   return <svg viewBox="0 0 64 64" className={className} style={style} aria-hidden>{kind === "bang" ? <><circle cx={32} cy={32} r={26} fill="#ff6b6b" {...S} /><text x={32} y={45} textAnchor="middle" fontSize={38} fontWeight={700} fontFamily="Fredoka, system-ui, sans-serif" fill="#fff">!</text></> : art}</svg>;
 }
+
+/** ✨ Glow: the Camp currency. */
+export function GlowIcon({ className, style }: P) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} style={style} aria-hidden>
+      <path d="M32 4C34 20 44 30 60 32C44 34 34 44 32 60C30 44 20 34 4 32C20 30 30 20 32 4Z" fill="#ffd84a" {...S} />
+      <path d="M50 8C51 13 54 16 59 17C54 18 51 21 50 26C49 21 46 18 41 17C46 16 49 13 50 8Z" fill="#fff3b0" stroke={INK} strokeWidth={2} strokeLinejoin="round" />
+    </svg>
+  );
+}
+export function ModeIcon({ kind, className }: { kind: "explore" | "camp"; className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden>
+      {kind === "explore" ? (
+        <g>
+          <circle cx={27} cy={27} r={16} fill="#bfe9ff" {...S} />
+          <path d="M39 39L56 56" stroke={INK} strokeWidth={8} strokeLinecap="round" />
+          <path d="M39 39L56 56" stroke="#c98a4b" strokeWidth={4} strokeLinecap="round" />
+          <path d="M18 24Q21 17 29 16" stroke="#fff" strokeWidth={3.5} fill="none" strokeLinecap="round" />
+        </g>
+      ) : (
+        <g>
+          <path d="M6 56L32 8L58 56Z" fill="#f2b84b" {...S} />
+          <path d="M32 8L32 56M32 56L20 56L32 30L44 56Z" fill="#e5736b" stroke={INK} strokeWidth={3} strokeLinejoin="round" />
+          <path d="M32 8L28 2M32 8L36 2" stroke={INK} strokeWidth={3} strokeLinecap="round" />
+        </g>
+      )}
+    </svg>
+  );
+}

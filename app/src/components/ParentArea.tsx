@@ -54,6 +54,13 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
         </div>
 
         <section className="rounded-2xl bg-white/10 p-4">
+          <h2 className="mb-2 text-xl font-bold">Game modes (experiments)</h2>
+          <p className="mb-2 text-sm text-white/70">Explore is always on. New ways to play appear as tabs inside each zone. Turn an experiment off if it isn't working.</p>
+          <label className="flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={s.wilds.modes.camp} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, camp: e.target.checked } } }))} />
+            <span><b>🏕️ Camp</b> (beta): friends work and make Glow while she's away; train them up.</span></label>
+        </section>
+
+        <section className="rounded-2xl bg-white/10 p-4">
           <h2 className="mb-2 text-xl font-bold">App update</h2>
           <p className="text-base">Installed version: <b>{BUILD}</b></p>
           <p className="text-base">Newest on the server: <b>{latestKnown() ?? "not checked yet"}</b> {newer && <span className="ml-1 rounded-full bg-yellow-300 px-2 text-sm font-bold text-black">update ready</span>}</p>
