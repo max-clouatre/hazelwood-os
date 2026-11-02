@@ -134,7 +134,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   const hOver = async (label) => { const o = await p.evaluate(() => { const w=innerWidth; return [...document.querySelectorAll('button,p,input')].filter(e=>{const r=e.getBoundingClientRect();return r.width&&(r.right>w+2||r.left<-2)&&!e.closest('.overflow-y-auto,.overflow-auto')}).map(e=>(e.textContent||'').slice(0,18)); }); console.log(o.length?'FAIL':'PASS', 'phone', label, o.length? JSON.stringify(o):''); };
   await hOver('hub');
   for (const [re,label] of [[/Friends$/,'friends'],[/Home$/,'habitat'],[/Dex$/,'dex'],[/Eggs/,'eggs'],[/Duel$/,'duel']]) { await p.locator('button',{hasText:re}).last().click(); await p.waitForTimeout(350); await p.screenshot({path:`${S}/shots/n-ph-${label}.png`}); await hOver(label); await p.getByText('◀ Back').first().click(); await p.waitForTimeout(200); }
-  await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(300); await hOver('explore');
+  await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(1200); await hOver('explore'); // wait for the pop-in animation to settle
   console.log('errors', errs);
   await b.close();
 })();
