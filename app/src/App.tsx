@@ -3,6 +3,7 @@ import { ACTIVITIES } from "./activities/registry";
 import { titleOf } from "./activities/types";
 import { BreakScreen } from "./components/BreakScreen";
 import { StickerOverlay } from "./components/StickerOverlay";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { TopBar } from "./components/TopBar";
 import { unlockAudio } from "./lib/audio";
 import { addPlayTime, playedToday, useStore } from "./lib/store";
@@ -59,7 +60,7 @@ function App() {
     body = (
       <div className={`flex h-full flex-col ${PROFILES[profile].bg}`}>
         <TopBar profile={profile} title={titleOf(activity, profile)} onHome={() => setActivityId(null)} />
-        <div className="min-h-0 flex-1"><activity.Component key={activity.id} profile={profile} /></div>
+        <div className="min-h-0 flex-1"><ErrorBoundary key={activity.id} label={activity.title} onExit={() => setActivityId(null)}><activity.Component profile={profile} /></ErrorBoundary></div>
       </div>
     );
   }

@@ -10,6 +10,8 @@ import { ELEMENTS, FAMILIES, FOODS, FOOD_COST, FOOD_SIDE, FORM_KEYS, PERSONALITI
 import type { FoodId, FormKey } from "./species";
 import type { Owned } from "./types";
 
+const lastForm = (o: Owned) => { const k = formKeysOf(o); return k[k.length - 1]; };
+
 export const Back = ({ onClick, label = "◀ Back" }: { onClick: () => void; label?: string }) => (
   <button onClick={onClick} className="rounded-2xl bg-white/90 px-4 py-2 text-xl font-bold text-emerald-900 shadow active:scale-95">{label}</button>
 );
@@ -28,7 +30,7 @@ export function MyWilds({ onOpen, onBack }: { onOpen: (id: string) => void; onBa
             <button key={o.id} onClick={() => onOpen(o.id)} className="relative rounded-3xl bg-white/15 p-1 text-center shadow-lg active:scale-95">
               <Creature species={sp} stage={st} shiny={o.shiny} seed={o.seed} personality={o.pers} branch={o.branch} className="mx-auto h-24 w-24 sm:h-28 sm:w-28" />
               <p className="truncate text-lg font-bold leading-tight">{o.name}</p>
-              <p className="truncate text-xs text-white/80"><span className="emoji">{ELEMENTS[sp.element].emoji}</span> {sp.rarity === 4 ? sp.names[0] : formName(sp, formKeysOf(o).at(-1)!)}</p>
+              <p className="truncate text-xs text-white/80"><span className="emoji">{ELEMENTS[sp.element].emoji}</span> {sp.rarity === 4 ? sp.names[0] : formName(sp, lastForm(o))}</p>
               <div className="mx-auto mt-1 h-2 w-3/4 overflow-hidden rounded-full bg-black/30"><div className="h-full bg-pink-400" style={{ width: `${bond(o.xp).pct * 100}%` }} /></div>
               {o.shiny && <span className="emoji absolute right-1 top-1 text-xl">✨</span>}
             </button>
@@ -66,7 +68,7 @@ export function Detail({ id, onBack }: { id: string; onBack: () => void }) {
     // read the creature again to see which form it became
     const o2 = wilds().owned.find((x) => x.id === o.id);
     if (!o2) return;
-    const key = formKeysOf(o2).at(-1)!;
+    const key = lastForm(o2);
     chime(); say(`${o2.name} evolved!`);
     setEvo({ key, stage: stageFor(o2.xp), branch: o2.branch, isNew: !known.has(key), name: o2.name });
     window.clearTimeout(evoTimer.current); evoTimer.current = window.setTimeout(() => setEvo(null), 4200);
@@ -118,7 +120,7 @@ export function Detail({ id, onBack }: { id: string; onBack: () => void }) {
               </>
             )}
           </div>
-          <p className="text-lg"><span className="emoji">{el.emoji}</span> {legendary ? sp.names[0] : formName(sp, formKeysOf(o).at(-1)!)} · {RARITY_LABEL[sp.rarity]} {o.shiny && "· ✨ Shiny"}</p>
+          <p className="text-lg"><span className="emoji">{el.emoji}</span> {legendary ? sp.names[0] : formName(sp, lastForm(o))} · {RARITY_LABEL[sp.rarity]} {o.shiny && "· ✨ Shiny"}</p>
           <p className="text-base text-white/90">{FAMILIES[sp.element].name} family · <b>{PERSONALITIES[o.pers].label}</b> · Loves: <b>{favKnown ? `${FOODS[favKnown as FoodId].emoji} ${FOODS[favKnown as FoodId].name}` : "??? (try different foods!)"}</b></p>
 
           {!legendary && (

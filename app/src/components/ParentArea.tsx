@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DEFAULT_SPELLING, playedToday, update, useStore } from "../lib/store";
 import { initialWilds } from "../wilds/types";
+import { clearError, lastError } from "../lib/errlog";
 import type { ProfileId } from "../lib/store";
 import { STICKERS } from "../lib/stickers";
 
@@ -31,6 +32,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
   const s = useStore();
   const [confirm, setConfirm] = useState(false);
   const [confirmW, setConfirmW] = useState(false);
+  const [, setTick] = useState(0);
   const kids: [ProfileId, string][] = [["hazel", "Hazel"], ["violet", "Violet"]];
   const hard = Object.entries(s.misses).sort((a, b) => b[1] - a[1]).map(([w]) => w);
   return (
@@ -63,6 +65,14 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           <h2 className="mb-2 text-xl font-bold">Hazel's spelling list (one word per line)</h2>
           <Editor words={s.spelling} />
           <p className="mt-3 text-lg">Words she needs again soon: {hard.length ? <b>{hard.join(", ")}</b> : <span className="text-white/70">none yet</span>}</p>
+        </section>
+
+        <section className="rounded-2xl bg-white/10 p-4">
+          <h2 className="mb-2 text-xl font-bold">Diagnostics</h2>
+          {(() => { const e = lastError(); return e ? (
+            <div className="text-sm"><p className="break-words">Last problem ({e.at.slice(0, 16).replace("T", " ")}): <b>{e.msg}</b></p><p className="mt-1 break-words text-white/60">{e.stack}</p><p className="mt-1 break-words text-white/60">{e.ua}</p>
+              <button onClick={() => { clearError(); setTick((t) => t + 1); }} className="mt-2 rounded-xl bg-white/20 px-4 py-2 text-base">Clear</button></div>
+          ) : <p className="text-white/70">No problems recorded. 👍</p>; })()}
         </section>
 
         <section className="rounded-2xl bg-white/10 p-4">
