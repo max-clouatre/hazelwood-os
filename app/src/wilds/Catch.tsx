@@ -7,6 +7,7 @@ import { Creature } from "./Creature";
 import { ELEMENTS, RARITY_LABEL, SPECIES_BY_ID, VARIANTS } from "./species";
 import type { Biome } from "./species";
 import type { Owned } from "./types";
+import { Orb, PopIcon } from "./Icons";
 import { Scene } from "./Scene";
 
 type Phase = "aim" | "throw" | "wobble" | "result";
@@ -102,7 +103,7 @@ export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: C
         <div className={wob ? "anim-wobble" : phase === "result" && msg.startsWith("Gotcha") ? "" : "anim-hop"} style={{ transition: "transform .4s", transform: wob || (phase === "result" && msg.startsWith("Gotcha")) ? "scale(.35)" : "scale(1)" }}>
           <Creature species={sp} stage={1} shiny={shiny} variant={draft.variant} seed={draft.seed} personality={draft.pers} mood={phase === "result" && !msg.startsWith("Gotcha") ? "sleep" : "happy"} className="h-56 w-56 sm:h-64 sm:w-64" />
         </div>
-        {wob && <span className="emoji absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl">🔮</span>}
+        {wob && <Orb className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2" />}
         {/* target circle + shrinking ring */}
         {phase === "aim" || phase === "throw" ? (
           <>
@@ -111,17 +112,17 @@ export function Catch({ draft, biome, bonus = 0, headline, onCaught, onFled }: C
               style={{ transform: "translate(-50%,-50%) scale(1.8)", borderColor: phase === "throw" ? ringHue : "#fff" }} />
           </>
         ) : null}
-        {phase === "throw" && <span className="emoji absolute left-1/2 top-1/2 -translate-x-1/2 text-5xl" style={{ animation: "burst 0.45s ease-in forwards", ["--dx" as string]: "0px", ["--dy" as string]: "-30px" }}>🔮</span>}
+        {phase === "throw" && <Orb className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2" style={{ animation: "burst 0.45s ease-in forwards", ["--dx" as string]: "0px", ["--dy" as string]: "-30px" } as React.CSSProperties} />}
         {quality && phase !== "aim" && <p className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-3xl font-bold" style={{ color: ringHue }}>{quality === "great" ? "GREAT!" : quality === "nice" ? "Nice!" : quality === "ok" ? "OK" : "Miss"}</p>}
       </div>
 
       <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-2 px-2 sm:gap-4">
         <button onClick={() => setUseBerry((b) => !b)} disabled={phase !== "aim" || berries < 1}
           className={`rounded-2xl px-3 py-2 text-base font-bold shadow-lg active:scale-95 sm:px-4 sm:py-3 sm:text-lg ${useBerry ? "bg-pink-400 text-white ring-4 ring-pink-200" : "bg-white/90 text-pink-700"} ${berries < 1 ? "opacity-40" : ""}`}>
-          <span className="emoji">🍓</span> Sweet berry {useBerry ? "ON" : ""}<span className="hidden text-xs font-normal sm:block">+15% · costs 1 ({berries} left)</span>
+          <PopIcon kind="berry" className="mr-1 inline-block h-6 w-6 align-middle" /> Sweet berry {useBerry ? "ON" : ""}<span className="hidden text-xs font-normal sm:block">+15% · costs 1 ({berries} left)</span>
         </button>
         <button onClick={throwOrb} disabled={phase !== "aim"} className="rounded-3xl bg-yellow-300 px-6 py-3 text-2xl font-bold text-black shadow-2xl active:scale-95 sm:px-10 sm:py-4 sm:text-3xl">
-          <span className="emoji">🔮</span> Throw!
+          <Orb className="mr-2 inline-block h-9 w-9 align-middle" /> Throw!
         </button>
         <button onClick={onFled} disabled={phase !== "aim"} className="rounded-2xl bg-white/70 px-3 py-2 text-base font-bold text-purple-900 active:scale-95 sm:px-4 sm:py-3 sm:text-lg">Run</button>
       </div>

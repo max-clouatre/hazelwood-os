@@ -18,6 +18,8 @@ import { BIOMES } from "../wilds/species";
 import type { Biome } from "../wilds/species";
 import type { Owned } from "../wilds/types";
 import { useStore } from "../lib/store";
+import { playTheme, stopMusic } from "../lib/music";
+import type { ThemeId } from "../lib/music";
 import type { ActivityProps } from "./types";
 
 type View =
@@ -33,6 +35,13 @@ export default function Hazelwild(_: ActivityProps) {
   const [guide, setGuide] = useState(false);
   const [tips, setTips] = useState(false);
   useEffect(() => { rollDay(); }, []);
+  // Songs: calm at the menus, each zone has its own while exploring (faster while catching), a fast one for duels.
+  const themeKey = view.n === "explore" || view.n === "catch" ? `${view.biome.id}:${view.n}` : view.n === "duel" ? "duel" : "hub";
+  useEffect(() => {
+    const [id, mode] = themeKey.split(":");
+    playTheme(id as ThemeId, mode === "catch");
+  }, [themeKey]);
+  useEffect(() => () => stopMusic(), []);
   useEffect(() => { const f = () => setGuide(true); window.addEventListener("wilds:guide", f); return () => window.removeEventListener("wilds:guide", f); }, []);
 
   // Add the creature, and celebrate if that completed the Wilddex.

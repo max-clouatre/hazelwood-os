@@ -31,5 +31,8 @@ export const note = (i?: number) => tone(PENTA[(i ?? Math.floor(Math.random() * 
 export const chime = () => [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.09, 0.45));
 export const oops = () => { tone(220, 0, 0.25, "triangle", 0.18); tone(196, 0.12, 0.3, "triangle", 0.18); };
 
+/** The shared audio context (music uses it too). */
+export const audioCtx = (): AudioContext | null => ac();
+
 /** Browsers block audio until a touch. Call once from a pointerdown handler. */
 export const unlockAudio = () => { ac(); };

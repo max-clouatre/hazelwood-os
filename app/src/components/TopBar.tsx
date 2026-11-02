@@ -2,8 +2,8 @@ import { useStore } from "../lib/store";
 import type { ProfileId } from "../lib/store";
 import { update } from "../lib/store";
 
-export function TopBar({ profile, title, onHome }: { profile: ProfileId; title?: string; onHome: () => void }) {
-  const { stars, sound } = useStore();
+export function TopBar({ profile, title, onHome, showMusic }: { profile: ProfileId; title?: string; onHome: () => void; showMusic?: boolean }) {
+  const { stars, sound, music } = useStore();
   return (
     <div className="flex items-center justify-between gap-3 p-3">
       <button onClick={onHome} aria-label="Home"
@@ -11,6 +11,7 @@ export function TopBar({ profile, title, onHome }: { profile: ProfileId; title?:
       {title && <h1 className="truncate text-2xl font-bold drop-shadow sm:text-3xl">{title}</h1>}
       <div className="flex items-center gap-3">
         <div className="rounded-full bg-black/30 px-4 py-2 text-xl font-bold"><span className="emoji">⭐</span> {stars[profile]}</div>
+        {showMusic && <button onClick={() => update((s) => ({ music: !s.music }))} aria-label="Music" className={`emoji h-12 w-12 rounded-full bg-black/30 text-2xl active:scale-95 ${music && sound ? "" : "opacity-50"}`}>{music ? "🎵" : "🔇"}</button>}
         <button onClick={() => update((s) => ({ sound: !s.sound }))} aria-label="Sound"
           className="emoji h-12 w-12 rounded-full bg-black/30 text-2xl active:scale-95">{sound ? "🔊" : "🔇"}</button>
       </div>

@@ -1,3 +1,4 @@
+import { duck } from "./music";
 import { getState } from "./store";
 
 export const speechSupported = typeof window !== "undefined" && "speechSynthesis" in window;
@@ -17,6 +18,7 @@ if (speechSupported) {
 export function say(text: string, rate = 0.85) {
   if (!speechSupported || !getState().sound) return;
   try {
+    duck(Math.min(5000, 1200 + text.length * 70));
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.rate = rate; u.pitch = 1.15;

@@ -10,6 +10,7 @@ import { addPlayTime, playedToday, useStore } from "./lib/store";
 import type { ProfileId } from "./lib/store";
 import { Home } from "./screens/Home";
 import Gallery from "./wilds/Gallery";
+import MusicLab from "./wilds/MusicLab";
 import { PROFILES, ProfilePicker } from "./screens/ProfilePicker";
 
 const TICK = 10; // seconds between play-time updates
@@ -17,6 +18,7 @@ const TICK = 10; // seconds between play-time updates
 // Tiny state machine instead of a router: picker -> home -> activity.
 export default function Root() {
   // Dev-only art preview: open the app address followed by #wilds-gallery
+  if (location.hash === "#music") return <MusicLab />;
   return location.hash === "#wilds-gallery" ? <Gallery /> : <App />;
 }
 
@@ -59,7 +61,7 @@ function App() {
   else {
     body = (
       <div className={`flex h-full flex-col ${PROFILES[profile].bg}`}>
-        <TopBar profile={profile} title={titleOf(activity, profile)} onHome={() => setActivityId(null)} />
+        <TopBar profile={profile} title={titleOf(activity, profile)} onHome={() => setActivityId(null)} showMusic={activity.id === "hazelwild"} />
         <div className="min-h-0 flex-1"><ErrorBoundary key={activity.id} label={activity.title} onExit={() => setActivityId(null)}><activity.Component profile={profile} /></ErrorBoundary></div>
       </div>
     );

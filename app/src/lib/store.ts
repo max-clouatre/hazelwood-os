@@ -26,6 +26,7 @@ interface State {
   limitMin: PerKid<number>; // daily play limit in minutes, 0 = none
   played: PerKid<{ day: string; sec: number }>;
   sound: boolean;
+  music: boolean; // background music on/off (sound must also be on)
 }
 
 const KEY = "hwos:v1"; // same key as before: older saves load and fill in new fields
@@ -44,6 +45,7 @@ const initial: State = {
   limitMin: { hazel: 0, violet: 0 },
   played: { hazel: { day: "", sec: 0 }, violet: { day: "", sec: 0 } },
   sound: true,
+  music: true,
 };
 
 function load(): State {

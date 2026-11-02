@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DEFAULT_SPELLING, playedToday, update, useStore } from "../lib/store";
 import { initialWilds } from "../wilds/types";
 import { clearError, lastError } from "../lib/errlog";
+import { BUILD, latestKnown, refreshAppFiles, updateNow, useUpdateInfo } from "../lib/update";
 import type { ProfileId } from "../lib/store";
 import { STICKERS } from "../lib/stickers";
 
@@ -33,6 +34,15 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
   const [confirm, setConfirm] = useState(false);
   const [confirmW, setConfirmW] = useState(false);
   const [, setTick] = useState(0);
+  const [upd, setUpd] = useState<string>("");
+  const [busy, setBusy] = useState(false);
+  const newer = useUpdateInfo();
+  const check = async () => {
+    setBusy(true); setUpd("Checking...");
+    const r = await updateNow();
+    setBusy(false);
+    setUpd(r === "current" ? "You have the newest version. ✓" : r === "offline" ? "No internet right now. Connect to Wi-Fi and try again." : "Update found! Restarting...");
+  };
   const kids: [ProfileId, string][] = [["hazel", "Hazel"], ["violet", "Violet"]];
   const hard = Object.entries(s.misses).sort((a, b) => b[1] - a[1]).map(([w]) => w);
   return (
@@ -42,6 +52,21 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           <h1 className="text-3xl font-bold">Grown-up area</h1>
           <button onClick={onClose} className="rounded-xl bg-white px-6 py-3 text-xl font-bold text-indigo-900">Done</button>
         </div>
+
+        <section className="rounded-2xl bg-white/10 p-4">
+          <h2 className="mb-2 text-xl font-bold">App update</h2>
+          <p className="text-base">Installed version: <b>{BUILD}</b></p>
+          <p className="text-base">Newest on the server: <b>{latestKnown() ?? "not checked yet"}</b> {newer && <span className="ml-1 rounded-full bg-yellow-300 px-2 text-sm font-bold text-black">update ready</span>}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <button onClick={check} disabled={busy} className="rounded-xl bg-emerald-400 px-5 py-3 text-xl font-bold text-black active:scale-95 disabled:opacity-50">⬇️ Check for updates</button>
+            {upd && <span className="text-base text-yellow-200">{upd}</span>}
+          </div>
+          <details className="mt-2 text-sm text-white/80">
+            <summary className="cursor-pointer">Something not working? Refresh the app files</summary>
+            <p className="mt-1">Downloads everything fresh. Friends, stars and settings are kept. Needs Wi-Fi.</p>
+            <button onClick={() => { if (window.confirm("Refresh the app files? Saved progress is kept.")) void refreshAppFiles(); }} className="mt-1 rounded-xl bg-white/20 px-4 py-2 text-base">Refresh app files</button>
+          </details>
+        </section>
 
         <section className="rounded-2xl bg-white/10 p-4">
           <h2 className="mb-2 text-xl font-bold">Daily play time</h2>
