@@ -46,3 +46,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 - **Camp:** "workers should be shown on the screen moving around and an animation should happen when they produce a glow." ⏳ [B-22]
 - "Adding workers to the **map camps also show them**, think that's a really good idea." ⏳ [B-23]
 - **Home area:** "I want her to be able to **choose which 5 or more friends are wandering** around her home area. Feels like the **home area and the landing page could be merged**... reimagine the flow and experience a bit." ⏳ [B-24]
+
+## 2026-11-02 (late): Pixel Lab result
+- Max: "I'm seeing 46-51 fps" in the Pixel Lab. Device unstated (phone vs Tab A). Status: recorded; B-10 partly answered.
