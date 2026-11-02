@@ -9,7 +9,7 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
-**Max measured 46-51 fps in the first Pixel Lab on the Tab A (280x158, 3 sprites).** **Latest (unseen by Max on tablet): Pixel meadow is lighter (colour bug fixed: it was too dark) and tuned for a steady 30 fps; ask for the fps again. Village mode idea planned in `project/PLAN-VILLAGE.md`; needs Max's answers (B-26).** **Narrator voice in Hazelwild is OFF by default (🗣️ button on the landing turns it on); music and sounds stay.** **Pixel meadow (Grown-up > Game modes) is built, beta, off by default. Max tried it on the Tab A: loves it, steady ~25 fps (cap 30, auto-degrade below 22).** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
+**Max measured 46-51 fps in the first Pixel Lab on the Tab A (280x158, 3 sprites).** **Newest: Worlds layer (`wilds/worlds.ts`, `PLAN-WORLDS.md`) and Village mode phase 0 (Grown-up switch, 3rd tab per region, `village.ts`); recipes in `project/EXTENDING.md`. Ask Max to switch Village on and play it; next is B-27 Worlds phase 1 (Pixel Isles content).** **Latest (unseen by Max on tablet): Pixel meadow is lighter (colour bug fixed: it was too dark) and tuned for a steady 30 fps; ask for the fps again. Village mode idea planned in `project/PLAN-VILLAGE.md`; needs Max's answers (B-26).** **Narrator voice in Hazelwild is OFF by default (🗣️ button on the landing turns it on); music and sounds stay.** **Pixel meadow (Grown-up > Game modes) is built, beta, off by default. Max tried it on the Tab A: loves it, steady ~25 fps (cap 30, auto-degrade below 22).** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
 
 **Newest (unseen by Max):** sound overlap fix (B-21), Camp yard with wandering/sparkling workers (B-22), workers on the map and zone cards (B-23), merged landing meadow with crew picker, Today/Map sheets (B-24, replaces Hub and Home). Ask Max: do songs still overlap? Is the landing clearer? Does Hazel pick her own crew? Are the Camp sparkles fun?
 
@@ -85,7 +85,7 @@ docs/                      BUILT output served by Pages (do not edit)     guide.
 ## Data model (saves)
 `localStorage["hwos:v1"]` = `{ stars, stickers, newSticker, letterRight, countRight, traceRight, spelling, misses, limitMin, played, coloring,
 colored, sound, music, wilds }`. `wilds` (`wilds/types.ts`): `started, owned[], seen, berries, fromStars, eggs, day, visitorDone, treeDone,
-duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp,pixel?}, homeCrew[]`.
+duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp,pixel?,village?}, homeCrew[], village{region}, world?`.
 Each owned friend: `id, sp, name, shiny, variant?, seed, pers, xp, got, pet, foods[2], branch?, level?`. Other keys: `hwos:lasterror`. **Every new field needs a default so old saves load.**
 
 ## Quality gates (see CLAUDE.md section 3)

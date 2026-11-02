@@ -78,7 +78,10 @@ function edit(zone: string, fn: (c: Camp) => Camp) {
   setWilds((x) => { const c = x.camps[zone] ?? emptyCamp(); return { glow: x.glow + gained, camps: { ...x.camps, [zone]: { ...fn(c), since: Date.now() } } }; });
   return gained;
 }
-export const assignedZone = (w: Wilds, ownedId: string) => Object.keys(w.camps).find((z) => w.camps[z].workers.includes(ownedId));
+/** Where a friend is working right now (a camp, or a village building as "village:<region>"); undefined = free. */
+export const assignedZone = (w: Wilds, ownedId: string) =>
+  Object.keys(w.camps).find((z) => w.camps[z].workers.includes(ownedId))
+  ?? Object.keys(w.village ?? {}).map((z) => (w.village![z].plots.some((p) => p?.worker === ownedId) ? "village:" + z : undefined)).find(Boolean);
 export function assignWorker(zone: string, ownedId: string): boolean {
   const w = wilds(); const c = campOf(w, zone);
   if (c.workers.length >= slotsOf(c) || assignedZone(w, ownedId)) return false;
@@ -117,7 +120,7 @@ export const modeEnabled = (mode: "camp") => getState().wilds.modes[mode];
  *  Always returns at least CREW_MIN (if she owns that many) and at most CREW_MAX. */
 export const CREW_MIN = 5, CREW_MAX = 10;
 export function homeCrew(w: Wilds): Owned[] {
-  const busy = new Set(Object.keys(w.camps).flatMap((z) => w.camps[z].workers));
+  const busy = new Set(w.owned.filter((o) => assignedZone(w, o.id)).map((o) => o.id));
   const free = w.owned.filter((o) => !busy.has(o.id));
   const chosen = w.homeCrew.map((id) => free.find((o) => o.id === id)).filter(Boolean) as Owned[];
   const rest = free.filter((o) => !chosen.includes(o)).sort((a, b) => b.xp - a.xp);

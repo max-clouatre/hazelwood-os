@@ -11,7 +11,7 @@ const TREES: [number, number][] = [[-4, -1.3], [-3.2, -3.4], [3.9, -2.8], [-0.6,
 const DIRT = "#c98f56";
 const hs = (x: number, z: number) => { const s = Math.sin(x * 127.1 + z * 311.7) * 43758.5453; return s - Math.floor(s); };
 
-interface Box { x: number; y: number; z: number; sx: number; sy: number; sz: number; c: string }
+export interface Box { x: number; y: number; z: number; sx: number; sy: number; sz: number; c: string }
 const cells = new Map<string, number>(); // "x,z" -> height step (0..2); missing = no ground
 const key = (x: number, z: number) => `${Math.round(x)},${Math.round(z)}`;
 let built = false;
@@ -40,7 +40,11 @@ export function walkable(): [number, number][] {
 /** Spots around the tent where workers stand. */
 export const campSpots = (): [number, number][] => [[CAMP.x - 1.5, CAMP.z + 0.7], [CAMP.x - 0.2, CAMP.z + 1.6], [CAMP.x + 1.5, CAMP.z + 0.9], [CAMP.x - 1.3, CAMP.z - 0.9], [CAMP.x + 1.4, CAMP.z - 0.8], [CAMP.x + 0.2, CAMP.z - 1.7]];
 
-export function buildIsland(THREE: TH, gradientMap: T.Texture) {
+/** Village build plots: spots on the ground that are clear of the pond, trees and the wishing tree. */
+export const PLOTS: [number, number][] = [[-2, 0], [0, -1], [0, 1], [2, 1], [-2, -2], [-1, 3], [1, 3], [3, 0]];
+export const plotPos = (i: number): { x: number; y: number; z: number } => { const [x, z] = PLOTS[i]; return { x, y: groundY(x, z), z }; };
+
+export function buildIsland(THREE: TH, gradientMap: T.Texture, opts: { village?: boolean } = {}) {
   layout();
   const boxes: Box[] = [];
   const add = (x: number, y: number, z: number, sx: number, sy: number, sz: number, c: string) => boxes.push({ x, y, z, sx, sy, sz, c });
@@ -79,17 +83,24 @@ export function buildIsland(THREE: TH, gradientMap: T.Texture) {
     else if (r > 0.74) add(fx, y + 0.1, fz, 0.42, 0.28, 0.34, "#c9c4dc");
     else if (r < 0.05) { add(fx, y + 0.1, fz, 0.1, 0.2, 0.1, "#fff3d6"); add(fx, y + 0.24, fz, 0.32, 0.14, 0.32, "#e5534b"); }
   });
-  // the camp: striped tent with a dark door, and a fire ring
+  // the camp: striped tent with a dark door, and a fire ring (the Village uses that space for plots instead)
   const cy = top(CAMP.x, CAMP.z), tx = CAMP.x, tz = CAMP.z;
+  if (!opts.village) {
   const stripe = ["#e5534b", "#fff3d6"];
   [[1.7, 0.45], [1.35, 0.4], [1.0, 0.4], [0.65, 0.35], [0.3, 0.3]].forEach(([w, hgt], i) => add(tx, cy + 0.22 + i * 0.4, tz, w, hgt, w, stripe[i % 2]));
   add(tx, cy + 0.05 + 0.3, tz + 0.88, 0.42, 0.6, 0.06, "#2b2540"); add(tx, cy + 2.3, tz, 0.06, 0.5, 0.06, "#a8693a"); add(tx + 0.18, cy + 2.45, tz, 0.3, 0.18, 0.04, "#f2b84b");
   for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(tx - 1.0 + Math.cos(a) * 0.32, cy + 0.07, tz + 1.5 + Math.sin(a) * 0.32, 0.16, 0.14, 0.16, "#c9c4dc"); }
+  }
 
-  const mat = new THREE.MeshToonMaterial({ gradientMap });
-  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mat, boxes.length);
+  const mesh = boxesToMesh(THREE, gradientMap, boxes);
+  return { mesh, fire: { x: tx - 1.0, y: cy + 0.2, z: tz + 1.5 }, wish: { x: WISH.x, y: top(WISH.x, WISH.z) + 2.6, z: WISH.z } };
+}
+
+/** Turn a list of boxes into one instanced mesh (one draw call). Used for the island and for Village buildings. */
+export function boxesToMesh(THREE: TH, gradientMap: T.Texture, boxes: Box[]): T.InstancedMesh {
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshToonMaterial({ gradientMap }), Math.max(1, boxes.length));
   const o = new THREE.Object3D(), c = new THREE.Color();
   boxes.forEach((b, i) => { o.position.set(b.x, b.y, b.z); o.scale.set(b.sx, b.sy, b.sz); o.updateMatrix(); mesh.setMatrixAt(i, o.matrix); mesh.setColorAt(i, c.set(b.c)); });
-  mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-  return { mesh, fire: { x: tx - 1.0, y: cy + 0.2, z: tz + 1.5 }, wish: { x: WISH.x, y: top(WISH.x, WISH.z) + 2.6, z: WISH.z } };
+  mesh.count = boxes.length; mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  return mesh;
 }

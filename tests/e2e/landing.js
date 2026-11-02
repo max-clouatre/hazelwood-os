@@ -35,6 +35,9 @@ const path = require('path');
     ok(`${label}: crew choice survives a reload`, (await crew()) === 6);
     // map shows the worker on its zone card and a glow badge
     await p.getByRole('button', { name: 'Adventure!' }).click(); await p.waitForTimeout(300);
+    ok(`${label}: map shows the world bar with Hazelwild and Pixel Isles (soon)`, (await p.getByTestId('world-bar').innerText()).includes('Hazelwild') && /Pixel Isles\s*soon/i.test((await p.getByTestId('world-bar').innerText()).replace(/\n/g, ' ')));
+    await p.getByRole('button', { name: /Pixel Isles/ }).click(); await p.waitForTimeout(200);
+    ok(`${label}: an unbuilt world cannot be entered, it just says it is coming`, (await p.getByText(/Being built/).first().isVisible()) && (await p.locator('button', { hasText: 'Meadow' }).count()) >= 1);
     ok(`${label}: zone card shows its worker`, (await p.getByTestId('zone-workers-meadow').locator('svg').count()) >= 1);
     ok(`${label}: zone card shows glow waiting`, await p.getByText(/✨ \d+/).first().isVisible());
     await p.screenshot({ path: `${OUT}/shots/landing-map-${label}.png` });

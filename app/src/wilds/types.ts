@@ -14,6 +14,10 @@ export type GoalKind = "catch" | "catchEl" | "feed" | "pet" | "explore" | "duel"
 export interface Goal { id: string; kind: GoalKind; el?: ElementId; target: number; have: number; reward: number; claimed: boolean }
 /** One zone's camp: friends who work there and its upgrades. */
 export interface Camp { workers: string[]; extra: number; basket: number; speed: number; since: number }
+/** One built plot in a Village: what stands there, how upgraded it is, when its pile started growing, and which friend works it. */
+export interface VPlot { kind: string; level: number; at: number; worker?: string }
+/** A region's village: plots (null = empty), shared stock of raw resources, and whether the starter gift was given. */
+export interface Village { plots: (VPlot | null)[]; stock: Record<string, number>; gift: boolean }
 export interface Egg { id: string; need: number; have: number }
 export interface Wilds {
   started: boolean; // picked a first friend
@@ -33,7 +37,9 @@ export interface Wilds {
   camps: Record<string, Camp>; // by zone id
   boost: { from: number; until: number }; // Star Boost window (ms timestamps): camps work 2x inside it
   caught: Record<string, number>; // how many of each species she has caught (Mastery)
-  modes: { camp: boolean; pixel?: boolean }; // which experimental game modes are switched on
+  modes: { camp: boolean; pixel?: boolean; village?: boolean }; // which experimental game modes are switched on
+  village?: Record<string, Village>; // by region id (Village mode)
+  world?: string; // which world the map shows (undefined = hazelwild)
   voice?: boolean; // narrator voice in Hazelwild (undefined = off, it was too busy)
   homeCrew: string[]; // ids of the friends she chose to wander on the landing meadow ([] = automatic)
 }

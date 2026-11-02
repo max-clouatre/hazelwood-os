@@ -117,10 +117,18 @@ export function GlowIcon({ className, style }: P) {
     </svg>
   );
 }
-export function ModeIcon({ kind, className }: { kind: "explore" | "camp"; className?: string }) {
+export function ModeIcon({ kind, className }: { kind: "explore" | "camp" | "village"; className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      {kind === "explore" ? (
+      {kind === "village" ? (
+        <g>
+          <path d="M8 56V30L26 14L44 30V56Z" fill="#f2d6a2" {...S} />
+          <path d="M4 32L26 10L48 32" fill="none" stroke={INK} strokeWidth={5} strokeLinejoin="round" strokeLinecap="round" />
+          <path d="M4 32L26 10L48 32" fill="none" stroke="#e5534b" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+          <rect x={20} y={38} width={12} height={18} fill="#8a5a36" {...S} />
+          <rect x={44} y={40} width={14} height={16} fill="#7ddb5c" {...S} />
+        </g>
+      ) : kind === "explore" ? (
         <g>
           <circle cx={27} cy={27} r={16} fill="#bfe9ff" {...S} />
           <path d="M39 39L56 56" stroke={INK} strokeWidth={8} strokeLinecap="round" />

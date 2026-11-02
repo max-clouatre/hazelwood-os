@@ -62,6 +62,8 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
             <span><b>🏕️ Camp</b> (beta): friends work and make Glow while she's away; train them up.</span></label>
           <label className="mt-2 flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={!!s.wilds.modes.pixel} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, pixel: e.target.checked } } }))} />
             <span><b>🧊 Pixel meadow</b> (beta): the home screen becomes a little 3D pixel island where her crew wanders and camp workers work. Falls back to the flat meadow on a device that can't show it.</span></label>
+          <label className="mt-2 flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={!!s.wilds.modes.village} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, village: e.target.checked } } }))} />
+            <span><b>🏘️ Village</b> (beta): build and design a little village in each region; buildings make resources that turn into Glow. Looks best with Pixel meadow on.</span></label>
         </section>
 
         <section className="rounded-2xl bg-white/10 p-4">

@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: Worlds layer and Village mode (phase 0)
+- **Worlds:** `wilds/worlds.ts` registry above regions; Map shows a world bar (Hazelwild playable, Pixel Isles "soon"); `wilds.world` saved; code that looped over all regions now uses `allRegions()`. Docs: `PLAN-WORLDS.md`, `EXTENDING.md` (recipes for creature, region, world, mode, building, art style).
+- **Village mode (beta, Grown-up switch, off by default):** third tab per region. 8 plots on the pixel island (flat grid fallback without WebGL). Build a Glow Well, Berry Patch, Lumber Hut, Workshop, or decorations (Flower Bed, Lantern); producers fill a pile (capped at 45 minutes, offline safe) you tap to collect; berries and wood go to village stock and the Workshop turns stock into ✨; buildings upgrade to level 3 and a friend assigned to a building works it (uses Camp worker math), visibly beside it. A friend is busy if at a camp or a village plot. 30 ✨ starter gift on first visit. Rules in `village.ts`, shapes in `pixel/buildings.ts`.
+- Tests: new `village` (23 checks incl. the berries/wood -> Workshop -> Glow chain, offline pile, flat fallback, old save, hidden-until-switched); `landing` checks the world bar. Phone layout fix: three mode tabs now wrap.
+- Not verified: real tablet speed/feel of Village, balance of the numbers, whether Hazel enjoys it.
+
 ## 2026-11-02: Pixel meadow, lighter and faster
 - **Bug found and fixed:** the post pass showed colors darker than designed (sRGB target read as linear). That was a big part of the "dark, heavy greens". Colors now come out as designed; palette re-tuned to a bright Forager-like set (fresh greens, warm sand dirt, light sky and water), lighter toon bands, sprite colors snapped to the palette so creatures are crisp instead of grainy.
 - **Speed:** hidden dirt/underside blocks no longer drawn (about 60% fewer island boxes), fewer particles and no particle upload when none are alive, medium-precision shaders, no stencil. The picture size now adapts: under 27 fps for 3 seconds it makes pixels bigger first (looks the same, much cheaper), and only then drops effects; the size it settles on is remembered on that device (`hwos:pixelps`).

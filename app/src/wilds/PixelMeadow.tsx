@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Owned } from "./types";
-import type { Meadow } from "./pixel/meadow";
+import type { Meadow, VillageView } from "./pixel/meadow";
 import type { PostOpts } from "./pixel/engine";
 
 const PS_KEY = "hwos:pixelps"; // the pixel size this device settled on (remembered so it does not re-learn every visit)
@@ -9,10 +9,14 @@ const savePs = (n: number) => { try { localStorage.setItem(PS_KEY, String(n)); }
 const AUTO_PS = (w: number, h: number) => Math.max(2, Math.round(Math.max(w, h) / 380));
 
 /** The pixel diorama. Loads three.js on demand. If anything goes wrong (no WebGL, old GPU) it calls onFail so the caller shows the flat meadow instead. */
-export function PixelMeadow({ crew, workers, onTap, onFail, pixelSize, post, adaptive = true, onFps }: {
+export function PixelMeadow({ crew, workers, onTap, onFail, pixelSize, post, adaptive = true, onFps, village, onPlot }: {
   crew: Owned[]; workers: Owned[]; onTap?: (o: Owned, xPct: number, yPct: number, worker: boolean) => void; onFail?: (why: string) => void;
   pixelSize?: number; post?: PostOpts; adaptive?: boolean; onFps?: (fps: number) => void;
+  village?: VillageView; onPlot?: (i: number, xPct: number, yPct: number) => void; // village scene instead of the crew meadow
 }) {
+  const plotRef = useRef(onPlot); plotRef.current = onPlot;
+  const villageRef = useRef(village); villageRef.current = village;
+  const vsig = village ? JSON.stringify(village.plots) + village.workers.map((x) => x.owned.id + x.plot).join(",") : "";
   const box = useRef<HTMLDivElement>(null);
   const meadow = useRef<Meadow | null>(null);
   const psRef = useRef(pixelSize ?? (adaptive ? loadPs() : 0));
@@ -34,14 +38,14 @@ export function PixelMeadow({ crew, workers, onTap, onFail, pixelSize, post, ada
         el.appendChild(canvas);
         const dims = () => { const r = el.getBoundingClientRect(); const ps = psRef.current || AUTO_PS(r.width, r.height); return [Math.floor(r.width / ps), Math.floor(r.height / ps)]; };
         const [w0, h0] = dims();
-        const m = createMeadow(THREE, canvas, w0, h0, { post, onTap: (o, x, y, wk) => tapRef.current?.(o, x, y, wk) });
+        const m = createMeadow(THREE, canvas, w0, h0, { post, scene: villageRef.current ? "village" : "meadow", onPlot: (i, x, y) => plotRef.current?.(i, x, y), onTap: (o, x, y, wk) => tapRef.current?.(o, x, y, wk) });
         meadow.current = m;
-        await m.setActors(pending.current.crew, pending.current.workers);
+        if (villageRef.current) await m.setVillage(villageRef.current); else await m.setActors(pending.current.crew, pending.current.workers);
         if (dead) { m.dispose(); return; }
         setReady(true);
         const refit = () => { const [w, h] = dims(); m.resize(w, h); };
         if (typeof ResizeObserver !== "undefined") { ro = new ResizeObserver(refit); ro.observe(el); } else window.addEventListener("resize", refit);
-        (window as unknown as { __pixel?: unknown }).__pixel = { stats: () => ({ ...m.stats(), ps: psRef.current || AUTO_PS(el.clientWidth, el.clientHeight) }), screenOf: m.screenOf, rotate: m.rotate };
+        (window as unknown as { __pixel?: unknown }).__pixel = { stats: () => ({ ...m.stats(), ps: psRef.current || AUTO_PS(el.clientWidth, el.clientHeight) }), screenOf: m.screenOf, plotScreen: m.plotScreen, rotate: m.rotate };
         // Aim for a steady 30. If it runs under 27 for 3 seconds in a row: first use bigger pixels (looks the same, costs much less),
         // and only when that is used up drop the palette/outline effects. The size it settles on is remembered.
         let bad = 0;
@@ -59,7 +63,8 @@ export function PixelMeadow({ crew, workers, onTap, onFail, pixelSize, post, ada
     return () => { dead = true; ro?.disconnect(); window.clearInterval(timer); meadow.current?.dispose(); meadow.current = null; canvas?.remove(); setReady(false); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => { meadow.current?.setActors(crew, workers); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!villageRef.current) meadow.current?.setActors(crew, workers); }, [sig]);
+  useEffect(() => { if (villageRef.current) meadow.current?.setVillage(villageRef.current); }, [vsig]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (post) meadow.current?.setPost(post); }, [post]);
   useEffect(() => { if (pixelSize) { psRef.current = pixelSize; const el = box.current; if (el && meadow.current) { const r = el.getBoundingClientRect(); meadow.current.resize(Math.floor(r.width / pixelSize), Math.floor(r.height / pixelSize)); } } }, [pixelSize]);
 
@@ -67,7 +72,7 @@ export function PixelMeadow({ crew, workers, onTap, onFail, pixelSize, post, ada
     <div ref={box} className="absolute inset-0 overflow-hidden bg-[#92dbff]" data-testid="pixel-meadow">
       {!ready && <p className="absolute inset-0 flex items-center justify-center text-lg font-bold text-white drop-shadow">Building the meadow…</p>}
       {ready && (
-        <div className="absolute right-2 top-14 z-10 flex flex-col gap-2">
+        <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-2">
           <button aria-label="Turn the view left" onClick={() => meadow.current?.rotate(-1)} className="h-12 w-12 rounded-2xl border-[3px] border-ink bg-white/90 text-2xl font-bold text-emerald-900 shadow-lg active:scale-95">↺</button>
           <button aria-label="Turn the view right" onClick={() => meadow.current?.rotate(1)} className="h-12 w-12 rounded-2xl border-[3px] border-ink bg-white/90 text-2xl font-bold text-emerald-900 shadow-lg active:scale-95">↻</button>
         </div>

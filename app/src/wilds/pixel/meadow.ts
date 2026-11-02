@@ -3,11 +3,15 @@ import type * as T from "three";
 import type { Owned } from "../types";
 import { DEFAULT_POST, Stage, toonMap } from "./engine";
 import type { PostOpts, TH } from "./engine";
-import { buildIsland, campSpots, groundY, walkable } from "./island";
+import { shapeOf } from "./buildings";
+import { boxesToMesh, buildIsland, campSpots, groundY, plotPos, PLOTS, walkable } from "./island";
+import type { Box } from "./island";
 import { buildSprite, rasterize, spriteKey } from "./sprite";
 import type { SpriteGeo } from "./sprite";
 
-export interface MeadowOpts { post?: PostOpts; onTap?: (o: Owned, xPct: number, yPct: number, worker: boolean) => void }
+/** What the Village screen wants drawn: each plot (null = empty, ready = pile colour when something waits) and the friends working. */
+export interface VillageView { plots: ({ kind: string; level: number; ready: string | null } | null)[]; workers: { owned: Owned; plot: number }[] }
+export interface MeadowOpts { scene?: "meadow" | "village"; onPlot?: (i: number, screenX: number, screenY: number) => void; post?: PostOpts; onTap?: (o: Owned, xPct: number, yPct: number, worker: boolean) => void }
 type Mode = "idle" | "walk" | "sleep" | "work";
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -18,17 +22,18 @@ class Actor {
 
 
 export interface Meadow {
-  setActors(crew: Owned[], workers: Owned[]): Promise<void>; rotate(dir: number): void; resize(w: number, h: number): void; setPost(p: PostOpts): void;
+  setActors(crew: Owned[], workers: Owned[]): Promise<void>; setVillage(v: VillageView): Promise<void>; plotScreen(i: number): { x: number; y: number }; rotate(dir: number): void; resize(w: number, h: number): void; setPost(p: PostOpts): void;
   setActive(on: boolean): void; stats(): { fps: number; post: PostOpts; w: number; h: number; actors: number; yawK: number }; screenOf(id: string): { x: number; y: number } | null; dispose(): void;
 }
 
 export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h: number, opts: MeadowOpts): Meadow {
   const stage = new Stage(THREE, canvas, w, h, opts.post ?? DEFAULT_POST);
-  const scene = stage.scene; scene.background = new THREE.Color("#92dbff");
+  const scene = stage.scene; if (opts.scene === "village") stage.frame(5.3); /* closer, so buildings read well */ scene.background = new THREE.Color("#92dbff");
   scene.add(new THREE.AmbientLight(0xffffff, 1.05));
   const sun = new THREE.DirectionalLight(0xfff6dc, 1.9); sun.position.set(6, 12, 7); scene.add(sun);
   const gm = toonMap(THREE);
-  const island = buildIsland(THREE, gm); scene.add(island.mesh);
+  const village = opts.scene === "village";
+  const island = buildIsland(THREE, gm, { village }); scene.add(island.mesh);
   const toon = new THREE.MeshBasicMaterial({ vertexColors: true }); // sprites carry their own baked light and shade
   const shadowMat = new THREE.MeshBasicMaterial({ color: 0x1a3a22, transparent: true, opacity: 0.28 });
   const shadowGeo = new THREE.CircleGeometry(0.7, 8); shadowGeo.rotateX(-Math.PI / 2);
@@ -69,11 +74,11 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
     return g;
   }
   const dropActor = (a: Actor) => { scene.remove(a.group); };
-  function make(o: Owned, worker: boolean, geo: SpriteGeo, i: number): Actor {
+  function make(o: Owned, worker: boolean, geo: SpriteGeo, i: number, at?: [number, number]): Actor {
     const mesh = new THREE.Mesh(geo.geometry, toon);
     const shadow = new THREE.Mesh(shadowGeo, shadowMat);
     const group = new THREE.Group(); group.add(mesh); scene.add(group); scene.add(shadow); group.add(shadow); shadow.position.y = 0.03; shadow.renderOrder = 1;
-    const sp = worker ? cspots[i % cspots.length] : spots[(i * 7 + 3) % spots.length];
+    const sp = at ?? (worker ? cspots[i % cspots.length] : spots[(i * 7 + 3) % spots.length]);
     const a = Object.create(Actor.prototype) as Actor;
     Object.assign(a, { o, worker, geo, mesh, shadow, group, mode: worker ? "work" : "idle", t: rnd(0.2, 2), x: sp[0], z: sp[1], tx: sp[0], tz: sp[1], face: 1, ph: rnd(0, 6), hop: 0, fx: 0 });
     return a;
@@ -89,10 +94,38 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
     workers.forEach((o, i) => actors.push(make(o, true, geos[crew.length + i], i)));
   }
 
+  const v3 = new THREE.Vector3();
+  // ---- village: building meshes, empty-plot markers, ready bubbles
+  let vMesh: T.InstancedMesh | null = null; let vSig = ""; let vView: VillageView | null = null;
+  const marker: (T.Mesh | null)[] = []; const readyCubes: (T.Mesh | null)[] = [];
+  const markMat = new THREE.MeshBasicMaterial({ color: 0xffd23f });
+  const readyColor: Record<string, string> = { glow: "#ffd23f", berries: "#ff5d8f", wood: "#c8905a" };
+  async function setVillage(v: VillageView) {
+    vView = v; const sig = JSON.stringify(v.plots) + "|" + v.workers.map((x) => x.owned.id + x.plot).join(",");
+    if (sig === vSig) return; vSig = sig;
+    if (vMesh) { scene.remove(vMesh); vMesh.geometry.dispose(); vMesh = null; }
+    marker.forEach((q) => q && scene.remove(q)); marker.length = 0; readyCubes.forEach((q) => q && scene.remove(q)); readyCubes.length = 0;
+    const boxes: Box[] = [];
+    v.plots.forEach((p, i) => {
+      const { x, y, z } = plotPos(i);
+      if (!p) {
+        shapeOf("", 1).forEach((b) => boxes.push({ ...b, x: b.x + x, y: b.y + y, z: b.z + z }));
+        const mk = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.2, 0.2), markMat), mk2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.9), markMat);
+        const g = new THREE.Group(); g.add(mk, mk2); g.position.set(x, y + 0.45, z); scene.add(g); marker[i] = g as unknown as T.Mesh;
+      } else shapeOf(p.kind, p.level).forEach((b, k) => { const S = k < 2 ? 1 : 1.3; boxes.push({ x: b.x * S + x, y: b.y * S + y, z: b.z * S + z, sx: b.sx * S, sy: b.sy * S, sz: b.sz * S, c: b.c }); });
+      if (p?.ready) { const c = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.34, 0.34), new THREE.MeshBasicMaterial({ color: new THREE.Color(readyColor[p.ready] ?? "#ffffff") })); scene.add(c); readyCubes[i] = c; }
+    });
+    vMesh = boxesToMesh(THREE, gm, boxes); scene.add(vMesh);
+    const geos = await Promise.all(v.workers.map((x) => geoFor(x.owned)));
+    if (vView !== v) return;
+    actors.forEach(dropActor); actors = [];
+    v.workers.forEach((x, k) => { const { x: px, z: pz } = plotPos(x.plot); actors.push(make(x.owned, true, geos[k], k, [px + 1.0, pz + 0.9])); });
+  }
+  const plotScreen = (i: number) => { const r = canvas.getBoundingClientRect(); const { x, y, z } = plotPos(i); v3.set(x, y + 0.7, z).project(stage.camera); return { x: ((v3.x + 1) / 2) * r.width, y: ((1 - v3.y) / 2) * r.height }; };
+
   // ---- camera, loop, taps
   let yawK = 0, yaw = Math.PI / 4, active = true, raf = 0, last = 0, fpsN = 0, fpsT = 0, fps = 0, slow = 0;
   const targetYaw = () => Math.PI / 4 + yawK * (Math.PI / 2);
-  const v3 = new THREE.Vector3();
   const frame = (ts: number) => {
     raf = requestAnimationFrame(frame);
     if (!active || document.hidden) { last = ts; return; }
@@ -106,7 +139,10 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
     flies.forEach((f) => { const p = f.userData.ph + t * 0.6; f.position.set(Math.sin(p) * 3.2 - 1, 1.6 + Math.sin(p * 2.1) * 0.35, Math.cos(p * 0.8) * 2.6); f.rotation.y = yaw; const flap = Math.abs(Math.sin(t * 14 + f.userData.ph)); f.userData.a.scale.x = f.userData.b.scale.x = 0.3 + flap * 0.9; });
     // ambient: wishing tree sparkles and the campfire
     if (Math.random() < dt * 3) emit(island.wish.x + rnd(-1, 1), island.wish.y - rnd(0, 1.2), island.wish.z + rnd(-1, 1), Math.random() < 0.5 ? "#ffd1e6" : "#fff3b0", 1, 0.5, 0.1, 0.1);
-    if (Math.random() < dt * 8) emit(island.fire.x, island.fire.y, island.fire.z, Math.random() < 0.5 ? "#ff9f3a" : "#ffd23f", 1, 1.1, 0.12, 0.12);
+    if (!village && Math.random() < dt * 8) emit(island.fire.x, island.fire.y, island.fire.z, Math.random() < 0.5 ? "#ff9f3a" : "#ffd23f", 1, 1.1, 0.12, 0.12);
+    marker.forEach((g) => { if (g) { g.scale.setScalar(0.85 + Math.sin(t * 3) * 0.2); g.rotation.y = yaw; } });
+    readyCubes.forEach((c, i) => { if (c) { const { x, y, z } = plotPos(i); c.position.set(x, y + 2.3 + Math.sin(t * 3 + i) * 0.12, z); c.rotation.y = t * 2; } });
+    const vs = village ? 0.55 : 1; // friends are small helpers beside their building in a village
     const cr = Math.cos(yaw), sr = -Math.sin(yaw); // screen-right direction on the ground
     for (const a of actors) {
       a.t -= dt; a.ph += dt;
@@ -127,7 +163,7 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
       }
       if (a.hop > 0) { a.hop -= dt; hop += Math.abs(Math.sin((1 - a.hop) * Math.PI * 4)) * 0.4; if (Math.random() < dt * 14) emit(a.x, groundY(a.x, a.z) + a.geo.height * 0.9, a.z, "#ff5d8f", 1, 0.9, 0.35, 0.16); }
       const gy = groundY(a.x, a.z);
-      a.group.position.set(a.x, gy + hop, a.z); a.group.rotation.y = yaw; a.mesh.scale.set(a.face, sq, 1);
+      a.group.position.set(a.x, gy + hop, a.z); a.group.rotation.y = yaw; a.mesh.scale.set(a.face * vs, sq * vs, vs);
       a.shadow.position.y = 0.03 - hop; a.shadow.scale.setScalar(1 - hop * 0.8);
     }
     // particles
@@ -156,6 +192,12 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
   };
   const onClick = (e: MouseEvent) => {
     const r = canvas.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    if (village) {
+      let bi = -1, bdist = Infinity; const ppu = r.height / (stage.halfH * 2);
+      for (let i = 0; i < PLOTS.length; i++) { const s = plotScreen(i), d = Math.hypot(s.x - px, s.y - py); if (d < Math.max(34, ppu * 0.9) && d < bdist) { bi = i; bdist = d; } }
+      if (bi >= 0) { const s = plotScreen(bi); opts.onPlot?.(bi, (s.x / r.width) * 100, (s.y / r.height) * 100); }
+      return;
+    }
     let best: Actor | null = null, bd = Infinity;
     for (const a of actors) {
       const s = screenOf(a.o.id); if (!s) continue;
@@ -166,7 +208,7 @@ export function createMeadow(THREE: TH, canvas: HTMLCanvasElement, w: number, h:
   };
   canvas.addEventListener("click", onClick);
   return {
-    setActors,
+    setActors, setVillage, plotScreen,
     rotate: (dir) => { yawK += dir; },
     resize: (nw, nh) => stage.resize(nw, nh),
     setPost: (p) => stage.setPost(p),

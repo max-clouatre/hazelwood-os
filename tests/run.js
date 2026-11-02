@@ -22,6 +22,7 @@ const TESTS = [
   { name: "narrator", file: "narrator.js", fast: true, what: "Hazelwild narrator is off by default; the button toggles it" },
   { name: "pixel-lab", file: "pixel-lab.js", fast: false, what: "Grown-up Pixel Lab opens, dials work, three.js loads lazily" },
   { name: "pixel-meadow", file: "pixel-meadow.js", fast: false, what: "Pixel meadow mode: island, taps, turning, camp workers, flat fallback" },
+  { name: "village", file: "village.js", fast: false, what: "Village mode: build, collect, convert, upgrade, workers, flat fallback" },
   { name: "catch-flow", file: "catch-flow.js", fast: false, what: "starter, explore, throw, catch, reveal" },
   { name: "progression", file: "progression.js", fast: false, what: "evolution branches, badges, goals, berry guide, eggs" },
   { name: "color-by-number", file: "color-by-number.js", fast: false, what: "Hazel's color-by-number pages complete" },

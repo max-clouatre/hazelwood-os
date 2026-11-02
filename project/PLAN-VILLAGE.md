@@ -5,6 +5,8 @@
 ## Why it fits
 Camp already has workers, Glow, upgrades, Star Boost, mastery, family and home-zone bonuses, and (with Pixel meadow) an island, a tent and a campfire. A village turns "numbers going up" into **a place she designs**. Kids-first rules still hold: progress only goes up, nothing is lost or punished, no timers that pressure, no purchases.
 
+## STATUS 2026-11-02: phase 0 built (see CHANGELOG). Decisions Max delegated: sits next to Camp; starter buildings Glow Well, Berry Patch, Lumber Hut, Workshop + decor Flower Bed and Lantern; decoration included as free-ish extras.
+
 ## Proof of concept (POC), smallest slice that tests the idea
 - **Where:** a new mode, "Village" tab inside a zone beside Explore and Camp (`/new-mode`), switch in the Grown-up area, off by default. Needs Pixel meadow's engine, so it is drawn on the pixel island of that zone (reuse `wilds/pixel/`); flat fallback is a simple grid view.
 - **Grid:** the zone's island has about 12 build plots (the walkable cells). Tap an empty plot, pick a building, it appears (little pop, sparkle).

@@ -11,6 +11,7 @@ import { Goals } from "./Goals";
 import { PixelMeadow } from "./PixelMeadow";
 import { Roamers } from "./Roamers";
 import { Scene } from "./Scene";
+import { allRegions, currentWorld, regionsOf, WORLDS } from "./worlds";
 import { BIOMES, COLLECTABLE, ELEMENTS, PERSONALITIES, SPECIES_BY_ID } from "./species";
 import type { Biome } from "./species";
 import type { Owned, Wilds } from "./types";
@@ -27,13 +28,13 @@ export function Landing({ w, onExplore, onVisitor, onNav, onTips }: {
   const [hearts, setHearts] = useState(0);
   const [pixelFailed, setPixelFailed] = useState(false);
   const pixelOn = !!w.modes.pixel && !pixelFailed;
-  const campWorkers = w.modes.camp ? BIOMES.flatMap((b) => workersOf(w, b.id)) : [];
+  const campWorkers = w.modes.camp ? allRegions().flatMap((b) => workersOf(w, b.id)) : [];
   const [pbubble, setPbubble] = useState<{ id: string; text: string; x: number; y: number } | null>(null);
   const crew = homeCrew(w);
   const have = collected(w);
   const eggReady = w.eggs.some((e) => e.have >= e.need);
   const todayNew = !w.visitorDone || !w.treeDone || w.goals.list.some((g) => g.have >= g.target && !g.claimed);
-  const mapNew = w.modes.camp && BIOMES.some((b) => pendingGlow(w, b.id) >= 1);
+  const mapNew = w.modes.camp && allRegions().some((b) => pendingGlow(w, b.id) >= 1);
   const dock = "relative flex flex-1 flex-col items-center justify-center rounded-2xl bg-white/90 py-1.5 text-sm font-bold text-emerald-900 shadow-lg active:scale-95 sm:text-lg";
   const dot = (on: boolean) => on && <span className="absolute right-1 top-0.5 h-4 w-4 rounded-full border-2 border-white bg-red-500" />;
 
@@ -106,10 +107,20 @@ function Sheet({ title, onClose, children }: { title: string; onClose: () => voi
 
 function MapPanel({ w, have, onClose, onPick }: { w: Wilds; have: number; onClose: () => void; onPick: (b: Biome) => void }) {
   const [lockMsg, setLockMsg] = useState("");
+  const world = currentWorld(w);
   return (
     <Sheet title="🗺️ Where to explore?" onClose={onClose}>
+      <div className="mb-3 flex flex-wrap items-center justify-center gap-2" data-testid="world-bar">
+        {WORLDS.map((x) => (
+          <button key={x.id} onClick={() => (x.soon ? setLockMsg(`${x.name}: ${x.blurb}`) : setWilds(() => ({ world: x.id })))} aria-pressed={x.id === world.id}
+            className={`flex items-center gap-1 rounded-full px-4 py-1 text-lg font-bold active:scale-95 ${x.id === world.id ? "bg-mustard text-black" : "bg-white/20"} ${x.soon ? "opacity-70" : ""}`}>
+            <span className="emoji">{x.emoji}</span> {x.name}{x.soon && <span className="ml-1 rounded-full bg-black/30 px-2 text-xs">soon</span>}
+          </button>
+        ))}
+      </div>
+      <p className="mb-2 text-center text-sm text-white/80">{world.blurb}</p>
       <div className="flex flex-wrap justify-center gap-3">
-        {BIOMES.map((b) => {
+        {regionsOf(world).map((b) => {
           const open = biomeUnlocked(b.id, w);
           const crew = w.modes.camp ? workersOf(w, b.id) : [];
           const glow = w.modes.camp ? Math.floor(pendingGlow(w, b.id)) : 0;
