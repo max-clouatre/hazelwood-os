@@ -32,6 +32,8 @@ Two profiles. **Violet (3):** Count Friends, Letter Pals, Trace It, Coloring Boo
 My Stickers. Stars earned in any activity become berries and a Star Boost in Hazelwild, so learning fuels the game. A Grown-up area
 (hold the title, or the visible gear, then a math question) has play-time limits, spelling list, game-mode switches, updates, diagnostics.
 
+Reference links Max shared are kept in `project/REFERENCES.md` (gamedev-cheatsheet.com is saved but **unread**: the sandbox could not reach it).
+
 ## Commands (run from `app/`)
 ```bash
 npm install                 # first time
