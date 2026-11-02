@@ -84,7 +84,7 @@ Each owned friend: `id, sp, name, shiny, variant?, seed, pers, xp, got, pet, foo
 
 ## Quality gates (see CLAUDE.md section 3)
 Fast suite (`tests/run.js`): layout (all screens, phone + tablet), old-chrome (simulated tablet browser), mystery, creatures-ui, camp (idle math checked by hand), update (hermetic build of two versions), music (levels). Full adds: catch-flow, progression (evolution branches, badges, goals, eggs), color-by-number, duel.
-**Last full verification: see `project/CHANGELOG.md` top entry.**
+**Last full verification: 2026-11-02, all green: fast suite 74 checks, slow suite 39 checks** (`npm run test:e2e:full`). Details in `project/CHANGELOG.md`.
 
 ## Known issues and unverified items
 - **Unverified on the real tablet:** gray-box fix (verified by simulating the old CSS parser), mystery capture, music sound quality, text-to-speech voice quality (depends on the tablet's engine), real-play balance of Camp.

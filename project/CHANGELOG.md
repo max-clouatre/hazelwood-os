@@ -6,7 +6,7 @@ Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, *
 - Fixed gray boxes behind creatures and capture icons on the old tablet browser (Tailwind `:where()` button reset dropped). Regression test `old-chrome`.
 - Creatures are now a mystery shadow until caught; Wild of the Day mystery; Wilddex ??? tiles hint where to look. Test `mystery`.
 - Project harness: `CLAUDE.md`, `STATE.md`, `project/*`, Playwright suite moved into `tests/`, `scripts/harness.js` + `.claude/settings.json` hooks, slash commands `/resume /ship /log-feedback /new-mode`.
-- Verified: **F** (7 files, 74 checks). Slow suite: see `STATE.md` / run log.
+- Verified: **F + S**, all green on 2026-11-02: fast suite 7 files / 74 checks; slow suite 4 files / 39 checks (progression re-run after making one animation-timing check wait for the animation). Not verified: real tablet, how music sounds, voices.
 
 ## 2026-11-02: Phase 1 incremental systems (`81b0ef6`)
 Game modes (Explore/Camp tabs, Grown-up switch), Camp per zone (Glow, upgrades, training Lv 1-10, Star Boost), Species Mastery stars, plan in `PLAN-INCREMENTAL.md`. Verified: Camp suite (18 checks), regression. 
