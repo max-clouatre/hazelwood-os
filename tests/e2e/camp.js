@@ -119,7 +119,7 @@ const ok = (label, v) => console.log((v ? 'PASS ' : 'FAIL ') + label);
   await p.getByLabel('Grown-up settings').click(); await p.waitForTimeout(300);
   const q = await p.locator('p.text-5xl').innerText(); const [a,c] = q.match(/(\d+) × (\d+)/).slice(1).map(Number);
   await p.getByRole('button',{name:String(a*c),exact:true}).click(); await p.waitForTimeout(300);
-  await p.getByRole('checkbox').uncheck(); await p.waitForTimeout(200);
+  await p.getByRole('checkbox').first().uncheck(); await p.waitForTimeout(200);
   await p.getByRole('button',{name:'Done'}).click(); await p.waitForTimeout(200);
   await p.getByText('Hazel',{exact:true}).click(); await p.getByText('Hazelwild').first().click(); await p.waitForTimeout(400);
   await p.getByRole('button',{name:'Adventure!'}).click(); await p.waitForTimeout(250); await p.locator('button',{hasText:'Meadow'}).first().click(); await p.waitForTimeout(500);

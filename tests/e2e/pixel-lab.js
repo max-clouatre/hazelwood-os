@@ -1,4 +1,4 @@
-// Grown-up area > Pixel Lab: opens, builds the 3D pixel scene, runs frames, closes; the main game does not load three.js.
+// Grown-up area > Pixel Lab: opens, runs the pixel diorama, dials work, closes; three.js loads lazily.
 const { serve, ROOT, OUT, ok } = require('../lib');
 const { chromium } = require('playwright');
 const path = require('path');
@@ -14,15 +14,17 @@ const path = require('path');
     const q = await p.locator('p.text-5xl').innerText(); const [a, c] = q.match(/(\d+) × (\d+)/).slice(1).map(Number);
     await p.getByRole('button', { name: String(a * c), exact: true }).click(); await p.waitForTimeout(300);
     await p.getByRole('button', { name: /Pixel Lab/ }).click();
-    await p.getByTestId('pixel-lab').waitFor(); await p.waitForTimeout(4000);
+    await p.getByTestId('pixel-lab').waitFor(); await p.waitForTimeout(5000);
     ok(`${label}: three.js loads only when the lab opens`, reqs.some(u => /three\.module/.test(u)));
-    const px = await p.evaluate(() => { const c = document.querySelector('[data-testid=pixel-lab] canvas'); return c ? { w: c.width, h: c.height } : null; });
-    ok(`${label}: low-res canvas exists ${JSON.stringify(px)}`, !!px && px.w === 280);
-    const fps = parseInt(await p.getByTestId('pixel-fps').innerText());
-    ok(`${label}: scene is running (${fps} fps in software GL)`, fps > 0);
+    const st = await p.evaluate(() => window.__pixel && window.__pixel.stats());
+    ok(`${label}: diorama is running with 8 friends ${JSON.stringify(st && { w: st.w, h: st.h, fps: st.fps, actors: st.actors })}`, !!st && st.actors === 8 && st.w < 600);
     await p.screenshot({ path: `${OUT}/shots/pixel-lab-${label}.png` });
-    await p.getByRole('button', { name: 'Chunky' }).click(); await p.waitForTimeout(2500);
-    ok(`${label}: resolution switch rebuilds the canvas`, (await p.evaluate(() => document.querySelector('[data-testid=pixel-lab] canvas').width)) === 200);
+    await p.getByRole('button', { name: 'Outlines' }).click(); await p.getByRole('button', { name: 'Dither' }).click(); await p.waitForTimeout(300);
+    const st2 = await p.evaluate(() => window.__pixel.stats());
+    ok(`${label}: dials switch the effects off`, !st2.post.outline && !st2.post.dither && st2.post.palette);
+    await p.locator('input[type=range]').fill('5'); await p.waitForTimeout(800);
+    const st3 = await p.evaluate(() => window.__pixel.stats());
+    ok(`${label}: pixel size slider makes the picture smaller (${st.w} -> ${st3.w})`, st3.w < st.w);
     ok(`${label}: no horizontal overflow`, await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
     await p.getByRole('button', { name: 'Close' }).click(); await p.waitForTimeout(300);
     ok(`${label}: lab closes`, (await p.getByTestId('pixel-lab').count()) === 0);

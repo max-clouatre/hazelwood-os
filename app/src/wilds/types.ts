@@ -33,7 +33,7 @@ export interface Wilds {
   camps: Record<string, Camp>; // by zone id
   boost: { from: number; until: number }; // Star Boost window (ms timestamps): camps work 2x inside it
   caught: Record<string, number>; // how many of each species she has caught (Mastery)
-  modes: { camp: boolean }; // which experimental game modes are switched on
+  modes: { camp: boolean; pixel?: boolean }; // which experimental game modes are switched on
   homeCrew: string[]; // ids of the friends she chose to wander on the landing meadow ([] = automatic)
 }
 export const initialWilds: Wilds = {

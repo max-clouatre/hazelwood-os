@@ -60,6 +60,8 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           <p className="mb-2 text-sm text-white/70">Explore is always on. New ways to play appear as tabs inside each zone. Turn an experiment off if it isn't working.</p>
           <label className="flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={s.wilds.modes.camp} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, camp: e.target.checked } } }))} />
             <span><b>🏕️ Camp</b> (beta): friends work and make Glow while she's away; train them up.</span></label>
+          <label className="mt-2 flex items-center gap-3 text-lg"><input type="checkbox" className="h-6 w-6" checked={!!s.wilds.modes.pixel} onChange={(e) => update((st) => ({ wilds: { ...st.wilds, modes: { ...st.wilds.modes, pixel: e.target.checked } } }))} />
+            <span><b>🧊 Pixel meadow</b> (beta): the home screen becomes a little 3D pixel island where her crew wanders and camp workers work. Falls back to the flat meadow on a device that can't show it.</span></label>
         </section>
 
         <section className="rounded-2xl bg-white/10 p-4">

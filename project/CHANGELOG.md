@@ -2,6 +2,13 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-02: Pixel meadow mode (beta, off by default)
+- Grown-up area > Game modes > **Pixel meadow**: the landing becomes a floating 3D pixel island (turnable in quarter turns). Her chosen crew wander, hop, sleep with z's and are petted by tapping; friends working at camps stand by a striped tent and campfire and sparkle Glow. Clouds, butterflies, a pond, flowers, wishing-tree sparkles. Dock, Map, Today and Crew work as before over it. If WebGL fails it falls back to the flat meadow; if it runs slow (< 22 fps for 3 s) it drops effects, then uses bigger pixels.
+- New pixel engine (`wilds/pixel/`): low-res render target, fixed 512-color palette with Bayer dither, ink outlines from depth jumps, banded toon light on the island; creatures are sampled from their SVG to 40x40, inflated into pillows and meshed with only visible faces (about 3k triangles each). Rendering is capped at 30 pictures a second.
+- Pixel Lab rebuilt on the same engine: pixel size 1-6, palette/dither/outline switches, friend picker, fps.
+- Tests `pixel-meadow` and `pixel-lab` (full suite). Software GL here, so **real tablet fps/feel unverified**.
+- Lessons taken from the tennis-diorama prompt: low-res target + palette snap + dither + depth outlines (adopted); fixed iso camera with quarter turns (adopted); a written module contract and parallel agents (not needed at this size); CDN three r128 (not allowed, we bundle); OKLab palette snap (replaced by cheap per-channel steps because the old tablet GPU matters more); day/dusk/night and cutaway walls (future ideas).
+
 ## 2026-11-02: Pixel Lab experiment (Grown-up area)
 - Grown-up area > Labs > **Pixel Lab**: our SVG creatures sampled to 36x36 pixel art, built from cubes in a three.js scene drawn at low resolution (Chunky/Classic/Fine) and enlarged with hard edges; live fps counter doubles as the first tablet performance probe (B-10). three.js is lazy-loaded (separate 670 KB chunk, not used by the game). Test `pixel-lab` (slow list; software GL ~13 fps here, **real tablet fps unknown**).
 

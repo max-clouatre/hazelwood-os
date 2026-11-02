@@ -45,3 +45,6 @@ Max asked to merge them. The landing is her meadow with a chosen crew wandering 
 
 ## D-22: one music chain at a time (2026-11-02)
 Overlap came from echo/feedback loops that were never disconnected, plus the song restarting on every catch. `makeChain` returns a handle whose `kill()` fades and disconnects every node; only one chain lives; the zone song keeps playing through a catch. Guard: `tests/e2e/music-switching.js`.
+
+## D-23: Pixel meadow is a mode, with a cheap palette (2026-11-02)
+Max liked a pixel-diorama prompt. Adopted: low-res render, fixed palette with ordered dither, depth outlines, iso camera. Not adopted: OKLab nearest-colour (a 64-iteration shader loop is a risk on the Tab A GPU, per-channel 8-step snapping costs nothing), CDN scripts (offline rule), big multi-agent contract (too heavy for one scene). It is behind a Grown-up switch, lazy-loaded, capped at 30 fps and degrades by itself (drop effects, then bigger pixels, and falls back to the flat meadow without WebGL). Creature sprites are meshed with visible faces only (about 3k triangles each) because instancing one cube per voxel was 6x heavier.

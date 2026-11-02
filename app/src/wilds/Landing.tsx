@@ -8,6 +8,7 @@ import { GlowPill } from "./Camp";
 import { Creature } from "./Creature";
 import { addBerries, biomeUnlocked, collected, dailyVisitorSpecies, pet, petsLeft, setWilds, stageFor, TOTAL_FORMS, totalFormsFound, wildOfDay } from "./game";
 import { Goals } from "./Goals";
+import { PixelMeadow } from "./PixelMeadow";
 import { Roamers } from "./Roamers";
 import { Scene } from "./Scene";
 import { BIOMES, COLLECTABLE, ELEMENTS, PERSONALITIES, SPECIES_BY_ID } from "./species";
@@ -24,6 +25,10 @@ export function Landing({ w, onExplore, onVisitor, onNav, onTips }: {
   const [panel, setPanel] = useState<Panel>(null);
   const [bubble, setBubble] = useState<{ id: string; text: string } | null>(null);
   const [hearts, setHearts] = useState(0);
+  const [pixelFailed, setPixelFailed] = useState(false);
+  const pixelOn = !!w.modes.pixel && !pixelFailed;
+  const campWorkers = w.modes.camp ? BIOMES.flatMap((b) => workersOf(w, b.id)) : [];
+  const [pbubble, setPbubble] = useState<{ id: string; text: string; x: number; y: number } | null>(null);
   const crew = homeCrew(w);
   const have = collected(w);
   const eggReady = w.eggs.some((e) => e.have >= e.need);
@@ -39,9 +44,16 @@ export function Landing({ w, onExplore, onVisitor, onNav, onTips }: {
     setTimeout(() => setBubble((b) => (b && b.id === o.id ? null : b)), 2600);
   };
 
+  const petPixel = (o: Owned, x: number, y: number, worker: boolean) => {
+    if (worker) { const t = `${o.name} is busy making ✨ Glow!`; setPbubble({ id: o.id, text: t, x, y }); say(t); }
+    else { const r = pet(o.id); const l = PERSONALITIES[o.pers].pet; const t = r.ok ? l[Math.floor(Math.random() * l.length)] : `${o.name} is all cuddled out today!`; setPbubble({ id: o.id, text: t, x, y }); say(t); }
+    setTimeout(() => setPbubble((b) => (b && b.id === o.id ? null : b)), 2800);
+  };
+
   return (
     <div className="absolute inset-0">
-      <Scene biome={BIOMES[0]} />
+      {pixelOn ? <PixelMeadow crew={crew} workers={campWorkers} onTap={petPixel} onFail={() => setPixelFailed(true)} /> : <Scene biome={BIOMES[0]} />}
+      {pixelOn && pbubble && <span key={pbubble.id + pbubble.text} className="anim-pop pointer-events-none absolute z-20 w-44 -translate-x-1/2 -translate-y-full rounded-xl border-2 border-ink bg-white px-2 py-1 text-center text-sm font-bold leading-tight text-emerald-900" style={{ left: `${Math.min(80, Math.max(20, pbubble.x))}%`, top: `${Math.max(12, pbubble.y)}%` }}>{pbubble.text}</span>}
       <div className="absolute inset-x-0 top-2 z-10 flex flex-wrap items-center justify-center gap-2 px-2">
         <BerryPill n={w.berries} />
         {w.modes.camp && <GlowPill n={w.glow} className="!px-3 !text-lg" />}
@@ -55,10 +67,10 @@ export function Landing({ w, onExplore, onVisitor, onNav, onTips }: {
         </button>
       )}
 
-      <div className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }} data-testid="landing-crew">
+      {!pixelOn && <div className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }} data-testid="landing-crew">
         <Roamers list={crew} size="h-20 w-20 sm:h-28 sm:w-28" top={[40, 58]} label onTap={petIt}
           extra={(o) => (<>{petsLeft(o) > 0 && <span className="emoji absolute -right-1 top-0 text-lg">💖</span>}{bubble?.id === o.id && <span className="anim-pop absolute -top-10 left-1/2 z-20 w-40 -translate-x-1/2 rounded-xl bg-white px-2 py-1 text-center text-sm font-bold leading-tight text-emerald-900">{bubble.text}</span>}</>)} />
-      </div>
+      </div>}
       {hearts > 0 && <Burst key={hearts} emojis={["💖", "💗", "✨"]} />}
 
       <div className="absolute inset-x-0 bottom-0 z-30 flex flex-col gap-1.5 px-2 pb-2">

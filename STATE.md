@@ -9,7 +9,7 @@ played Hazelwild for the first time on 2026-11-02 and loved the catch-and-discov
 features that **Max has not yet seen on the tablet** (list below). The newest work (this commit) fixes gray boxes behind creatures,
 makes creatures a **mystery shadow until caught**, and adds this durable-project harness (rules, hooks, tests, state files).
 
-**Max measured 46-51 fps in Pixel Lab (Classic, 280x158; device not yet stated: ask phone or Tab A).** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
+**Max measured 46-51 fps in the first Pixel Lab on the Tab A (280x158, 3 sprites).** **Pixel meadow (Grown-up > Game modes) is built, beta, off by default: ask Max for the fps in Pixel Lab on the tablet and whether it feels right; cap is 30 fps.** **Pixel Lab (Grown-up area > Labs) is an experiment: ask Max for the fps number it shows on the tablet (that answers B-10) and whether he likes the look.** Note the update downloads one extra 670 KB chunk.
 
 **Newest (unseen by Max):** sound overlap fix (B-21), Camp yard with wandering/sparkling workers (B-22), workers on the map and zone cards (B-23), merged landing meadow with crew picker, Today/Map sheets (B-24, replaces Hub and Home). Ask Max: do songs still overlap? Is the landing clearer? Does Hazel pick her own crew? Are the Camp sparkles fun?
 
@@ -72,7 +72,7 @@ Error boundary around every activity + crash log shown in the Grown-up area. Shi
 app/src/App.tsx            profile picker > home > activity; time limit; update check; ErrorBoundary
 app/src/activities/        one file per activity + registry.ts (cards) + types.ts
 app/src/wilds/             Hazelwild: species.ts (data), Creature.tsx (art), game.ts (rules), camp.ts + mastery.ts (incremental),
-                           Landing (meadow + dock + Map/Today/Crew sheets) / Roamers / Zone / Explore / Camp / Catch / Reveal / Collection / Dex / Eggs / Duel / Overlays / BerryGuide / Goals
+                           Landing (meadow or Pixel meadow (`wilds/pixel/`) + dock + Map/Today/Crew sheets) / Roamers / Zone / Explore / Camp / Catch / Reveal / Collection / Dex / Eggs / Duel / Overlays / BerryGuide / Goals
 app/src/lib/               store.ts (all saved state), audio.ts, music.ts, speech.ts, update.ts, errlog.ts, shims.ts
 app/src/components/        TopBar, ParentArea (Grown-up), ParentGate, BreakScreen, ErrorBoundary, Burst, StickerOverlay
 app/src/coloring/          SVG coloring pages + color-by-number keys
@@ -83,7 +83,7 @@ docs/                      BUILT output served by Pages (do not edit)     guide.
 ## Data model (saves)
 `localStorage["hwos:v1"]` = `{ stars, stickers, newSticker, letterRight, countRight, traceRight, spelling, misses, limitMin, played, coloring,
 colored, sound, music, wilds }`. `wilds` (`wilds/types.ts`): `started, owned[], seen, berries, fromStars, eggs, day, visitorDone, treeDone,
-duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp}, homeCrew[]`.
+duelDay, favs, legend, seq, duelWins, goals, badges, newBadge, bushAt, tipSeen, glow, camps{zone}, boost, caught{species}, modes{camp,pixel?}, homeCrew[]`.
 Each owned friend: `id, sp, name, shiny, variant?, seed, pers, xp, got, pet, foods[2], branch?, level?`. Other keys: `hwos:lasterror`. **Every new field needs a default so old saves load.**
 
 ## Quality gates (see CLAUDE.md section 3)

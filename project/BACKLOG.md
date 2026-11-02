@@ -10,6 +10,7 @@ Each item has an acceptance test. Add items from `FEEDBACK.md`; keep this list s
 - **B-21 ✅ fixed, awaiting Max's ear (test `music-switching`) P0: music from different screens plays at once.** Landing/menu music keeps playing when a zone's song starts. *Accept:* switching screens leaves exactly one song audible (test measures the song scheduler and real output level).
 - **B-22 ✅ built, awaiting Max's play-test P1: Camp shows its workers moving around and animates each Glow they produce.** *Accept:* workers visible and moving in Camp; a visible sparkle when Glow is produced; basket reacts when Glow arrives.
 - **B-23 ✅ built, awaiting Max's play-test P1: workers also show on the map** (their zone's scene and the zone card on the map). *Accept:* assigned workers visible in that zone's Explore scene and on its map card.
+- **B-25 🔧 P2: Pixel meadow polish and reach.** Built first pass (mode, engine, sprites, camp tent). Ideas: day/dusk/night with lamps, per-zone pixel scenes in Explore, walk-cycle frames, pixel Catch screen, sound for taps. *Accept:* Max plays it on the tablet; fps >= 30 steady.
 - **B-24 ✅ built, awaiting Max's play-test P1: merge Home meadow and landing page; Hazel chooses 5 or more friends who wander at home; rethink the flow** (Home as the landing screen, Map for zones, a "Today" panel for daily things). *Accept:* landing screen is the living meadow with her chosen crew; she can change the crew; all old features still reachable.
 
 ## Next up
