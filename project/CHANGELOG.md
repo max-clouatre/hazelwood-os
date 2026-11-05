@@ -2,6 +2,10 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-05: Animal Game (new activity, Hazel and Violet)
+- "Animal Game": pick a category (Mix it up, Pets, Farm, Jungle, Water, Birds & Bugs, Woods; 50 animals) and press Start. Every 20 seconds (10 or 30 selectable) it shouts a new animal ("cow! Chew chew and swish your tail!"), shows it big with a movement animation (hop, waddle, stomp, fly, swim, crawl, sway, run) inside a countdown ring, and shouts the animal's sound halfway. Pause, Next, Done. Every animal comes up once before any repeats. A star every 5 finished animals (feeds Hazelwild like other stars). No winning or losing. Animals are data in `activities/animals.ts`.
+- Test `animal-game` (fake clock; both profiles; phone and tablet). Not verified: how the voice sounds on the tablet; whether 20 seconds suits the girls.
+
 ## 2026-11-02: Worlds layer and Village mode (phase 0)
 - **Worlds:** `wilds/worlds.ts` registry above regions; Map shows a world bar (Hazelwild playable, Pixel Isles "soon"); `wilds.world` saved; code that looped over all regions now uses `allRegions()`. Docs: `PLAN-WORLDS.md`, `EXTENDING.md` (recipes for creature, region, world, mode, building, art style).
 - **Village mode (beta, Grown-up switch, off by default):** third tab per region. 8 plots on the pixel island (flat grid fallback without WebGL). Build a Glow Well, Berry Patch, Lumber Hut, Workshop, or decorations (Flower Bed, Lantern); producers fill a pile (capped at 45 minutes, offline safe) you tap to collect; berries and wood go to village stock and the Workshop turns stock into ✨; buildings upgrade to level 3 and a friend assigned to a building works it (uses Camp worker math), visibly beside it. A friend is busy if at a camp or a village plot. 30 ✨ starter gift on first visit. Rules in `village.ts`, shapes in `pixel/buildings.ts`.

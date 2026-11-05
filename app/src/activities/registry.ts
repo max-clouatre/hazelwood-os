@@ -1,3 +1,4 @@
+import AnimalGame from "./AnimalGame";
 import ColorLab from "./ColorLab";
 import ColoringBook from "./ColoringBook";
 import Hazelwild from "./Hazelwild";
@@ -12,6 +13,7 @@ import TraceIt from "./TraceIt";
 import type { Activity } from "./types";
 
 export const ACTIVITIES: Activity[] = [
+  { id: "animal-game", title: "Animal Game", emoji: "🐸", color: "bg-[#5aa84a]", profiles: ["hazel", "violet"], Component: AnimalGame },
   { id: "kitty-count", title: "Count Friends", emoji: "🐱", color: "bg-[#e5736b]", profiles: ["violet"], Component: KittyCount },
   { id: "letter-pals", title: "Letter Pals", emoji: "🔤", color: "bg-[#8a6bbf]", profiles: ["violet"], Component: LetterPals },
   { id: "trace-it", title: "Trace It", emoji: "✏️", color: "bg-[#3fa7a0]", profiles: ["violet"], Component: TraceIt },
