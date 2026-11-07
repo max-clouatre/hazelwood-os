@@ -20,6 +20,7 @@ const TESTS = [
   { name: "music-switching", file: "music-switching.js", fast: true, what: "only one song chain alive; leaving Hazelwild silences it" },
   { name: "landing", file: "landing.js", fast: true, what: "merged landing meadow, crew picker, workers in camp yard and on the map" },
   { name: "animal-game", file: "animal-game.js", fast: true, what: "Animal Game: categories, timed shouts, pause, skip, stars" },
+  { name: "piano", file: "piano.js", fast: false, what: "Piano: free play, lessons, songs (follow, play along, listen), My Songs" },
   { name: "narrator", file: "narrator.js", fast: true, what: "Hazelwild narrator is off by default; the button toggles it" },
   { name: "pixel-lab", file: "pixel-lab.js", fast: false, what: "Grown-up Pixel Lab opens, dials work, three.js loads lazily" },
   { name: "pixel-meadow", file: "pixel-meadow.js", fast: false, what: "Pixel meadow mode: island, taps, turning, camp workers, flat fallback" },

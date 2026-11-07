@@ -7,8 +7,8 @@ An offline, touch-first learning and play space for Hazel (7) and Violet (3), bu
 ## What's in it
 | Who | Activities |
 | --- | --- |
-| Violet (3) | **Animal Game** (act like the animal that is shouted every 20 s, 7 categories), **Count Friends** (touch to count cats, unicorns, puppies; later "pick exactly N"), **Letter Pals** (find the letter; later "what does this start with?"), **Trace It** (finger-trace letters and numbers), **Coloring Book**, Sparkle Paint, My Stickers |
-| Hazel (7) | **Animal Game**, **Hazelwild** (creature collecting: explore, catch, name, evolve, duel), **Spelling Unicorn** (editable list, repeats missed words, rainbow every 5 words), **Sink or Float?** (22 items, streak bonus), **Magnet Mystery**, **Color Lab** (mix potions incl. pastels, hints), **Color by Number**, Sparkle Paint (rainbow brush, sizes, undo), My Stickers |
+| Violet (3) | **Piano** (free play, lessons, play-along songs), **Animal Game** (act like the animal that is shouted every 20 s, 7 categories), **Count Friends** (touch to count cats, unicorns, puppies; later "pick exactly N"), **Letter Pals** (find the letter; later "what does this start with?"), **Trace It** (finger-trace letters and numbers), **Coloring Book**, Sparkle Paint, My Stickers |
+| Hazel (7) | **Piano**, **Animal Game**, **Hazelwild** (creature collecting: explore, catch, name, evolve, duel), **Spelling Unicorn** (editable list, repeats missed words, rainbow every 5 words), **Sink or Float?** (22 items, streak bonus), **Magnet Mystery**, **Color Lab** (mix potions incl. pastels, hints), **Color by Number**, Sparkle Paint (rainbow brush, sizes, undo), My Stickers |
 
 - **Coloring (same 8 original pictures: unicorn, kitty, puppy, castle, butterfly, flowers, rocket, rainbow):**
   - *Violet* gets the free **Coloring Book**: pick any of 12 colors (spoken aloud) and tap a shape. Finishing a page gives a star.

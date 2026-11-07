@@ -54,3 +54,6 @@ Max wants expansions with their own regions, progression and art. We made three 
 
 ## D-25: Village is rules-first and renderer-agnostic (2026-11-02)
 `village.ts` holds all rules and numbers and knows nothing about drawing; `pixel/buildings.ts` draws. A friend is "busy" if assigned to a camp or a village plot (`assignedZone` covers both), so no friend can be in two places. A building's pile is computed from a start time and capped (no punishment, no endless hoarding); changing worker or level banks the pile first so nothing is lost. Everything ends as Glow: producers make Glow or stock (berries, wood), the Workshop turns stock into Glow. Starter gift of 30 Glow on the first visit so the loop starts without Camp.
+
+## D-26: copyrighted songs are typed in by the owner, never bundled (2026-11-07)
+Max asked for dads' songs such as Mad World. The repo and the Pages site are public, so writing melodies of songs that are still under copyright into the app would publish them. Dads' Corner therefore holds public-domain classics only (Ode to Joy, Für Elise, Greensleeves, The Entertainer, Auld Lang Syne), and **My Songs** lets a grown-up (behind the math gate) type any song's notes, stored only in that tablet's localStorage. Format and checking live in `lib/piano.ts`. Do not add copyrighted melodies or lyrics to `songs.ts`.

@@ -5,6 +5,7 @@ import Hazelwild from "./Hazelwild";
 import KittyCount from "./KittyCount";
 import LetterPals from "./LetterPals";
 import MagnetMystery from "./MagnetMystery";
+import Piano from "./Piano";
 import SinkFloat from "./SinkFloat";
 import SparklePaint from "./SparklePaint";
 import SpellingUnicorn from "./SpellingUnicorn";
@@ -14,6 +15,7 @@ import type { Activity } from "./types";
 
 export const ACTIVITIES: Activity[] = [
   { id: "animal-game", title: "Animal Game", emoji: "🐸", color: "bg-[#5aa84a]", profiles: ["hazel", "violet"], Component: AnimalGame },
+  { id: "piano", title: "Piano", emoji: "🎹", color: "bg-[#9b5fc0]", profiles: ["hazel", "violet"], Component: Piano },
   { id: "kitty-count", title: "Count Friends", emoji: "🐱", color: "bg-[#e5736b]", profiles: ["violet"], Component: KittyCount },
   { id: "letter-pals", title: "Letter Pals", emoji: "🔤", color: "bg-[#8a6bbf]", profiles: ["violet"], Component: LetterPals },
   { id: "trace-it", title: "Trace It", emoji: "✏️", color: "bg-[#3fa7a0]", profiles: ["violet"], Component: TraceIt },

@@ -67,3 +67,6 @@ button { -webkit-appearance: none; appearance: none; background-color: transpare
 @keyframes mv-crawl { 0%,100% { transform: translateX(-16px) scale(1,.94) } 50% { transform: translateX(16px) scale(1.06,1) } }
 @keyframes mv-sway { 0%,100% { transform: rotate(-7deg) } 50% { transform: rotate(7deg) } }
 @keyframes mv-run { 0%,100% { transform: translate(-30px,0) } 25% { transform: translate(0,-12px) } 50% { transform: translate(30px,0) } 75% { transform: translate(0,-12px) } }
+
+/* ---- Piano: a pulsing key to press next ---- */
+@keyframes keyglow { 0%,100% { filter: brightness(1) } 50% { filter: brightness(1.18) } }

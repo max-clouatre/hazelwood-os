@@ -2,6 +2,13 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-07: Piano (new activity, Hazel and Violet)
+- **Piano** with three parts: **Free Play** (rainbow keys, letters, two octaves, Low/High buttons, multi-touch), **Lessons** (8 short lessons: hello, find middle C, C D E, five-finger walk, black keys, A and B, Hot Cross Buns, Mary Had a Little Lamb; each step is spoken, glowing keys show what to press, mistakes only get a hint, a star per lesson) and **Songs** with falling notes in three modes: **Follow me** (the song waits for her), **Play along** (notes keep falling, hits sparkle, no fail, slow or normal), **Listen** (it plays itself). A star for finishing a song.
+- **Song book** (all traditional or public domain): 11 kids' songs (Twinkle, Mary, Hot Cross Buns, Row Row Row, Happy Birthday, Old MacDonald, Itsy Bitsy Spider, London Bridge, Frère Jacques, Yankee Doodle, Oh! Susanna), 2 holiday songs (Jingle Bells, We Wish You a Merry Christmas) and **Dads' Corner** (Ode to Joy, Für Elise, Greensleeves, The Entertainer, Auld Lang Syne).
+- **My Songs:** a grown-up (math gate) types in any song as notes (`E4 D4 C4:2 R:1 F#4`); it is checked as you type and saved only on the tablet (`hwos:songs`). This is how copyrighted songs such as Mad World get in without being published in the public repo. Progress (finished lessons/songs) in `hwos:piano`.
+- Sound: a small additive piano voice (`lib/piano.ts`). Songs are data in `activities/piano/songs.ts` (`parseSong` format documented in `lib/piano.ts`).
+- Test `piano` (both profiles, phone and tablet; Follow me played to the end, Play along timed on a fake clock, Listen, gate, typed song, restart). Not verified: how the piano sound feels on the tablet speaker; whether the classical melodies match the real pieces note for note (they are simplified from memory; tell me any wrong notes).
+
 ## 2026-11-05: Animal Game (new activity, Hazel and Violet)
 - "Animal Game": pick a category (Mix it up, Pets, Farm, Jungle, Water, Birds & Bugs, Woods; 50 animals) and press Start. Every 20 seconds (10 or 30 selectable) it shouts a new animal ("cow! Chew chew and swish your tail!"), shows it big with a movement animation (hop, waddle, stomp, fly, swim, crawl, sway, run) inside a countdown ring, and shouts the animal's sound halfway. Pause, Next, Done. Every animal comes up once before any repeats. A star every 5 finished animals (feeds Hazelwild like other stars). No winning or losing. Animals are data in `activities/animals.ts`.
 - Test `animal-game` (fake clock; both profiles; phone and tablet). Not verified: how the voice sounds on the tablet; whether 20 seconds suits the girls.
