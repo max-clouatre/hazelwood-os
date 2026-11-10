@@ -2,6 +2,9 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-10: Spelling "Test Me" mode
+- Spelling Unicorn now has **Practice** (tiles, as before) and **Test Me**. Test Me goes through **every word on the list exactly once** in a fresh random order ("Word 3 of 10"), speaks the word, and she types it from memory on a full keyboard: no letter tiles, no spoken letters, no hints, one try per word. A wrong word shows the right spelling (spoken and written) and moves on. At the end: "You got 8 out of 10!", the missed words with what she wrote, Test again / Practice. A star per right word, +3 for a perfect list; misses are remembered so Practice repeats them. Works for any list length (tested with 10 and 25 words). Layout fits phone, tablet, and 800x480. Test `spelling-test`.
+
 ## 2026-11-10: Spelling Unicorn repeated the same few words (bug fix)
 - Hazel reported "the same few words over and over". Cause: words she missed were weighted up to 11x (1 + 2 per miss, up to 5 misses), so one or two words flooded the game. Now it is a shuffled deck: every word once per pass, a missed word gets one extra turn, and a word never returns within the last 4 draws (a 5-word rainbow is always 5 different words). Regression test `spelling-variety` (plays 24 words on a fake clock with two heavily missed words; fails on the old logic).
 

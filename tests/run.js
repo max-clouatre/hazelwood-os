@@ -24,6 +24,7 @@ const TESTS = [
   { name: "narrator", file: "narrator.js", fast: true, what: "Hazelwild narrator is off by default; the button toggles it" },
   { name: "spelling-list", file: "spelling-list.js", fast: true, what: "Weekly spelling list is adopted once; hand edits stick" },
   { name: "spelling-variety", file: "spelling-variety.js", fast: true, what: "Spelling Unicorn rotates the whole list, no flooding" },
+  { name: "spelling-test", file: "spelling-test.js", fast: true, what: "Spelling Test Me: every word once, typed, scored, misses remembered" },
   { name: "pixel-lab", file: "pixel-lab.js", fast: false, what: "Grown-up Pixel Lab opens, dials work, three.js loads lazily" },
   { name: "pixel-meadow", file: "pixel-meadow.js", fast: false, what: "Pixel meadow mode: island, taps, turning, camp workers, flat fallback" },
   { name: "village", file: "village.js", fast: false, what: "Village mode: build, collect, convert, upgrade, workers, flat fallback" },

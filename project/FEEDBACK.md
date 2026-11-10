@@ -65,3 +65,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-10: Spelling repeats
 - Max (relaying Hazel): Spelling Unicorn is "just doing the same few words over and over". Status: fixed (shuffled deck, `drawWord`), test `spelling-variety`.
+
+## 2026-11-10: Test Me
+- Max: yes to a Test Me mode; must do EVERY word in the list, not just a couple. Status: built (`SpellingTest.tsx`), test `spelling-test` asserts every word is asked exactly once for 10 and 25 word lists.

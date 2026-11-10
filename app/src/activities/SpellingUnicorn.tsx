@@ -4,6 +4,7 @@ import { chime, note, oops } from "../lib/audio";
 import { cheer, say, speechSupported } from "../lib/speech";
 import { addStar, DEFAULT_SPELLING, getState, noteSpellingResult, useStore } from "../lib/store";
 import { shuffle } from "../lib/util";
+import { SpellingTest } from "./SpellingTest";
 import type { ActivityProps } from "./types";
 
 interface Tile { id: number; ch: string }
@@ -31,7 +32,7 @@ export function drawWord(deck: string[], recent: string[], words: string[]): str
   const w = words.find((x) => x !== recent[recent.length - 1]) ?? words[0]; recent.push(w); return w;
 }
 
-export default function SpellingUnicorn({ profile }: ActivityProps) {
+function Practice({ profile }: ActivityProps) {
   const { spelling } = useStore();
   const words = useMemo(() => (spelling.length ? spelling : DEFAULT_SPELLING), [spelling]);
   const deck = useRef<string[]>([]); const recent = useRef<string[]>([]);
@@ -135,6 +136,25 @@ export default function SpellingUnicorn({ profile }: ActivityProps) {
         </div>
       )}
       {done > 0 && <Burst key={`${done}-${rainbow}`} emojis={["⭐", "🦄", "🌈", "✨"]} />}
+    </div>
+  );
+}
+
+/** Spelling: Practice (tiles, friendly) or Test Me (every word on the list once, typed from memory). */
+export default function SpellingUnicorn({ profile }: ActivityProps) {
+  const { spelling } = useStore();
+  const words = spelling.length ? spelling : DEFAULT_SPELLING;
+  const [mode, setMode] = useState<"practice" | "test">("practice");
+  const chip = (on: boolean) => `rounded-full px-5 py-1.5 text-xl font-bold active:scale-95 ${on ? "bg-mustard text-black" : "bg-white/25"}`;
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex justify-center gap-2 py-2">
+        <button onClick={() => setMode("practice")} aria-pressed={mode === "practice"} aria-label="Practice mode" className={chip(mode === "practice")}><span className="emoji">🦄</span> Practice</button>
+        <button onClick={() => setMode("test")} aria-pressed={mode === "test"} aria-label="Test Me mode" className={chip(mode === "test")}><span className="emoji">📝</span> Test Me</button>
+      </div>
+      <div className="relative min-h-0 flex-1">
+        {mode === "practice" ? <Practice profile={profile} /> : <SpellingTest key={words.join(",")} words={words} profile={profile} onPractice={() => setMode("practice")} />}
+      </div>
     </div>
   );
 }

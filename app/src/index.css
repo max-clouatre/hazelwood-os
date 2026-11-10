@@ -70,3 +70,17 @@ button { -webkit-appearance: none; appearance: none; background-color: transpare
 
 /* ---- Piano: a pulsing key to press next ---- */
 @keyframes keyglow { 0%,100% { filter: brightness(1) } 50% { filter: brightness(1.18) } }
+
+/* ---- Spelling Test Me: tighter on short screens so Done is never cut off (tablet landscape) ---- */
+@media (max-height: 700px) {
+  .sp-key { height: 2.7rem !important; font-size: 1.6rem !important; }
+  .sp-done { padding-top: .3rem !important; padding-bottom: .3rem !important; font-size: 1.7rem !important; }
+  .sp-box { min-height: 3.6rem !important; }
+  .sp-box span { font-size: 2.4rem !important; line-height: 1 !important; }
+}
+@media (max-height: 540px) {
+  .sp-key { height: 2.3rem !important; font-size: 1.4rem !important; }
+  .sp-done { font-size: 1.4rem !important; }
+  .sp-box { min-height: 3rem !important; }
+  .sp-box span { font-size: 2rem !important; }
+}
