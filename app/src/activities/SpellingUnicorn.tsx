@@ -3,7 +3,7 @@ import { Burst } from "../components/Burst";
 import { chime, note, oops } from "../lib/audio";
 import { cheer, say, speechSupported } from "../lib/speech";
 import { addStar, DEFAULT_SPELLING, getState, noteSpellingResult, useStore } from "../lib/store";
-import { rand, shuffle } from "../lib/util";
+import { shuffle } from "../lib/util";
 import type { ActivityProps } from "./types";
 
 interface Tile { id: number; ch: string }
@@ -16,18 +16,26 @@ function makeTiles(word: string): Tile[] {
   return shuffle([...word.split(""), ...extras]).map((ch, id) => ({ id, ch }));
 }
 
-/** Words she missed come up more often: weight = 1 + 2 per recent miss. */
-function chooseWord(words: string[], avoid: string): string {
-  const misses = getState().misses;
-  const pool = words.length > 1 ? words.filter((w) => w !== avoid) : words;
-  const bag = pool.flatMap((w) => Array<string>(1 + 2 * (misses[w] ?? 0)).fill(w));
-  return bag[rand(bag.length)];
+/** A shuffled deck: every word comes up once before any repeats. A word she missed gets one extra turn in the deck (not a flood),
+ *  and a word never comes back within the last four draws, so a 5-word rainbow is always 5 different words. */
+export function drawWord(deck: string[], recent: string[], words: string[]): string {
+  const avoid = Math.min(4, words.length - 1);
+  const refill = () => { const misses = getState().misses; deck.push(...shuffle([...words, ...words.filter((w) => (misses[w] ?? 0) > 0)])); };
+  for (let pass = 0; pass < 2; pass++) {
+    if (!deck.length) refill();
+    const blocked = recent.slice(-avoid);
+    const i = deck.findIndex((w) => !blocked.includes(w));
+    if (i >= 0) { const [w] = deck.splice(i, 1); recent.push(w); if (recent.length > 8) recent.shift(); return w; }
+    deck.length = 0; // everything left was recent: start a fresh deck
+  }
+  const w = words.find((x) => x !== recent[recent.length - 1]) ?? words[0]; recent.push(w); return w;
 }
 
 export default function SpellingUnicorn({ profile }: ActivityProps) {
   const { spelling } = useStore();
   const words = useMemo(() => (spelling.length ? spelling : DEFAULT_SPELLING), [spelling]);
-  const [word, setWord] = useState(() => chooseWord(words, ""));
+  const deck = useRef<string[]>([]); const recent = useRef<string[]>([]);
+  const [word, setWord] = useState(() => drawWord(deck.current, recent.current, words));
   const [tiles, setTiles] = useState(() => makeTiles(word));
   const [placed, setPlaced] = useState<Tile[]>([]);
   const [shake, setShake] = useState<number | null>(null);
@@ -42,7 +50,8 @@ export default function SpellingUnicorn({ profile }: ActivityProps) {
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   const nextWord = useCallback((resetRound: boolean) => {
-    const w = chooseWord(words, last.current);
+    deck.current = deck.current.filter((x) => words.includes(x)); // the list may have changed
+    const w = drawWord(deck.current, recent.current, words);
     last.current = w; missed.current = false;
     setWord(w); setTiles(makeTiles(w)); setPlaced([]); setDone(0); setPeek(false);
     if (resetRound) { setRainbow(0); setRoundDone(false); }
@@ -110,7 +119,7 @@ export default function SpellingUnicorn({ profile }: ActivityProps) {
 
       <div className="flex max-w-3xl flex-wrap justify-center gap-3">
         {tiles.map((t) => (
-          <button key={t.id} onClick={() => tap(t)} disabled={used.has(t.id)}
+          <button key={t.id} onClick={() => tap(t)} disabled={used.has(t.id)} data-tile={t.ch}
             className={`h-20 w-20 rounded-2xl bg-fuchsia-100 text-5xl font-bold text-fuchsia-700 shadow-lg active:scale-90 ${used.has(t.id) ? "invisible" : ""} ${shake === t.id ? "anim-shake !bg-red-200" : ""}`}>
             {t.ch}
           </button>

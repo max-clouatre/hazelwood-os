@@ -2,6 +2,9 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-10: Spelling Unicorn repeated the same few words (bug fix)
+- Hazel reported "the same few words over and over". Cause: words she missed were weighted up to 11x (1 + 2 per miss, up to 5 misses), so one or two words flooded the game. Now it is a shuffled deck: every word once per pass, a missed word gets one extra turn, and a word never returns within the last 4 draws (a 5-word rainbow is always 5 different words). Regression test `spelling-variety` (plays 24 words on a fake clock with two heavily missed words; fails on the old logic).
+
 ## 2026-11-10: Hazel's new spelling list (test Tue Nov 10)
 - New school list: page, germ, digit, gray, space, face, cell, center, carpet, are. It lives in `lib/spellinglists.ts` (`WEEKLY_LIST` with an id). When the tablet updates, a list with a newer id replaces the saved one **once** (stars, stickers and everything else untouched; words she still needs are kept if on the new list); edits made in the Grown-up area afterwards stick until the next id ships. Bug caught by the test: the default masked the missing id in old saves. Test `spelling-list`.
 - **Weekly routine:** Max sends the list, we change `WEEKLY_LIST` (new id = date, new words), ship; Max taps Check for updates.

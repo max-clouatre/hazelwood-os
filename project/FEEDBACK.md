@@ -62,3 +62,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-07: Piano request
 - Max: a piano app that does lessons and lets them play along with songs; a bunch of kids songs and a section of dads' songs like Mad World. Status: built (`Piano.tsx`, `activities/piano/`). Mad World itself is not bundled (copyright, public repo): Max adds it under My Songs by typing the notes (D-26).
+
+## 2026-11-10: Spelling repeats
+- Max (relaying Hazel): Spelling Unicorn is "just doing the same few words over and over". Status: fixed (shuffled deck, `drawWord`), test `spelling-variety`.
