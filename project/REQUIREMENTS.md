@@ -28,3 +28,5 @@ Keep these true in every change. Add new ones as they appear.
 - Keep project state durable in the repo so any session can continue (this harness).
 
 - Hazelwild: music and sound effects yes, narrator voice no by default (2026-11-02, "way too busy"). Voice stays in learning activities.
+
+- Hazel's spelling list changes weekly with her school list; Max sends it (often a photo of the teacher's message) and we ship it as the new `WEEKLY_LIST` (2026-11-10).

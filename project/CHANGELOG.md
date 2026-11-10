@@ -2,6 +2,10 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-10: Hazel's new spelling list (test Tue Nov 10)
+- New school list: page, germ, digit, gray, space, face, cell, center, carpet, are. It lives in `lib/spellinglists.ts` (`WEEKLY_LIST` with an id). When the tablet updates, a list with a newer id replaces the saved one **once** (stars, stickers and everything else untouched; words she still needs are kept if on the new list); edits made in the Grown-up area afterwards stick until the next id ships. Bug caught by the test: the default masked the missing id in old saves. Test `spelling-list`.
+- **Weekly routine:** Max sends the list, we change `WEEKLY_LIST` (new id = date, new words), ship; Max taps Check for updates.
+
 ## 2026-11-07: Piano (new activity, Hazel and Violet)
 - **Piano** with three parts: **Free Play** (rainbow keys, letters, two octaves, Low/High buttons, multi-touch), **Lessons** (8 short lessons: hello, find middle C, C D E, five-finger walk, black keys, A and B, Hot Cross Buns, Mary Had a Little Lamb; each step is spoken, glowing keys show what to press, mistakes only get a hint, a star per lesson) and **Songs** with falling notes in three modes: **Follow me** (the song waits for her), **Play along** (notes keep falling, hits sparkle, no fail, slow or normal), **Listen** (it plays itself). A star for finishing a song.
 - **Song book** (all traditional or public domain): 11 kids' songs (Twinkle, Mary, Hot Cross Buns, Row Row Row, Happy Birthday, Old MacDonald, Itsy Bitsy Spider, London Bridge, Frère Jacques, Yankee Doodle, Oh! Susanna), 2 holiday songs (Jingle Bells, We Wish You a Merry Christmas) and **Dads' Corner** (Ode to Joy, Für Elise, Greensleeves, The Entertainer, Auld Lang Syne).

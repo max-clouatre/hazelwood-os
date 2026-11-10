@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { STARS_PER_STICKER, STICKERS } from "./stickers";
 import { initialWilds } from "../wilds/types";
+import { WEEKLY_LIST } from "./spellinglists";
 import type { Wilds } from "../wilds/types";
 
 export type ProfileId = "hazel" | "violet";
@@ -19,6 +20,7 @@ interface State {
   countRight: number; // Violet: grows the counting range
   traceRight: number; // Violet: grows the trace pool
   spelling: string[]; // Hazel's list (editable in the parent area)
+  spellingId: string; // which shipped weekly list (lib/spellinglists.ts) she has been given
   misses: Record<string, number>; // spelling word -> how often she needs it again
   coloring: PerKid<Record<string, Record<string, string>>>; // page -> region -> color
   colored: PerKid<Record<string, boolean>>; // pages already rewarded with a star
@@ -37,7 +39,8 @@ const initial: State = {
   letterRight: 0,
   countRight: 0,
   traceRight: 0,
-  spelling: DEFAULT_SPELLING,
+  spelling: [...WEEKLY_LIST.words],
+  spellingId: WEEKLY_LIST.id,
   misses: {},
   coloring: { hazel: {}, violet: {} },
   colored: { hazel: {}, violet: {} },
@@ -54,7 +57,7 @@ function load(): State {
     if (raw) {
       const saved = JSON.parse(raw);
       // Old saves lack the per-kid fields above; merge each object so nothing is undefined.
-      return {
+      const merged: State = {
         ...initial, ...saved,
         stars: { ...initial.stars, ...saved.stars },
         stickers: { ...initial.stickers, ...saved.stickers },
@@ -64,6 +67,15 @@ function load(): State {
         limitMin: { ...initial.limitMin, ...saved.limitMin },
         played: { ...initial.played, ...saved.played },
       };
+      // a newer weekly list from school: adopt it once, keep misses only for words still on it
+      if (saved.spellingId !== WEEKLY_LIST.id) {
+        const words = [...WEEKLY_LIST.words]; const misses: Record<string, number> = {};
+        for (const w of words) if (merged.misses[w]) misses[w] = merged.misses[w];
+        const out = { ...merged, spelling: words, spellingId: WEEKLY_LIST.id, misses };
+        try { localStorage.setItem(KEY, JSON.stringify(out)); } catch { /* ignore */ }
+        return out;
+      }
+      return merged;
     }
   } catch { /* storage unavailable: run in memory */ }
   return initial;

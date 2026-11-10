@@ -22,6 +22,7 @@ const TESTS = [
   { name: "animal-game", file: "animal-game.js", fast: true, what: "Animal Game: categories, timed shouts, pause, skip, stars" },
   { name: "piano", file: "piano.js", fast: false, what: "Piano: free play, lessons, songs (follow, play along, listen), My Songs" },
   { name: "narrator", file: "narrator.js", fast: true, what: "Hazelwild narrator is off by default; the button toggles it" },
+  { name: "spelling-list", file: "spelling-list.js", fast: true, what: "Weekly spelling list is adopted once; hand edits stick" },
   { name: "pixel-lab", file: "pixel-lab.js", fast: false, what: "Grown-up Pixel Lab opens, dials work, three.js loads lazily" },
   { name: "pixel-meadow", file: "pixel-meadow.js", fast: false, what: "Pixel meadow mode: island, taps, turning, camp workers, flat fallback" },
   { name: "village", file: "village.js", fast: false, what: "Village mode: build, collect, convert, upgrade, workers, flat fallback" },
