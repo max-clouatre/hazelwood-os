@@ -1,4 +1,4 @@
-# Plan: Spotify music for the girls (request from Max, 2026-11-12) — NOT BUILT YET, waiting for answers
+# Plan: Spotify music for the girls (request from Max, 2026-11-12) — PARKED by Max (2026-11-12): do not build until he answers the questions below
 
 **Request:** the girls can listen to music on the tablet through Max's Spotify account. He logs in once as the parent. Each kid has her own music area. **Design (updated 2026-11-12):** one playlist per kid, named exactly **"Hazel"** and **"Violet"** in Max's Spotify (he adds songs to them in Spotify). Hazel's area plays "Hazel", Violet's plays "Violet". Simple, kid-friendly screen.
 
