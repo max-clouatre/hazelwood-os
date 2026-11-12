@@ -68,3 +68,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-10: Test Me
 - Max: yes to a Test Me mode; must do EVERY word in the list, not just a couple. Status: built (`SpellingTest.tsx`), test `spelling-test` asserts every word is asked exactly once for 10 and 25 word lists.
+
+## 2026-11-12: Cuddle Run idea
+- Max: a Vampire Survivors style game for Hazel but non-violent: creatures come to be petted, some take longer and drain energy, when energy is low you rest (run over); integrate with the creature collection: pets from her collection join runs and help tend the wild animals; mom-approved, a 7-year-old would like it, learning elements. Status: built as Cuddle Run (`PLAN-CUDDLE.md`).

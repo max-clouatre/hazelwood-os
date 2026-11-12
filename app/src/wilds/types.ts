@@ -18,6 +18,8 @@ export interface Camp { workers: string[]; extra: number; basket: number; speed:
 export interface VPlot { kind: string; level: number; at: number; worker?: string }
 /** A region's village: plots (null = empty), shared stock of raw resources, and whether the starter gift was given. */
 export interface Village { plots: (VPlot | null)[]; stock: Record<string, number>; gift: boolean }
+/** Cuddle Run progress: runs played, animals helped, field notes collected (species ids), her chosen helper friends, and a new friend waiting to be met. */
+export interface CuddleSave { runs: number; helped: number; best: number; notes: Record<string, true>; team: string[]; pending?: Owned }
 export interface Egg { id: string; need: number; have: number }
 export interface Wilds {
   started: boolean; // picked a first friend
@@ -37,7 +39,8 @@ export interface Wilds {
   camps: Record<string, Camp>; // by zone id
   boost: { from: number; until: number }; // Star Boost window (ms timestamps): camps work 2x inside it
   caught: Record<string, number>; // how many of each species she has caught (Mastery)
-  modes: { camp: boolean; pixel?: boolean; village?: boolean }; // which experimental game modes are switched on
+  modes: { camp: boolean; pixel?: boolean; village?: boolean; cuddle?: boolean }; // which experimental game modes are switched on
+  cuddle?: CuddleSave; // Cuddle Run progress
   village?: Record<string, Village>; // by region id (Village mode)
   world?: string; // which world the map shows (undefined = hazelwild)
   voice?: boolean; // narrator voice in Hazelwild (undefined = off, it was too busy)

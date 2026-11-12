@@ -31,7 +31,7 @@ type View =
 export default function Hazelwild(_: ActivityProps) {
   const { wilds: w } = useStore();
   const [view, setView] = useState<View>({ n: "hub" });
-  const [draft, setDraft] = useState<{ o: Owned; back: View; visitor: boolean } | null>(null);
+  const [draft, setDraft] = useState<{ o: Owned; back: View; visitor: boolean; headline?: string } | null>(null);
   const [legend, setLegend] = useState<Owned | null>(null);
   const [starter, setStarter] = useState<Owned | null>(null);
   const [guide, setGuide] = useState(false);
@@ -77,6 +77,7 @@ export default function Hazelwild(_: ActivityProps) {
       )}
       {view.n === "zone" && (
         <Zone biome={view.biome} mode={view.mode} onMode={(m) => setView({ ...view, mode: m })} onBack={toHub}
+          onFriend={(o) => setDraft({ o, back: { n: "zone", biome: view.biome, mode: "cuddle" }, visitor: false, headline: "A new friend joins you!" })}
           onEncounter={(draft, lure) => startCatch(draft, view.biome, lure ? 0.1 : 0, lure ? "Your lure worked! A special" : "A wild", false)} />
       )}
       {view.n === "catch" && (
@@ -94,7 +95,7 @@ export default function Hazelwild(_: ActivityProps) {
       {tips && <Tips onClose={() => { setTips(false); setWilds(() => ({ tipSeen: true })); }} />}
       {guide && <BerryGuide onClose={() => setGuide(false)} />}
       {draft && (
-        <Reveal draft={draft.o} headline={draft.o.shiny ? "You caught a shiny friend!" : "You caught a new friend!"} onDone={(name) => {
+        <Reveal draft={draft.o} headline={draft.headline ?? (draft.o.shiny ? "You caught a shiny friend!" : "You caught a new friend!")} onDone={(name) => {
           adopt(draft.o, name, true);
           if (draft.visitor) setWilds(() => ({ visitorDone: true }));
           setView(draft.back); setDraft(null);
