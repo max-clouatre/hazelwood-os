@@ -4,6 +4,8 @@ import { chime, note, oops } from "../lib/audio";
 import { cheer, say, speechSupported } from "../lib/speech";
 import { addStar, DEFAULT_SPELLING, getState, noteSpellingResult, useStore } from "../lib/store";
 import { shuffle } from "../lib/util";
+import { readAloud, WEEKLY_LIST } from "../lib/spellinglists";
+import { SpellingStarts } from "./SpellingStarts";
 import { SpellingTest } from "./SpellingTest";
 import type { ActivityProps } from "./types";
 
@@ -58,7 +60,7 @@ function Practice({ profile }: ActivityProps) {
     if (resetRound) { setRainbow(0); setRoundDone(false); }
   }, [words]);
 
-  useEffect(() => { say(`Spell the word: ${word}`); }, [word]);
+  useEffect(() => { say(`Spell the word: ${readAloud(word)}`, 0.85); }, [word]);
   // If the list changes, make sure the current word is still on it.
   useEffect(() => { if (!words.includes(word)) nextWord(false); }, [words, word, nextWord]);
 
@@ -97,7 +99,7 @@ function Practice({ profile }: ActivityProps) {
           {RAINBOW.map((c, i) => <span key={i} className="h-4 w-12 rounded-full" style={{ background: i < rainbow ? c : "rgba(255,255,255,.25)" }} />)}
         </div>
         <div className="flex gap-3">
-          <button onClick={() => say(word, 0.7)} className="rounded-2xl bg-white/90 px-6 py-3 text-2xl font-bold text-purple-700 shadow-lg active:scale-95">
+          <button onClick={() => say(readAloud(word), 0.75)} className="rounded-2xl bg-white/90 px-6 py-3 text-2xl font-bold text-purple-700 shadow-lg active:scale-95">
             <span className="emoji">🔊</span> Hear it
           </button>
           {speechSupported && (
@@ -144,16 +146,19 @@ function Practice({ profile }: ActivityProps) {
 export default function SpellingUnicorn({ profile }: ActivityProps) {
   const { spelling } = useStore();
   const words = spelling.length ? spelling : DEFAULT_SPELLING;
-  const [mode, setMode] = useState<"practice" | "test">("practice");
-  const chip = (on: boolean) => `rounded-full px-5 py-1.5 text-xl font-bold active:scale-95 ${on ? "bg-mustard text-black" : "bg-white/25"}`;
+  const [mode, setMode] = useState<"practice" | "starts" | "test">("practice");
+  const isWeekly = JSON.stringify(words) === JSON.stringify(WEEKLY_LIST.words);
+  const chip = (on: boolean) => `rounded-full px-4 py-1.5 text-xl font-bold active:scale-95 ${on ? "bg-mustard text-black" : "bg-white/25"}`;
   return (
     <div className="flex h-full flex-col">
-      <div className="flex justify-center gap-2 py-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 py-2">
+        <span className="rounded-full bg-black/30 px-3 py-1 text-lg font-bold" data-testid="list-name">{isWeekly ? WEEKLY_LIST.name : "My list"}</span>
         <button onClick={() => setMode("practice")} aria-pressed={mode === "practice"} aria-label="Practice mode" className={chip(mode === "practice")}><span className="emoji">🦄</span> Practice</button>
+        <button onClick={() => setMode("starts")} aria-pressed={mode === "starts"} aria-label="Starts mode" className={chip(mode === "starts")}><span className="emoji">🔤</span> Starts</button>
         <button onClick={() => setMode("test")} aria-pressed={mode === "test"} aria-label="Test Me mode" className={chip(mode === "test")}><span className="emoji">📝</span> Test Me</button>
       </div>
       <div className="relative min-h-0 flex-1">
-        {mode === "practice" ? <Practice profile={profile} /> : <SpellingTest key={words.join(",")} words={words} profile={profile} onPractice={() => setMode("practice")} />}
+        {mode === "practice" ? <Practice profile={profile} /> : mode === "starts" ? <SpellingStarts key={words.join(",")} words={words} profile={profile} onPractice={() => setMode("practice")} /> : <SpellingTest key={words.join(",")} words={words} profile={profile} onPractice={() => setMode("practice")} />}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 const { serve, ROOT, ok } = require('../lib');
 const { chromium } = require('playwright');
 const path = require('path');
-const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center', 'carpet', 'are'];
+const NEW = ['knotted', 'knitting', 'knocked', 'wringing', 'wronged', 'whipped', 'whined', 'quitting', 'quacked', 'all'];
 (async () => {
   const server = await serve(path.join(ROOT, 'docs'));
   const b = await chromium.launch();
@@ -10,12 +10,12 @@ const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center',
   { const p = await (await b.newContext({ viewport: { width: 960, height: 600 } })).newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(server.url + '/'); await p.waitForTimeout(300);
     // an old-shaped save: old list, no spellingId, misses for one old and one new word
-    await p.evaluate(() => localStorage.setItem('hwos:v1', JSON.stringify({ stars: { hazel: 4, violet: 1 }, spelling: ['because', 'friend'], misses: { because: 2, gray: 1 } })));
+    await p.evaluate(() => localStorage.setItem('hwos:v1', JSON.stringify({ stars: { hazel: 4, violet: 1 }, spelling: ['because', 'friend'], misses: { because: 2, knocked: 1 } })));
     await p.reload(); await p.waitForTimeout(600);
     let s = await read(p);
     ok('old save gets the new school list: ' + JSON.stringify(s.spelling), JSON.stringify(s.spelling) === JSON.stringify(NEW));
     ok('stars are untouched', s.stars.hazel === 4 && s.stars.violet === 1);
-    ok('misses kept only for words still on the list', JSON.stringify(s.misses) === JSON.stringify({ gray: 1 }));
+    ok('misses kept only for words still on the list', JSON.stringify(s.misses) === JSON.stringify({ knocked: 1 }));
     // Grown-up edit sticks across a reload
     await p.evaluate(() => { const st = JSON.parse(localStorage.getItem('hwos:v1')); st.spelling = ['custom', 'words']; localStorage.setItem('hwos:v1', JSON.stringify(st)); });
     await p.reload(); await p.waitForTimeout(500);

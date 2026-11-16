@@ -2,7 +2,7 @@
 const { serve, ROOT, ok } = require('../lib');
 const { chromium } = require('playwright');
 const path = require('path');
-const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center', 'carpet', 'are'];
+const NEW = ['knotted', 'knitting', 'knocked', 'wringing', 'wronged', 'whipped', 'whined', 'quitting', 'quacked', 'all'];
 (async () => {
   const server = await serve(path.join(ROOT, 'docs'));
   const b = await chromium.launch();
@@ -10,7 +10,7 @@ const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center',
     const p = await (await b.newContext({ viewport: vp, hasTouch: true })).newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.addInitScript(() => { window.__said = []; if (window.speechSynthesis) window.speechSynthesis.speak = (u) => { window.__said.push(u.text); }; });
     await p.clock.install(); await p.goto(server.url + '/'); await p.clock.runFor(500);
-    await p.evaluate((w) => localStorage.setItem('hwos:v1', JSON.stringify({ spelling: w, spellingId: '2026-11-10', misses: {}, stars: { hazel: 0, violet: 0 } })), list);
+    await p.evaluate((w) => localStorage.setItem('hwos:v1', JSON.stringify({ spelling: w, spellingId: '2026-11-16', misses: {}, stars: { hazel: 0, violet: 0 } })), list);
     await p.reload(); await p.clock.runFor(700);
     await p.getByText('Hazel', { exact: true }).click(); await p.clock.runFor(300); await p.getByText('Spelling Unicorn').first().click(); await p.clock.runFor(600);
     const dismiss = async () => { while (await p.locator('button.fixed.inset-0').count()) { await p.locator('button.fixed.inset-0').first().click(); await p.clock.runFor(200); } };
@@ -21,7 +21,7 @@ const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center',
       for (let n = 0; n < list.length; n++) {
         const prog = await p.getByTestId('test-progress').innerText();
         if (prog !== `Word ${n + 1} of ${list.length}`) { console.log('  progress mismatch', prog, n + 1); }
-        const word = await p.evaluate((l) => { const s = window.__said.filter((t) => l.includes(t)); return s[s.length - 1]; }, list);
+        const word = await p.evaluate((l) => { const s = window.__said.filter((t) => l.includes(t.split('.')[0])); return s[s.length - 1].split('.')[0]; }, list);
         asked.push(word);
         await typeWord(wrongAt.includes(n) ? 'zzz' : word);
         await p.getByRole('button', { name: 'Check my word' }).click(); await p.clock.runFor(wrongAt.includes(n) ? 3400 : 1500); await dismiss();
@@ -33,6 +33,7 @@ const NEW = ['page', 'germ', 'digit', 'gray', 'space', 'face', 'cell', 'center',
     ok(`${label}: there are no letter tiles or hints, just a full keyboard`, (await p.getByTestId('test-keys').locator('[data-key]').count()) === 26);
     const wrong = [2, 6];
     const asked = await runTest(wrong);
+    if (label === 'tablet') { const said = await p.evaluate(() => window.__said.join(' | ')); ok('tablet: each word is read in its sentence (like a teacher)', said.includes('Her shoelaces were knotted together.') && said.includes('We ate all of the cookies.')); }
     ok(`${label}: it asked every word on the list (${asked.length} of ${list.length})`, asked.length === list.length && list.every((w) => asked.includes(w)));
     ok(`${label}: each word exactly once`, new Set(asked).size === list.length);
     const score = await p.getByTestId('test-score').innerText();

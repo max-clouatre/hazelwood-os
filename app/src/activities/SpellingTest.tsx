@@ -4,6 +4,7 @@ import { chime, oops } from "../lib/audio";
 import { cheer, say } from "../lib/speech";
 import { addStar, noteSpellingResult } from "../lib/store";
 import type { ProfileId } from "../lib/store";
+import { readAloud } from "../lib/spellinglists";
 import { shuffle } from "../lib/util";
 
 const ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
@@ -25,7 +26,7 @@ export function SpellingTest({ words, profile, onPractice }: { words: string[]; 
 
   const finished = i >= order.length;
   const word = order[i];
-  useEffect(() => { if (!finished && word) say(word, 0.8); }, [i, finished]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!finished && word) say(readAloud(word), 0.8); }, [i, finished]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (finished && results.length === order.length) {
       const got = results.filter((r) => r.right).length;
@@ -67,7 +68,7 @@ export function SpellingTest({ words, profile, onPractice }: { words: string[]; 
     <div className="relative flex h-full flex-col items-center justify-between px-3 pb-3" data-testid="test-play">
       <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
         <p className="rounded-full bg-black/30 px-4 py-1 text-xl font-bold" data-testid="test-progress">Word {i + 1} of {order.length}</p>
-        <button onClick={() => say(word, 0.75)} aria-label="Hear the word" className="rounded-2xl bg-white/90 px-6 py-3 text-2xl font-bold text-purple-700 shadow-lg active:scale-95"><span className="emoji">🔊</span> Hear it again</button>
+        <button onClick={() => say(readAloud(word), 0.75)} aria-label="Hear the word" className="rounded-2xl bg-white/90 px-6 py-3 text-2xl font-bold text-purple-700 shadow-lg active:scale-95"><span className="emoji">🔊</span> Hear it again</button>
       </div>
       <div className="sp-box flex min-h-[5.5rem] w-full max-w-xl items-center justify-center rounded-2xl border-4 border-dashed border-white/60 bg-white/10 px-3" aria-label="Your spelling">
         <span className="break-all text-5xl font-bold tracking-widest" data-testid="test-typed">{typed}</span>

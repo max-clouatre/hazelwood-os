@@ -1,4 +1,4 @@
-import{s as It,a as Xt,r as Yt,C as Wt,b as Kt}from"./index-BNfuOn4B.js";const Jt={palette:!0,outline:!0,dither:!0},Qt="#2b2540",Zt=8,Tt="varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",Rt=`
+import{s as It,a as Xt,r as Yt,C as Wt,b as Kt}from"./index-B97pSxKn.js";const Jt={palette:!0,outline:!0,dither:!0},Qt="#2b2540",Zt=8,Tt="varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",Rt=`
 precision highp float;
 uniform sampler2D tColor; uniform sampler2D tDepth;
 uniform vec2 texel; uniform vec2 res; uniform float thr; uniform float levels;

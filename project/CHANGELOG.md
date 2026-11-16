@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-16: Spelling list "Skills 3" (test Tue Nov 17) + read-aloud sentences + Starts game
+- New weekly list **Skills 3**: knotted, knitting, knocked, wringing, wronged, whipped, whined, quitting, quacked, and the tricky word **all**. It is the default and is adopted once on update (same mechanism as before: `WEEKLY_LIST` id 2026-11-16). The list name shows at the top of the Spelling screen ("My list" if Max edited the words).
+- Every word has a **read-aloud sentence** (teacher style: word, sentence, word) in Practice, Starts and Test Me (`SENTENCES` in `lib/spellinglists.ts`; previous list's words keep theirs).
+- New mode **Starts**: the beginning of the word is hidden and Hazel picks it from look-alikes for the teacher's warning (kn / n / gn, wr / r, wh / w, qu / kw / q), with the sentence on screen. Every tricky-start word comes up exactly once (9 words; "all" has no tricky start), retry until right, first try is scored, bonus stars for a perfect round, missed words feed Practice. Test `spelling-starts`; earlier spelling tests updated.
+- Weekly routine unchanged: Max (or the other chat) sends the list, we edit `lib/spellinglists.ts`, ship, tap Check for updates.
+
 ## 2026-11-12: Cuddle Run (new game mode in Hazelwild, on by default)
 - A gentle "survivors" game for Hazel, per region as a 4th tab next to Explore, Camp and Village (`project/PLAN-CUDDLE.md`). Hazel walks a meadow (drag anywhere); wild animals come to her for cuddles; standing near them pets them automatically (up to 2 at a time, more with upgrades) until a heart ring fills and they leave happy, dropping sparkles (xp) and sometimes snacks (energy). Big and "needy" animals take longer and tire her; clingers slow her a little. When **energy runs out it is Nap time**: the day ends kindly and she keeps everything. A full day (4 minutes) ends in a sunset with a bonus. Nothing is attacked, hurt or lost.
 - **Helper friends:** she brings up to 3 of her own creatures. Each family has an ability (Sproutkin cozy patches that restore energy, Tidefolk calming splashes, Emberkin warm cuddles that speed petting, Dawnkin sunbeam that pets by itself, Duskkin lullaby that cuts tiredness, Skykin breeze that gathers sparkles and speeds her up). A friend's **form (1 to 3)** is its helper level, so evolving friends makes better helpers.
