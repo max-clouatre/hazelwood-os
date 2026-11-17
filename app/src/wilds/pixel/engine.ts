@@ -50,7 +50,10 @@ export class Stage {
   private target: T.WebGLRenderTarget | null = null;
   private postScene: T.Scene; private postCam: T.OrthographicCamera; private postMat: T.ShaderMaterial;
   w = 1; h = 1; halfH = 6.1; post: PostOpts;
-  constructor(private THREE: TH, public canvas: HTMLCanvasElement, w: number, h: number, post: PostOpts) {
+  /** Snap amount for the PS1-style vertex wobble: half the render size (set in resize). */
+  snap: { value: T.Vector2 };
+  constructor(private THREE: TH, public canvas: HTMLCanvasElement, w: number, h: number, post: PostOpts, opts: { levels?: number } = {}) {
+    this.snap = { value: new THREE.Vector2(1, 1) };
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: "low-power", stencil: false, precision: "mediump" });
     this.renderer.setPixelRatio(1);
     this.scene = new THREE.Scene();
@@ -58,7 +61,7 @@ export class Stage {
     this.postScene = new THREE.Scene(); this.postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     this.postMat = new THREE.ShaderMaterial({
       vertexShader: VERT, fragmentShader: FRAG, depthTest: false, depthWrite: false,
-      uniforms: { tColor: { value: null }, tDepth: { value: null }, texel: { value: new THREE.Vector2() }, res: { value: new THREE.Vector2() }, thr: { value: 0.003 }, levels: { value: LEVELS }, pal: { value: 1 }, dith: { value: 1 }, outl: { value: 1 }, ink: { value: new THREE.Color(INK_HEX) } },
+      uniforms: { tColor: { value: null }, tDepth: { value: null }, texel: { value: new THREE.Vector2() }, res: { value: new THREE.Vector2() }, thr: { value: 0.003 }, levels: { value: opts.levels ?? LEVELS }, pal: { value: 1 }, dith: { value: 1 }, outl: { value: 1 }, ink: { value: new THREE.Color(INK_HEX) } },
     });
     this.postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.postMat));
     this.post = post; this.resize(w, h);
@@ -74,7 +77,7 @@ export class Stage {
     t.texture.colorSpace = THREE.SRGBColorSpace; // keep stored colors in sRGB so the palette steps look even
     t.depthTexture = new THREE.DepthTexture(this.w, this.h); t.depthTexture.minFilter = t.depthTexture.magFilter = THREE.NearestFilter;
     this.target = t;
-    const u = this.postMat.uniforms; u.texel.value.set(1 / this.w, 1 / this.h); u.res.value.set(this.w, this.h);
+    const u = this.postMat.uniforms; u.texel.value.set(1 / this.w, 1 / this.h); u.res.value.set(this.w, this.h); this.snap.value.set(this.w / 2, this.h / 2);
     this.frame(this.halfH);
   }
   /** Set how many world units fit the view height (the island stays fully in view on tall phones too). */
@@ -98,6 +101,12 @@ export class Stage {
     u.pal.value = this.post.palette ? 1 : 0; u.dith.value = this.post.dither ? 1 : 0; u.outl.value = this.post.outline ? 1 : 0;
     u.thr.value = 0.3 / (this.camera.far - this.camera.near); // ~0.3 world units of depth jump draws an outline
     r.render(this.postScene, this.postCam);
+  }
+  /** PS1-style vertex snapping: vertices are rounded to the render grid, so low-poly shapes shimmer a little like old hardware. */
+  ps1<M extends T.Material>(m: M): M {
+    const snap = this.snap;
+    m.onBeforeCompile = (sh) => { sh.uniforms.uSnap = snap; sh.vertexShader = sh.vertexShader.replace("void main() {", "uniform vec2 uSnap;\nvoid main() {").replace("#include <project_vertex>", "#include <project_vertex>\n  gl_Position.xy = floor(gl_Position.xy / gl_Position.w * uSnap + 0.5) / uSnap * gl_Position.w;"); };
+    m.customProgramCacheKey = () => "ps1snap"; return m;
   }
   dispose() { this.target?.dispose(); this.postMat.dispose(); this.renderer.dispose(); this.renderer.forceContextLoss(); }
 }

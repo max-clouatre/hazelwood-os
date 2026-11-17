@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-17: Cloheart Pets (new activity for Hazel and Violet, phase 0)
+- A gentle virtual pet in a cosy 3D room, in a **PS1 look**: small render (about 320 wide), 15-bit colour (32 steps per channel) with Bayer dither, vertex snapping (a little shimmer), flat low-poly shapes, no outlines. Built on the existing pixel engine (new options: `levels`, `ps1()` vertex snap). Plan: `project/PLAN-PETS.md` (phases 1 to 3: play/bath/sleep, photo colour helper, vision-to-traits, pets on the landing meadow).
+- **Pets are traits entries** (`activities/pets/data.ts`: species dog|cat, size, three colours, nose/eye/collar, ears, tail, snout, stripes, patch). A **procedural rig** (`pets/rig.ts`) builds the body and animates it in code: walk cycle, breathing, blinking, head looks about, tail wag from mood, ear twitch, eating, happy hop. Two **placeholder pets** (golden dog Buddy, grey tabby Mimi) until the real pets' photos arrive (photos are not committed to the public repo; only the traits are).
+- **Care:** Feed (the pet walks to the bowl and eats with crunch sounds; a full pet says "is full", no penalty), Pet (tap the pet or the Pet button: hearts, bark/meow/purr). Fullness and joy drift down slowly in real time (about 8 and 12 hours) and **never below a floor**: the pet is "a little hungry" or "would love a cuddle", never sick or gone. State in its own key `hwos:pets`; the main save is untouched.
+- Big touch targets, kid copy, synthesized sounds (`lib/petsound.ts`, respect the Sound switch), flat 2D fallback when WebGL is missing. Test `cloheart` (28 checks: room on phone and tablet, tap to pet, feed to eating, full pet, 30 hours later, no scary words, fallback, traits file). Not verified: how it looks and runs on the real tablet, and the pets are placeholders.
+
 ## 2026-11-16: Spelling list "Skills 3" (test Tue Nov 17) + read-aloud sentences + Starts game
 - New weekly list **Skills 3**: knotted, knitting, knocked, wringing, wronged, whipped, whined, quitting, quacked, and the tricky word **all**. It is the default and is adopted once on update (same mechanism as before: `WEEKLY_LIST` id 2026-11-16). The list name shows at the top of the Spelling screen ("My list" if Max edited the words).
 - Every word has a **read-aloud sentence** (teacher style: word, sentence, word) in Practice, Starts and Test Me (`SENTENCES` in `lib/spellinglists.ts`; previous list's words keep theirs).

@@ -71,3 +71,6 @@ Add new entries the moment they arrive (`/log-feedback`).
 
 ## 2026-11-12: Cuddle Run idea
 - Max: a Vampire Survivors style game for Hazel but non-violent: creatures come to be petted, some take longer and drain energy, when energy is low you rest (run over); integrate with the creature collection: pets from her collection join runs and help tend the wild animals; mom-approved, a 7-year-old would like it, learning elements. Status: built as Cuddle Run (`PLAN-CUDDLE.md`).
+
+## 2026-11-17: Cloheart Pets request (relayed from another chat)
+- A virtual pet from photos of the family's own pets (PS1 look, procedural rig, traits from a vision model); care loop that never punishes; a room to wander; big touch targets. Start with a plan and one pet, one room, feed and pet. Status: phase 0 built with placeholder pets; waiting for the photos.
