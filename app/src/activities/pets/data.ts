@@ -9,6 +9,8 @@ export interface PetTraits {
   second: string;          // chest, belly, paws, muzzle
   accent: string;          // ears, back saddle, stripes, patches
   nose: string; eye: string; collar?: string;
+  earColor?: string;       // if the ears differ from the accent colour
+  tailColor?: string;      // if the tail differs from the main colour
   ears: Ears; tail: Tail;
   snout: number;           // 0 (flat face) to 1 (long snout)
   stripes?: boolean;       // tabby stripes on the back and tail
@@ -17,7 +19,11 @@ export interface PetTraits {
 }
 
 export const PETS: PetTraits[] = [
-  { id: "buddy", name: "Buddy", species: "dog", placeholder: true, size: 1.05, main: "#d9a24a", second: "#f3d9a0", accent: "#a8691f", nose: "#2b2540", eye: "#3a2418", collar: "#e5534b", ears: "floppy", tail: "long", snout: 0.6, sound: "bark" },
-  { id: "mimi", name: "Mimi", species: "cat", placeholder: true, size: 0.85, main: "#8f96a3", second: "#e8e4f2", accent: "#5b6170", nose: "#e58aa5", eye: "#9fd36a", collar: "#8a6bbf", ears: "pointy", tail: "long", snout: 0.1, stripes: true, sound: "meow" },
+  // Traits read from the family's photos (2026-11-17). The photos are not stored here.
+  { id: "nova", name: "Nova", species: "dog", size: 1.0, main: "#25222c", second: "#f4f1ea", accent: "#25222c", nose: "#2b2540", eye: "#7a5230", collar: "#f59ac0", ears: "pointy", tail: "curly", snout: 0.55, sound: "bark" },     // black and white dog: white blaze, chest and paws, tall upright ears, tail curled over her back
+  { id: "leeloo", name: "Leeloo", species: "cat", size: 0.9, main: "#25222c", second: "#f4f1ea", accent: "#25222c", nose: "#7a5560", eye: "#d6a02a", ears: "pointy", tail: "long", snout: 0.1, sound: "meow" },                          // black cat with a white bib and white paws, amber eyes
+  { id: "aslan", name: "Aslan", species: "cat", size: 1.2, main: "#e39a3a", second: "#f6d8a8", accent: "#c9772a", nose: "#e58aa5", eye: "#d6a02a", ears: "pointy", tail: "fluffy", snout: 0.12, stripes: true, sound: "meow" },     // big fluffy golden lion cat with darker orange stripes
+  { id: "neo", name: "Neo", species: "cat", size: 0.95, main: "#8a7a66", second: "#f1ede6", accent: "#3e3a36", nose: "#d98a9a", eye: "#9fc7a0", ears: "pointy", tail: "long", snout: 0.1, stripes: true, sound: "meow" },        // the merle-coloured tabby: grey-brown with dark stripes, white belly, chest and paws, green eyes
+  { id: "ember", name: "Ember", species: "cat", size: 0.75, main: "#25222c", second: "#f7f2ea", accent: "#e58a3a", nose: "#e8a0a8", eye: "#c9a227", collar: "#9aa8b8", earColor: "#25222c", tailColor: "#25222c", ears: "pointy", tail: "long", snout: 0.1, patch: { x: 0.12, y: 0.2, z: 0.1, r: 0.32 }, sound: "meow" }, // calico kitten: black, white and an orange patch
 ];
 export const petById = (id: string) => PETS.find((p) => p.id === id) ?? PETS[0];

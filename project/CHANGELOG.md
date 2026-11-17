@@ -2,6 +2,9 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-17 (later): the real pets are in Cloheart Pets
+- Replaced the placeholders with the family's five pets, traits read from the photos Max sent: **Nova** (black and white dog: white blaze, chest and paws, tall upright ears, tail curled over her back), **Leeloo** (black cat, white bib and paws, amber eyes), **Aslan** (big fluffy golden lion cat, darker orange stripes, fluffy tail), **Neo** (merle-coloured tabby: grey-brown with dark stripes, white belly and paws, green eyes), **Ember** (calico kitten: black, white and an orange patch, grey collar). New optional traits `earColor` and `tailColor`. The photos are not in the repo (public); only the traits are. Test `cloheart` updated to the new pets.
+
 ## 2026-11-17: Cloheart Pets (new activity for Hazel and Violet, phase 0)
 - A gentle virtual pet in a cosy 3D room, in a **PS1 look**: small render (about 320 wide), 15-bit colour (32 steps per channel) with Bayer dither, vertex snapping (a little shimmer), flat low-poly shapes, no outlines. Built on the existing pixel engine (new options: `levels`, `ps1()` vertex snap). Plan: `project/PLAN-PETS.md` (phases 1 to 3: play/bath/sleep, photo colour helper, vision-to-traits, pets on the landing meadow).
 - **Pets are traits entries** (`activities/pets/data.ts`: species dog|cat, size, three colours, nose/eye/collar, ears, tail, snout, stripes, patch). A **procedural rig** (`pets/rig.ts`) builds the body and animates it in code: walk cycle, breathing, blinking, head looks about, tail wag from mood, ear twitch, eating, happy hop. Two **placeholder pets** (golden dog Buddy, grey tabby Mimi) until the real pets' photos arrive (photos are not committed to the public repo; only the traits are).

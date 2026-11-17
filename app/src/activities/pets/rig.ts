@@ -30,7 +30,7 @@ export class PetRig {
     if (!cat && tr.collar !== undefined) { /* collar sits on the neck, added with the head */ }
     // head group pivots at the neck
     const head = new Group(); head.position.set(0, this.baseY + bh * S * 1.0, bl * S * 0.82); g.add(head); this.head = head;
-    const hr = (cat ? 0.27 : 0.3) * S;
+    const hr = (cat ? 0.27 : 0.3) * S; const earC = tr.earColor ?? tr.accent;
     part(new SphereGeometry(1, 8, 7), tr.main, 0, hr * 0.5, hr * 0.3, head).scale.set(hr, hr * 0.95, hr);
     const sn = tr.snout; const snL = hr * (0.35 + sn * 0.9), snW = hr * (0.55 + sn * 0.1);
     part(new BoxGeometry(snW, hr * 0.5, snL), tr.second, 0, hr * 0.28, hr * 0.85 + snL * 0.3, head);
@@ -40,9 +40,9 @@ export class PetRig {
       part(new BoxGeometry(hr * 0.06, hr * 0.06, hr * 0.06), "#ffffff", s * hr * 0.38, hr * 0.85, hr * 0.88, head); // eye shine
       // ears
       const ear = new Group(); ear.position.set(s * hr * 0.62, hr * 1.1, hr * 0.15); head.add(ear); this.ears.push(ear);
-      if (tr.ears === "pointy") { const c = part(new ConeGeometry(hr * 0.42, hr * 0.85, 4), tr.accent, 0, hr * 0.32, 0, ear); c.rotation.z = -s * 0.15; part(new ConeGeometry(hr * 0.22, hr * 0.5, 4), tr.second, 0, hr * 0.22, hr * 0.05, ear).rotation.z = -s * 0.15; }
-      else if (tr.ears === "floppy") { ear.position.set(s * hr * 0.78, hr * 0.85, hr * 0.1); part(new SphereGeometry(1, 6, 5), tr.accent, s * hr * 0.12, -hr * 0.3, 0, ear).scale.set(hr * 0.22, hr * 0.55, hr * 0.32); }
-      else part(new SphereGeometry(1, 6, 5), tr.accent, 0, hr * 0.15, 0, ear).scale.set(hr * 0.32, hr * 0.32, hr * 0.2);
+      if (tr.ears === "pointy") { const c = part(new ConeGeometry(hr * 0.42, hr * 0.85, 4), earC, 0, hr * 0.32, 0, ear); c.rotation.z = -s * 0.15; part(new ConeGeometry(hr * 0.22, hr * 0.5, 4), tr.second, 0, hr * 0.22, hr * 0.05, ear).rotation.z = -s * 0.15; }
+      else if (tr.ears === "floppy") { ear.position.set(s * hr * 0.78, hr * 0.85, hr * 0.1); part(new SphereGeometry(1, 6, 5), earC, s * hr * 0.12, -hr * 0.3, 0, ear).scale.set(hr * 0.22, hr * 0.55, hr * 0.32); }
+      else part(new SphereGeometry(1, 6, 5), earC, 0, hr * 0.15, 0, ear).scale.set(hr * 0.32, hr * 0.32, hr * 0.2);
     });
     if (cat) [-1, 1].forEach((s) => [0.1, -0.02].forEach((dy) => part(new BoxGeometry(hr * 0.9, 0.012, 0.012), "#f6f2ea", s * (hr * 0.72 + hr * 0.4), hr * 0.3 + dy, hr * 1.0, head))); // whiskers
     if (tr.collar) part(new CylinderGeometry(hr * 0.62, hr * 0.66, hr * 0.2, 8), tr.collar, 0, -hr * 0.35, hr * 0.05, head);
@@ -56,7 +56,7 @@ export class PetRig {
     // tail: a chain that sways
     const tl = tr.tail === "stub" ? 1 : tr.tail === "curly" ? 3 : cat ? 5 : 4, seg = (cat ? 0.13 : 0.12) * S * (tr.tail === "fluffy" ? 1.5 : 1);
     let parent: T.Object3D = g; const tailRoot = new Group(); tailRoot.position.set(0, this.baseY + bh * S * 1.05, -bl * S * 0.9); g.add(tailRoot); parent = tailRoot;
-    for (let i = 0; i < tl; i++) { const j = new Group(); j.position.set(0, i ? seg * 0.9 : 0, i ? -seg * 0.3 : 0); parent.add(j); part(new SphereGeometry(seg * (tr.tail === "fluffy" ? 1.1 - i * 0.1 : 1 - i * 0.08), 6, 5), i === tl - 1 && cat ? tr.accent : tr.main, 0, seg * 0.5, 0, j); this.tail.push(j); parent = j; }
+    for (let i = 0; i < tl; i++) { const j = new Group(); j.position.set(0, i ? seg * 0.9 : 0, i ? -seg * 0.3 : 0); parent.add(j); part(new SphereGeometry(seg * (tr.tail === "fluffy" ? 1.1 - i * 0.1 : 1 - i * 0.08), 6, 5), tr.tailColor ?? (i === tl - 1 && cat ? tr.accent : tr.main), 0, seg * 0.5, 0, j); this.tail.push(j); parent = j; }
     this.height = this.baseY + bh * S * 2 + hr * 1.4;
   }
 

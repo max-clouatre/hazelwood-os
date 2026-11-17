@@ -9,7 +9,7 @@ The pixel engine (`wilds/pixel/engine.ts`): low-res render target, fixed palette
 ## Phase 0 (this build): one pet, one room, feed and pet
 - Activity **Cloheart Pets** for Hazel and Violet. A cosy iso-view room (wood floor, two walls, window, rug, bed, bowl, toy ball). The pet wanders, sniffs, naps on the rug; tap it to pet (hearts, wiggle, bark/meow, purr); **Feed** fills the bowl, the pet walks over and eats (crunch sounds).
 - **Traits JSON** per pet (`activities/pets/data.ts`): species dog|cat, name, size, three colours, nose/eye colours, ears (pointy|floppy|round), tail (long|curly|fluffy|stub), snout length, stripes/patches, collar. A procedural rig builds the low-poly body from it (`pets/rig.ts`), animated in code: walk cycle, breathing, blinking, tail wag speed from mood, ear flick, eating, happy hop.
-- Two **placeholder pets** (a golden dog "Buddy" and a grey tabby "Mimi") so both body types work now; they are replaced by the real pets when the photos arrive.
+- The five real pets (2026-11-17, from Max's photos): Nova (dog), Leeloo, Aslan, Neo and Ember (cats). The placeholders Buddy and Mimi were removed.
 - **Care state** in its own key `hwos:pets` (main save untouched): fullness and joy drift down slowly in real time (about 8 and 12 hours to the floor) and **never below a gentle floor** (the pet is "peckish" or "wants a cuddle", never sick, sad-for-good, or gone). Feeding adds fullness; a full pet says "I'm full!" (no penalty). Moods: happy, peckish, cuddly. No timers shown to the kids, no pressure.
 - Sound: small synthesized bark, meow, purr, crunch, heart chime (respects the sound switch). Voice greets by name, sparingly.
 - Fallback without WebGL: a big friendly 2D pet face with the same buttons and stats.
