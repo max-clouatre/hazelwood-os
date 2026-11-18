@@ -14,7 +14,10 @@ The pixel engine (`wilds/pixel/engine.ts`): low-res render target, fixed palette
 - Sound: small synthesized bark, meow, purr, crunch, heart chime (respects the sound switch). Voice greets by name, sparingly.
 - Fallback without WebGL: a big friendly 2D pet face with the same buttons and stats.
 
-## Phase 1: more care and the builder
+## Phase 1 (BUILT 2026-11-18): play fetch, bubble bath, nap with night lighting, tricks, bond, accessories, room themes; voice removed
+(Original phase 1 text below; the photo colour helper is still future.)
+
+## Phase 1 (original): more care and the builder
 Play (throw the ball, fetch), bath (bubbles), sleep (pet curls up in its bed, lights dim at night hours); a second tap-to-select pet picker; **photo helper**: in the Grown-up area pick a photo, the app samples dominant fur colours offline (no network, photo never stored in the repo) and suggests the colour traits; shape traits chosen from pictures.
 
 ## Phase 2: photo to traits with vision

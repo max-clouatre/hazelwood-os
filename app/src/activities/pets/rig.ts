@@ -4,7 +4,7 @@ import type * as T from "three";
 import type { TH } from "../../wilds/pixel/engine";
 import type { PetTraits } from "./data";
 
-export interface Anim { mode: "idle" | "walk" | "eat" | "happy" | "sleep"; mood: number /* 0 (wants love) to 1 (very happy) */ }
+export interface Anim { mode: "idle" | "walk" | "eat" | "happy" | "sleep" | "sit" | "jump" | "shake"; mood: number /* 0 (wants love) to 1 (very happy) */; phase?: number /* 0..1 through a jump */ }
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
 export class PetRig {
@@ -12,9 +12,11 @@ export class PetRig {
   height = 1;
   private legs: any[] = []; private torso: any; private head: any; private tail: any[] = []; private ears: any[] = []; private eyes: any[] = [];
   private t = 0; private walk = 0; private blink = 0; private nextBlink = 2; private twitch = 0; private nextTwitch = 3; private look = 0; private lookTo = 0; private nextLook = 2;
-  private baseY: number; private cat: boolean;
+  private baseY: number; private cat: boolean; private hr = 0.3; private acc: any; private suds: any; private ball: any; private mats: (hex: string) => T.Material;
 
+  private THREE_: TH;
   constructor(THREE: TH, tr: PetTraits, mat: (hex: string) => T.Material) {
+    this.THREE_ = THREE; this.mats = mat;
     const { Group, Mesh, SphereGeometry, BoxGeometry, ConeGeometry, CylinderGeometry } = THREE;
     const cat = tr.species === "cat"; this.cat = cat; const S = tr.size;
     const g = new Group(); this.group = g;
@@ -25,13 +27,14 @@ export class PetRig {
     const torso = new Group(); torso.position.y = this.baseY + bh * S * 0.6; g.add(torso); this.torso = torso;
     part(new SphereGeometry(1, 8, 6), tr.main, 0, 0, 0, torso).scale.set(bw * S, bh * S, bl * S);
     part(new SphereGeometry(1, 7, 5), tr.second, 0, -bh * S * 0.45, bl * S * 0.25, torso).scale.set(bw * S * 0.8, bh * S * 0.55, bl * S * 0.62); // belly and chest
-    if (tr.patch) part(new SphereGeometry(1, 6, 5), tr.accent, tr.patch.x * S, tr.patch.y * S, tr.patch.z * S, torso).scale.set(tr.patch.r * S, tr.patch.r * S * 0.5, tr.patch.r * S);
+    (tr.patches ?? []).filter((p) => p.on !== "head").forEach((p) => part(new SphereGeometry(1, 6, 5), p.c, p.x * S, p.y * S, p.z * S, torso).scale.set(p.r * S, p.r * S * 0.5, p.r * S));
     if (tr.stripes) for (let i = 0; i < 4; i++) part(new BoxGeometry(bw * S * 1.9, 0.03 * S, 0.07 * S), tr.accent, 0, bh * S * 0.93, (-0.3 + i * 0.2) * S, torso);
     if (!cat && tr.collar !== undefined) { /* collar sits on the neck, added with the head */ }
     // head group pivots at the neck
     const head = new Group(); head.position.set(0, this.baseY + bh * S * 1.0, bl * S * 0.82); g.add(head); this.head = head;
     const hr = (cat ? 0.27 : 0.3) * S; const earC = tr.earColor ?? tr.accent;
     part(new SphereGeometry(1, 8, 7), tr.main, 0, hr * 0.5, hr * 0.3, head).scale.set(hr, hr * 0.95, hr);
+    (tr.patches ?? []).filter((p) => p.on === "head").forEach((p) => part(new SphereGeometry(1, 6, 5), p.c, p.x * hr, p.y * hr, hr * (0.8 + p.z), head).scale.set(p.r * hr * 2, p.r * hr * 1.6, p.r * hr * 0.7));
     const sn = tr.snout; const snL = hr * (0.35 + sn * 0.9), snW = hr * (0.55 + sn * 0.1);
     part(new BoxGeometry(snW, hr * 0.5, snL), tr.second, 0, hr * 0.28, hr * 0.85 + snL * 0.3, head);
     part(new BoxGeometry(snW * 0.45, hr * 0.22, hr * 0.22), tr.nose, 0, hr * 0.42, hr * 0.85 + snL * 0.78, head);
@@ -58,7 +61,27 @@ export class PetRig {
     let parent: T.Object3D = g; const tailRoot = new Group(); tailRoot.position.set(0, this.baseY + bh * S * 1.05, -bl * S * 0.9); g.add(tailRoot); parent = tailRoot;
     for (let i = 0; i < tl; i++) { const j = new Group(); j.position.set(0, i ? seg * 0.9 : 0, i ? -seg * 0.3 : 0); parent.add(j); part(new SphereGeometry(seg * (tr.tail === "fluffy" ? 1.1 - i * 0.1 : 1 - i * 0.08), 6, 5), tr.tailColor ?? (i === tl - 1 && cat ? tr.accent : tr.main), 0, seg * 0.5, 0, j); this.tail.push(j); parent = j; }
     this.height = this.baseY + bh * S * 2 + hr * 1.4;
+    // things that come and go: an accessory, soap suds, a ball in the mouth
+    this.hr = hr; this.acc = new Group(); head.add(this.acc);
+    this.suds = new Group(); torso.add(this.suds); this.mats = mat;
+    for (let i = 0; i < 7; i++) { const sp = new Mesh(new SphereGeometry(1, 6, 5), mat("#ffffff")); sp.position.set(rnd(-0.7, 0.7) * bw * S, bh * S * rnd(0.3, 1.0), rnd(-0.8, 0.8) * bl * S); sp.scale.setScalar(0.12 * S * rnd(0.8, 1.4)); sp.visible = false; this.suds.add(sp); }
+    this.ball = new Mesh(new SphereGeometry(0.11 * S, 6, 5), mat("#3fa7e0")); this.ball.position.set(0, hr * 0.1, hr * 1.25 + hr * (0.35 + tr.snout * 0.9) * 0.6); this.ball.visible = false; head.add(this.ball);
   }
+
+  /** Put an accessory on the pet's head or neck (or take it off with "none"). */
+  setAccessory(id: string) {
+    const { Mesh, BoxGeometry, ConeGeometry, CylinderGeometry, SphereGeometry } = this.THREE_; const hr = this.hr, m = this.mats, a = this.acc;
+    while (a.children.length) { const c = a.children[0]; a.remove(c); c.geometry?.dispose(); }
+    const add = (geo: T.BufferGeometry, hex: string, x: number, y: number, z: number) => { const o = new Mesh(geo, m(hex)); o.position.set(x, y, z); a.add(o); return o; };
+    if (id === "bow") { add(new BoxGeometry(hr * 0.34, hr * 0.26, hr * 0.12), "#ff5d8f", hr * 0.42, hr * 1.18, hr * 0.15); add(new BoxGeometry(hr * 0.34, hr * 0.26, hr * 0.12), "#ff5d8f", hr * 0.78, hr * 1.18, hr * 0.15); add(new BoxGeometry(hr * 0.16, hr * 0.16, hr * 0.16), "#ffd23f", hr * 0.6, hr * 1.18, hr * 0.15); }
+    if (id === "hat") { add(new ConeGeometry(hr * 0.38, hr * 0.95, 6), "#ff8fb8", 0, hr * 1.55, hr * 0.12); add(new SphereGeometry(hr * 0.1, 5, 4), "#ffd23f", 0, hr * 2.05, hr * 0.12); add(new BoxGeometry(hr * 0.6, hr * 0.07, hr * 0.6), "#ffd23f", 0, hr * 1.2, hr * 0.12); }
+    if (id === "crown") { add(new CylinderGeometry(hr * 0.42, hr * 0.46, hr * 0.28, 8), "#ffd23f", 0, hr * 1.3, hr * 0.12); for (let i = 0; i < 5; i++) { const ang = (i / 5) * Math.PI * 2; add(new ConeGeometry(hr * 0.1, hr * 0.28, 4), "#ffd23f", Math.cos(ang) * hr * 0.38, hr * 1.55, hr * 0.12 + Math.sin(ang) * hr * 0.38); } add(new SphereGeometry(hr * 0.08, 5, 4), "#e5334b", 0, hr * 1.32, hr * 0.5); }
+    if (id === "shades") { add(new BoxGeometry(hr * 0.42, hr * 0.26, hr * 0.1), "#1c1a24", -hr * 0.4, hr * 0.8, hr * 0.92); add(new BoxGeometry(hr * 0.42, hr * 0.26, hr * 0.1), "#1c1a24", hr * 0.4, hr * 0.8, hr * 0.92); add(new BoxGeometry(hr * 0.5, hr * 0.06, hr * 0.08), "#1c1a24", 0, hr * 0.86, hr * 0.92); }
+    if (id === "bandana") { add(new CylinderGeometry(hr * 0.7, hr * 0.74, hr * 0.2, 8), "#e5534b", 0, -hr * 0.3, hr * 0.05); const t = add(new ConeGeometry(hr * 0.3, hr * 0.45, 3), "#e5534b", 0, -hr * 0.62, hr * 0.5); t.rotation.x = Math.PI; t.rotation.y = Math.PI; }
+  }
+  /** Soap suds on the body (0 to 7 bubbles of foam). */
+  setSuds(n: number) { this.suds.children.forEach((c: any, i: number) => { c.visible = i < n; }); }
+  setBall(on: boolean) { this.ball.visible = on; }
 
   /** Move the body parts for this frame. */
   update(dt: number, a: Anim) {
@@ -70,14 +93,17 @@ export class PetRig {
     const closed = this.blink > 0 || a.mode === "sleep" ? 0.1 : 1; this.eyes.forEach((e) => { e.scale.y += ((closed * 0.17 * this.head.children[0].scale.y) - e.scale.y) * 0.5; });
     // legs
     const moving = a.mode === "walk"; if (moving) this.walk += dt * 9; else this.walk += dt * 0;
-    this.legs.forEach((l, i) => { const ph = this.walk + (i === 0 || i === 3 ? 0 : Math.PI); const target = moving ? Math.sin(ph) * 0.7 : a.mode === "sleep" ? 1.2 : 0; l.rotation.x += (target - l.rotation.x) * Math.min(1, dt * 14); });
+    this.legs.forEach((l, i) => { const ph = this.walk + (i === 0 || i === 3 ? 0 : Math.PI); const hind = i >= 2; const target = moving ? Math.sin(ph) * 0.7 : a.mode === "sleep" ? 1.2 : a.mode === "sit" ? (hind ? -1.25 : 0) : a.mode === "jump" ? (hind ? 0.9 : -0.9) : 0; l.rotation.x += (target - l.rotation.x) * Math.min(1, dt * 14); });
     // body: bob, breathe, hop, squash
     let y = 0, tilt = 0, headX = 0, headY = 0, sy = 1 + Math.sin(t * 2.2) * 0.018;
     if (moving) y = Math.abs(Math.sin(this.walk)) * 0.035;
     if (a.mode === "happy") { y = Math.abs(Math.sin(t * 9)) * 0.22; tilt = Math.sin(t * 9) * 0.08; }
     if (a.mode === "eat") { headX = 0.62 + Math.sin(t * 11) * 0.09; y = -0.01; }
     if (a.mode === "sleep") { sy = 0.8 + Math.sin(t * 1.6) * 0.03; y = -this.baseY * 0.55; headX = 0.5; }
-    this.torso.scale.y += (sy - this.torso.scale.y) * 0.3; this.torso.rotation.z += (tilt - this.torso.rotation.z) * 0.3;
+    if (a.mode === "sit") { y = -this.baseY * 0.28; headX = -0.2; tilt = Math.sin(t * 3) * 0.02; }
+    if (a.mode === "jump") { const ph = a.phase ?? 0; y = Math.sin(Math.min(1, ph) * Math.PI) * 0.9; headX = -0.25; }
+    if (a.mode === "shake") { tilt = Math.sin(t * 38) * 0.22; headX = 0.1; }
+    this.torso.rotation.x += ((a.mode === "sit" ? -0.5 : 0) - this.torso.rotation.x) * 0.25; this.torso.scale.y += (sy - this.torso.scale.y) * 0.3; this.torso.rotation.z += (tilt - this.torso.rotation.z) * 0.3;
     g.position.y += (y - g.position.y) * Math.min(1, dt * 20);
     // head looks about when idle
     this.nextLook -= dt; if (this.nextLook <= 0) { this.lookTo = rnd(-0.6, 0.6); this.nextLook = rnd(1.5, 4); }

@@ -31,6 +31,7 @@ const TESTS = [
   { name: "village", file: "village.js", fast: false, what: "Village mode: build, collect, convert, upgrade, workers, flat fallback" },
   { name: "cuddle", file: "cuddle.js", fast: false, what: "Cuddle Run: prep, run, level-up questions, nap/sunset, rewards, friend, notes" },
   { name: "cloheart", file: "cloheart.js", fast: false, what: "Cloheart Pets: room, feed, pet, gentle time drift, flat fallback" },
+  { name: "cloheart-care", file: "cloheart-care.js", fast: false, what: "Cloheart Pets: play, bath, nap, tricks, bond, style, themes, old saves, no voice" },
   { name: "catch-flow", file: "catch-flow.js", fast: false, what: "starter, explore, throw, catch, reveal" },
   { name: "progression", file: "progression.js", fast: false, what: "evolution branches, badges, goals, berry guide, eggs" },
   { name: "color-by-number", file: "color-by-number.js", fast: false, what: "Hazel's color-by-number pages complete" },

@@ -2,6 +2,17 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-18: Cloheart Pets grows: play, bath, nap, tricks, style, rooms, bond (no voice)
+- **Ember is whiter**: mostly white now with black and orange patches (new `patches` trait: coloured patches on body or head).
+- **Voice removed** from Cloheart Pets (Max: unnecessary). Only the pets' own sounds remain (bark, meow, purr, crunch, pops).
+- **Play fetch:** press Play, tap the floor to throw the ball (it arcs through the room), the pet runs after it, carries it in its mouth and brings it back; five throws per game.
+- **Bubble bath:** the pet walks to the tub; tap it six times to scrub (foam appears on its body), then a splash, a shake and a squeaky-clean pet. A new **clean** meter.
+- **Nap:** the pet goes to its bed and sleeps (z's float up); the room lights dim and a moon shows in the window; tap or Wake to wake early. A new **rest** meter. The room also dims by itself in the evening and at night (by the tablet's clock).
+- **Tricks:** sit, spin or a big jump, with hearts. **Bond** levels (New friends, Buddies, Best friends, Forever friends) grow with every pat, meal, game, bath, nap and trick.
+- **Style:** unlock things to wear with bond (bow, party hat at 6, bandana at 12, cool shades at 20, crown at 35; a celebration when one unlocks) and change the room theme (Cozy, Sky, Candy, Forest). All remembered.
+- Pets are never busy-blocked harshly: while one is napping or bathing the others say "busy right now" gently. Meters still drift slowly with floors; four moods now (happy, a little hungry, bubble bath, sleepy, cuddle). Old saves load with defaults. Tests `cloheart` and `cloheart-care` (42 checks: every activity, unlocks, themes, night, old save, no voice).
+- Not verified on the real tablet; the 3D can only be judged there.
+
 ## 2026-11-17 (later): the real pets are in Cloheart Pets
 - Replaced the placeholders with the family's five pets, traits read from the photos Max sent: **Nova** (black and white dog: white blaze, chest and paws, tall upright ears, tail curled over her back), **Leeloo** (black cat, white bib and paws, amber eyes), **Aslan** (big fluffy golden lion cat, darker orange stripes, fluffy tail), **Neo** (merle-coloured tabby: grey-brown with dark stripes, white belly and paws, green eyes), **Ember** (calico kitten: black, white and an orange patch, grey collar). New optional traits `earColor` and `tailColor`. The photos are not in the repo (public); only the traits are. Test `cloheart` updated to the new pets.
 

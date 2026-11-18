@@ -6,7 +6,7 @@ const path = require('path'); const fs = require('fs');
 (async () => {
   // traits file sanity
   const src = fs.readFileSync(path.join(ROOT, 'app/src/activities/pets/data.ts'), 'utf8');
-  const hex = [...src.matchAll(/(?:main|second|accent|nose|eye|collar): "(#[0-9a-fA-F]{6})"/g)].length, entries = [...src.matchAll(/\{ id: "[a-z]+", name: /g)].length;
+  const hex = [...src.matchAll(/(?:main|second|accent|nose|eye|collar): "(#[0-9a-fA-F]{6})"/g)].length, entries = [...src.matchAll(/\{ id: "[a-z]+", name: "[^"]+", species: /g)].length;
   ok(`traits: every pet has valid hex colours (${hex} colour fields, ${entries} pets)`, entries >= 5 && hex >= entries * 5 && !/: "#[0-9a-fA-F]{0,5}"/.test(src));
   const server = await serve(path.join(ROOT, 'docs'));
   const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
