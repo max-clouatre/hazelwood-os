@@ -32,6 +32,9 @@ This repo is run as a **delivery factory with durable state**. Start with:
 - `project/`: `BACKLOG.md`, `FEEDBACK.md` (Max's play-test notes), `DECISIONS.md`, `CHANGELOG.md`, `REQUIREMENTS.md`, `ENVIRONMENT.md`, design docs.
 - `tests/`: Playwright end-to-end suite (`npm run test:e2e` from `app/`). `.claude/`: hooks and slash commands (`/resume`, `/ship`, `/log-feedback`, `/new-mode`).
 
+## Third-party code
+The Pets preview lab vendors [ink-studio](https://github.com/siliconjungle/shapeshift-labs-ink-studio) (MIT, copyright siliconjungle) under `app/public/ink/` with its licence (`LICENSE.txt`). It is loaded only when that lab opens.
+
 ## Layout
 - `app/`: source (Vite + React + TypeScript + Tailwind 3, `vite-plugin-pwa`).
 - `docs/`: **built output**, committed so GitHub Pages can serve `main` + `/docs`. Never edit by hand.

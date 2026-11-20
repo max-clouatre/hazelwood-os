@@ -1,0 +1,4 @@
+ink-studio (MIT licence, see LICENSE.txt)
+https://github.com/siliconjungle/shapeshift-labs-ink-studio
+commit 7bf2e8676d55bb9d0d97f5c8537ad856905bd2a3
+vendored with scripts/vendor-ink.js (bundle + minify to es2019, WebGL renderer bundled to one file)

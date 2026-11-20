@@ -63,3 +63,6 @@ Rules that must stay true for this game and any change to it: no attacking, hurt
 
 ## D-28: Cloheart Pets are gentle by design, and photos stay out of the repo (2026-11-17)
 Pets can get hungry or want a cuddle but never sick, sad for good, or gone: state drifts down over hours and stops at a floor; feeding or petting only adds; a full pet just says so. The PS1 look reuses the pixel engine (low-res render, 15-bit palette dither, vertex snapping) instead of a second renderer. A pet is data (traits), the body is built and animated in code. Family photos are private: the repo and the site are public, so photos are never committed; only the traits derived from them are. In-app photo-to-traits with a vision model would need network and a key, so it waits behind a Grown-up switch; until then someone reads the photo and fills the traits.
+
+## D-29: third-party graphics toolkit only as an on-demand lab (2026-11-20)
+ink-studio is MIT (keep the licence file with any copy we ship) but large (4 MB minified) and needs WebGL2 and newer syntax. We vendor a pinned, transpiled copy under `public/ink/` (regenerate with `scripts/vendor-ink.js`), keep it out of the offline precache and out of the app bundle, and load it only from the Grown-up lab, with fallbacks. Adopting it for the live game is a separate decision that waits for a measured fps on the family tablet.

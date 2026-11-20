@@ -28,3 +28,14 @@ Pets roam on the pixel landing meadow, accessories and room decorating (stars/be
 
 ## Rules
 Gentle always: progress only goes up, nothing is lost, no dying/sickness/guilt, no purchases, no network. Saves: own key with defaults and try/catch. Old Chrome: es2019, lazy 3D chunk, error boundary. Photos stay out of the public repo.
+
+## Better-graphics experiment: ink-studio splat pets (2026-11-20)
+Demo only, in the Grown-up area (`lab/`), live pets unchanged. Screenshots: `project/shots/pets-lab-compare-*.png`.
+**What it is:** ink-studio (MIT, single author, v0.1.0, "private" package) sculpts signed-distance solids and bakes them to pixel-art Gaussian splats with lighting, puppets and particles, rendered with WebGL2. Our pet is about 16k to 20k splats; the room adds light from a lamp and the window; the demo bakes in about 200 ms on a desktop.
+**Honest comparison with the live PS1 pets:**
+- Look: clearly richer and warmer (soft shading, lamp and window light, dithering, readable faces and markings). The PS1 look is chunkier and flatter but matches the app's flat, outlined style and Forager-like world better.
+- Cost: needs a 4 MB toolkit plus 0.4 MB renderer (1.6 MB gzipped) against the app's roughly 1 MB, WebGL2 and modern GPU features, and a per-frame CPU depth sort whenever the puppet moves. **Tab A speed is unknown until measured**; the lab prints fps and CPU ms.
+- Compatibility: we transpile it to Chrome 67 syntax and shim `structuredClone`; it also uses BigInt and WebGL2. If the tablet's Chrome or GPU cannot run it the lab says so.
+- Authoring: every motion needs puppet clips (walk, fetch, eat, sit, sleep, bath, accessories). The demo only does idle, pet and feed; the PS1 rig already does all of them. Switching means re-authoring every activity.
+- Risk: young single-author dependency (breaking changes possible); we vendor a pinned copy, so it cannot break us, but we also would not get fixes.
+**Recommendation:** do not switch Cloheart Pets over yet. Read the fps on the tablet (Normal 320 and Chunky 240). Only if it holds about 30 fps with a steady frame time, consider using splats for **hero moments** (a pet portrait or "photo mode", a pet on the landing screen, a celebration) rather than replacing the live room, and port behaviours one at a time. If the tablet is below about 20 fps, stop here and keep investing in the PS1 look (lighting dim, nicer room, more animation), which already runs well.

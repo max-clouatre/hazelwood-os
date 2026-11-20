@@ -6,6 +6,7 @@ import { BUILD, latestKnown, refreshAppFiles, updateNow, useUpdateInfo } from ".
 import type { ProfileId } from "../lib/store";
 import { STICKERS } from "../lib/stickers";
 
+const PetsPreviewLab = lazy(() => import("../lab/PetsPreviewLab").then((m) => ({ default: m.PetsPreviewLab })));
 const PixelLab = lazy(() => import("../wilds/PixelLab").then((m) => ({ default: m.PixelLab })));
 const LIMITS = [0, 15, 20, 30, 45, 60];
 
@@ -34,6 +35,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
   const s = useStore();
   const [confirm, setConfirm] = useState(false);
   const [lab, setLab] = useState(false);
+  const [petLab, setPetLab] = useState(false);
   const [confirmW, setConfirmW] = useState(false);
   const [, setTick] = useState(0);
   const [upd, setUpd] = useState<string>("");
@@ -72,6 +74,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           <h2 className="mb-2 text-xl font-bold">Labs (try-outs for you)</h2>
           <p className="mb-2 text-sm text-white/70">Experiments that are not part of the kids' game. Opening one loads extra code only then.</p>
           <button onClick={() => setLab(true)} className="rounded-xl bg-mustard px-5 py-3 text-xl font-bold text-black active:scale-95">🧊 Pixel Lab (3D pixel art)</button>
+          <button onClick={() => setPetLab(true)} className="ml-2 mt-2 rounded-xl bg-pink-300 px-5 py-3 text-xl font-bold text-black active:scale-95 sm:mt-0">🔬 Pets preview lab (new graphics test)</button>
         </section>
 
         <section className="rounded-2xl bg-white/10 p-4">
@@ -144,6 +147,7 @@ export function ParentArea({ onClose }: { onClose: () => void }) {
           )}
         </section>
       </div>
+      {petLab && <Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-night text-xl">Loading…</div>}><PetsPreviewLab onClose={() => setPetLab(false)} /></Suspense>}
       {lab && <Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-night text-xl">Loading…</div>}><PixelLab onClose={() => setLab(false)} /></Suspense>}
     </div>
   );

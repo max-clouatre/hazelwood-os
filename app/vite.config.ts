@@ -20,6 +20,8 @@ export default defineConfig({
       manifestFilename: "manifest.webmanifest",
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,svg,webmanifest}"],
+        globIgnores: ["ink/**"], // the 4 MB graphics toolkit for the Pets preview lab is fetched only when that lab opens
+        runtimeCaching: [{ urlPattern: ({ url }: { url: URL }) => /\/ink\/.*\.js$/.test(url.pathname), handler: "CacheFirst", options: { cacheName: "ink-lab", expiration: { maxEntries: 4 } } }],
         navigateFallback: "index.html",
         cleanupOutdatedCaches: true,
         clientsClaim: true,
