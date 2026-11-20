@@ -43,6 +43,7 @@ export const THEMES = [
   { id: "sky", name: "Sky", emoji: "☁️", floorA: "#e8f1fb", floorB: "#cfe0f3", wall: "#bfe3ff", wall2: "#a9d6fb", wain: "#ffffff", rug: "#ffd23f", rug2: "#ff8fb8", bed: "#4fa8e0", bed2: "#bfe3ff" },
   { id: "candy", name: "Candy", emoji: "🍬", floorA: "#fff1f6", floorB: "#ffd9e6", wall: "#ffc8dd", wall2: "#ffb3d1", wain: "#c8f2e0", rug: "#a8e6cf", rug2: "#ffd23f", bed: "#ff8fb8", bed2: "#ffd9e6" },
   { id: "forest", name: "Forest", emoji: "🌲", floorA: "#a8693a", floorB: "#b87a45", wall: "#cfe8c0", wall2: "#bfdcae", wain: "#6fb06a", rug: "#e5534b", rug2: "#fff1d6", bed: "#5b8f5b", bed2: "#cfe8c0" },
+  { id: "yard", name: "Yard", emoji: "🌳", yard: true, sky: "#8fd0f0", skyNight: "#14183a", floorA: "#5fbf5a", floorB: "#6fcf66", wall: "#fff6e6", wall2: "#fff6e6", wain: "#f2e6c8", rug: "#e5534b", rug2: "#ffffff", bed: "#4fa8e0", bed2: "#bfe3ff" },
 ];
 export const BOND_LEVELS: { at: number; name: string }[] = [{ at: 0, name: "New friends" }, { at: 10, name: "Buddies" }, { at: 25, name: "Best friends" }, { at: 50, name: "Forever friends" }];
 export const bondLevel = (bond: number) => [...BOND_LEVELS].reverse().find((l) => bond >= l.at)!.name;

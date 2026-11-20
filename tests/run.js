@@ -32,6 +32,7 @@ const TESTS = [
   { name: "cuddle", file: "cuddle.js", fast: false, what: "Cuddle Run: prep, run, level-up questions, nap/sunset, rewards, friend, notes" },
   { name: "cloheart", file: "cloheart.js", fast: false, what: "Cloheart Pets: room, feed, pet, gentle time drift, flat fallback" },
   { name: "cloheart-care", file: "cloheart-care.js", fast: false, what: "Cloheart Pets: play, bath, nap, tricks, bond, style, themes, old saves, no voice" },
+  { name: "pets-yard", file: "pets-yard.js", fast: false, what: "Cloheart Pets: the Yard scene, butterflies, care in the yard, remembered" },
   { name: "pets-lab", file: "pets-lab.js", fast: false, what: "Pets preview lab: ink-studio splat pets beside the live PS1 pets, lazy load, fallbacks, licence" },
   { name: "catch-flow", file: "catch-flow.js", fast: false, what: "starter, explore, throw, catch, reveal" },
   { name: "progression", file: "progression.js", fast: false, what: "evolution branches, badges, goals, berry guide, eggs" },

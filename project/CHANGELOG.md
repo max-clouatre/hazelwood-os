@@ -2,6 +2,12 @@
 
 Verification column: **F** = fast e2e suite passed, **S** = slow suite passed, **B** = built only, **-** = not run.
 
+## 2026-11-21: Cloheart Pets Yard scene
+- New room theme **Yard 🌳** (Style > Rooms; saved with the other themes, nothing else changes): a sunny garden in the same PS1 look. Grass, a picket fence, a tree with apples to nap under, flowers, a bush, a picnic blanket, a wading pool with a rubber duck for baths, and a sun by day that becomes the moon at night.
+- **Three butterflies** drift about; while wandering the pet sometimes chases one (and gets a couple of hearts). The butterflies sleep at night. Feed, Play, Bath, Nap, Trick and Pet all work as in the room.
+- Code: `pets/scene.ts` (`buildYard`, butterflies, chase), `pets/data.ts` (a `yard` theme with sky colours). Test `pets-yard` (full suite). Screenshots in `tests/out/shots/yard-*.png`.
+- Not verified: how it looks and runs on the real tablet.
+
 ## 2026-11-20: Pets preview lab (ink-studio demo, Grown-up area)
 - New demo screen **Grown-up area > Labs > 🔬 Pets preview lab (new graphics test)** (the live Cloheart Pets the girls use are untouched). Shows the five real pets two ways, side by side or one at a time: **Current** (the live PS1-style three.js room) and **New**, rebuilt with [ink-studio](https://github.com/siliconjungle/shapeshift-labs-ink-studio) (MIT): each pet is sculpted from solids built from the same traits entries, baked into about 16 to 20 thousand pixel-art Gaussian splats in a cosy room with warm lamp light, window light and dithering, animated by a puppet rig (breathing, tail, ears, blinking, head turns), with Pet (hearts), Feed (head down, crumbs), a **Night** lighting toggle and a quality choice (Chunky 240 / Normal 320 / Fine 480). It shows fps, CPU ms per frame, build time, splat count and the tablet's Chrome version so the real tablet can be measured.
 - **Loading rules:** the 4 MB toolkit and 0.4 MB WebGL2 renderer are static files under `public/ink/` (vendored with `scripts/vendor-ink.js`, minified to Chrome 67 syntax, `structuredClone` shimmed), **excluded from the offline precache** and fetched only when the lab opens (runtime-cached after). The licence (`public/ink/LICENSE.txt`) and the upstream commit (`SOURCE.txt`) ship with it. Falls back kindly with a message when WebGL2 is missing or the toolkit cannot load; the live pets pane keeps working.
